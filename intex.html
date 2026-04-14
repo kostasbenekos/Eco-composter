@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ECO-COMPOSTER v59 Stable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #020617; font-family: 'Inter', sans-serif; }
+        #app { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
+        #canvas-wrap { flex: 1; position: relative; background: #7dd3fc; touch-action: none; }
+        canvas { display: block; width: 100% !important; height: 100% !important; }
+        .ui-panel { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .modal-full { position: absolute; inset: 0; z-index: 1000; background: rgba(2, 6, 23, 0.98); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .scroll-box::-webkit-scrollbar { width: 6px; }
+        .scroll-box::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="p-3 bg-slate-900 border-b border-emerald-500/30 flex justify-between items-center z-50">
+            <div class="flex gap-2">
+                <div class="ui-panel px-4 py-1 rounded-xl text-center min-w-[70px]">
+                    <p class="text-[8px] text-emerald-400 font-black uppercase">SCORE</p>
+                    <p id="sc-val" class="text-lg font-black text-white">0</p>
+                </div>
+                <div class="ui-panel px-4 py-1 rounded-xl text-center min-w-[70px]">
+                    <p class="text-[8px] text-red-400 font-black uppercase">MISTAKES</p>
+                    <p id="ms-val" class="text-lg font-black text-white">0/12</p>
+                </div>
+            </div>
+            <div id="boost-ui" class="hidden text-yellow-400 font-black animate-pulse text-[10px] bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/30 font-bold italic">⚡ BOOST x2</div>
+            <button onclick="toggleInfo(true)" class="ui-panel p-2 rounded-xl text-sky-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            </button>
+        </div>
+        <div id="canvas-wrap">
+            <div id="screen-start" class="modal-full">
+                <div class="max-w-xs w-full bg-slate-800 p-8 rounded-[3rem] border border-white/10 shadow-2xl text-center">
+                    <div class="w-20 h-20 bg-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M5 3l14 9-14 9V3z"/></svg>
+                    </div>
+                    <h1 class="text-3xl font-black mb-1 uppercase italic tracking-tighter">ECO-COMPOSTER</h1>
+                    <p class="text-emerald-400 text-[10px] font-black mb-8 uppercase tracking-widest leading-none">V59 GitHub Stable</p>
+                    <button id="play-trigger" class="bg-emerald-500 hover:bg-emerald-400 w-full py-5 rounded-2xl font-black text-xl text-white uppercase shadow-[0_5px_0_#059669] active:translate-y-1 transition-all">ΠΑΙΞΕ</button>
+                </div>
+            </div>
+            <div id="screen-info" class="modal-full hidden">
+                <div class="max-w-md w-full bg-slate-800 rounded-[3rem] border border-white/10 shadow-2xl flex flex-col h-[80vh] overflow-hidden">
+                    <div class="p-6 border-b border-white/5 text-center"><h2 class="text-2xl font-black text-emerald-400 uppercase">ΟΔΗΓΙΕΣ</h2></div>
+                    <div class="flex-1 overflow-y-auto scroll-box p-6 space-y-6 text-left">
+                        <div class="bg-black/30 p-5 rounded-2xl border border-white/5"><p class="text-xs font-bold text-emerald-400 mb-1">ΒΑΘΜΟΛΟΓΙΑ:</p><p class="text-sm text-slate-300">✅ Σωστό: +100 | ❌ Λάθος: -100</p></div>
+                        <div class="bg-yellow-400/10 p-5 rounded-2xl border border-yellow-400/20"><p class="text-xs font-bold text-yellow-400 mb-1 uppercase italic leading-none">Turbo Strike:</p><p class="text-xs text-slate-300">10 σωστά στη σειρά = Διπλάσιοι πόντοι!</p></div>
+                        <p class="text-[10px] text-slate-500 font-black uppercase text-center">ΣΩΣΤΑ (ΝΑΙ):</p>
+                        <div class="grid grid-cols-5 gap-3 text-3xl text-center"><span>🍌</span><span>🍎</span><span>🥦</span><span>🌿</span><span>🌱</span><span>🥚</span><span>📄</span><span>📰</span><span>📦</span><span>🪱</span></div>
+                        <p class="text-[10px] text-red-500/50 font-black uppercase text-center">ΛΑΘΟΣ (ΟΧΙ):</p>
+                        <div class="grid grid-cols-5 gap-3 text-3xl text-center grayscale opacity-30"><span>🥛</span><span>🍾</span><span>🍲</span><span>🥩</span><span>🍼</span></div>
+                        <button onclick="toggleInfo(false)" class="w-full bg-slate-700 py-4 rounded-2xl font-black text-white uppercase mt-4">ΠΙΣΩ</button>
+                    </div>
+                </div>
+            </div>
+            <div id="screen-end" class="modal-full hidden">
+                <div class="max-w-md w-full bg-slate-800 p-10 rounded-[3rem] border border-white/10 shadow-2xl text-center flex flex-col gap-6">
+                    <div class="text-6xl animate-bounce">🏆</div>
+                    <h2 class="text-3xl font-black uppercase">ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΥ</h2>
+                    <div class="bg-emerald-500/10 py-5 rounded-3xl border border-emerald-400/30"><p class="text-[10px] text-emerald-400 font-black uppercase mb-1">ΣΚΟΡ</p><p id="fin-sc" class="text-5xl font-black text-white">0</p></div>
+                    <div id="save-ui" class="space-y-3"><input type="text" id="p-name" maxlength="15" placeholder="ΟΝΟΜΑ" class="w-full bg-black/40 border-2 border-white/10 p-5 rounded-2xl text-center font-bold text-white focus:border-emerald-500 outline-none uppercase tracking-widest"><button onclick="saveResult()" id="btn-save" class="bg-emerald-500 w-full py-5 rounded-2xl font-black text-emerald-950 uppercase shadow-xl">ΑΠΟΘΗΚΕΥΣΗ</button></div>
+                    <div id="lead-list" class="space-y-2 max-h-[150px] overflow-y-auto scroll-box pr-2"></div>
+                    <button onclick="location.reload()" class="text-emerald-400 font-bold uppercase text-[10px] tracking-widest">ΠΑΙΞΕ ΞΑΝΑ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const fbConfig = JSON.parse(__firebase_config);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eco-comp-v59-github';
+        firebase.initializeApp(fbConfig); const db = firebase.firestore();
+        let gameActive = false, score = 0, mistakes = 0, streak = 0, speed = 0.15, frame = 0, progression = 0, lastX = 0;
+        let items = [], decor = [], audioCtx, musicInt;
+        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playSfx(f, dur=0.2, v=0.03) { if(!gameActive || !audioCtx) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = 'sine'; o.connect(g); g.connect(audioCtx.destination); o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(v, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur); o.start(); o.stop(audioCtx.currentTime + dur); }
+        const view = document.getElementById('canvas-wrap');
+        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x7dd3fc); scene.fog = new THREE.Fog(0x7dd3fc, 20, 140);
+        const camera = new THREE.PerspectiveCamera(75, view.clientWidth / view.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(view.clientWidth, view.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); view.appendChild(renderer.domElement);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.9)); const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(5, 20, 5); scene.add(sun);
+        const road = new THREE.Mesh(new THREE.PlaneGeometry(12, 1000), new THREE.MeshPhongMaterial({ color: 0x854d0e })); road.rotation.x = -Math.PI / 2; scene.add(road);
+        const truck = new THREE.Group(); const body = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.3, 2.4), new THREE.MeshPhongMaterial({ color: 0x333333 })); body.position.y = 0.4; truck.add(body);
+        const genLabel = () => { const c = document.createElement('canvas'); c.width = 512; c.height = 1024; const x = c.getContext('2d'); x.fillStyle = '#16a34a'; x.fillRect(0,0,512,1024); x.fillStyle = 'white'; x.textAlign = 'center'; x.font = 'bold 85px Inter, Arial'; x.save(); x.translate(256, 512); x.rotate(-Math.PI/2); x.fillText('ΚΑΔΟΣ ΚΟΜΠΟΣΤΟΠΟΙΗΣΗΣ', 0, 0); x.restore(); return new THREE.CanvasTexture(c); };
+        const bin = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.6, 1.3), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 })); bin.position.set(0, 1.3, 0.3); truck.add(bin); scene.add(truck);
+        for(let i=0; i<60; i++) { const t = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.3, 2), new THREE.MeshPhongMaterial({color:0x451a03})); const leaves = new THREE.Mesh(new THREE.ConeGeometry(1.4, 5, 8), new THREE.MeshPhongMaterial({color:0x166534})); leaves.position.y = 2.5; t.add(trunk); t.add(leaves); t.position.set(Math.random() > 0.5 ? 9.5 : -9.5, 0.5, -i * 8); scene.add(t); decor.push(t); }
+        document.getElementById('play-trigger').onclick = () => { initAudio(); if(audioCtx.state === 'suspended') audioCtx.resume(); gameActive = true; frame = 0; score = 0; mistakes = 0; streak = 0; progression = 0; speed = 0.15; items.forEach(it => scene.remove(it)); items = []; document.getElementById('screen-start').classList.add('hidden'); document.getElementById('screen-end').classList.add('hidden'); updateUI(); if(musicInt) clearInterval(musicInt); musicInt = setInterval(() => { if(gameActive) playSfx(261.63, 0.8, 0.02); }, 800); };
+        window.toggleInfo = (s) => document.getElementById('screen-info').classList.toggle('hidden', !s);
+        window.saveResult = async () => { const name = document.getElementById('p-name').value.trim(); if(!name || score === 0) return; const btn = document.getElementById('btn-save'); btn.disabled = true; btn.innerText = 'WAIT...'; await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').add({ name: name.toUpperCase(), score, ts: firebase.firestore.FieldValue.serverTimestamp() }); document.getElementById('save-ui').classList.add('hidden'); loadLead(); };
+        async function loadLead() { const list = document.getElementById('lead-list'); list.innerHTML = '<p class="text-[8px] animate-pulse">LOADING...</p>'; const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').orderBy('score','desc').limit(10).get(); list.innerHTML = ''; snap.forEach((d, i) => { const v = d.data(); list.innerHTML += `<div class="flex justify-between p-3 bg-white/5 rounded-xl text-xs font-bold border border-white/5"><span class="text-emerald-500">${i+1}. ${v.name}</span><span class="text-emerald-400 font-mono">${v.score}</span></div>`; }); }
+        function spawn() { const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🥛','🍾','🍲','🥩','🍼']; const idx = Math.floor(Math.random() * icons.length); const type = idx < 10 ? 'good' : 'bad'; const c = document.createElement('canvas'); c.width=128; c.height=128; const x = c.getContext('2d'); x.font='90px Arial'; x.textAlign='center'; x.fillText(icons[idx], 64, 100); const s = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(c)})); s.position.set((Math.random()-0.5)*9, 1.4, -130); s.scale.set(3.3, 3.3, 1); s.userData = { type }; scene.add(s); items.push(s); }
+        function updateUI() { document.getElementById('sc-val').innerText = score; document.getElementById('ms-val').innerText = `${mistakes}/12`; document.getElementById('boost-ui').style.display = streak >= 10 ? 'block' : 'none'; }
+        function loop() { requestAnimationFrame(loop); if(!gameActive) return; frame++; let curD = 15 + Math.floor(progression / 4500) * 5; speed = curD / 100; camera.position.set(truck.position.x * 0.4, 6, 9); camera.lookAt(truck.position.x, 1, -15); if(streak >= 10) bin.material.emissive.setRGB(0, (Math.sin(frame*0.4)+1)*0.4, 0); else bin.material.emissive.setHex(0x000000); for(let i=items.length-1; i>=0; i--) { const it = items[i]; it.position.z += speed * 2.5; if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z + 0.3)) < 1.6) { if(it.userData.type === 'good') { streak++; progression += 100; score += (streak > 10 ? 200 : 100); playSfx(500 + streak*20); } else { score = Math.max(0, score - 100); mistakes++; streak = 0; playSfx(140, 'square', 0.4, 0.05); if(mistakes >= 12) { gameActive = false; document.getElementById('fin-sc').innerText = score; document.getElementById('screen-end').classList.remove('hidden'); loadLead(); } } scene.remove(it); items.splice(i, 1); updateUI(); } else if(it.position.z > 10) { if(it.userData.type === 'good') { streak = 0; updateUI(); } scene.remove(it); items.splice(i, 1); } } decor.forEach(t => { t.position.z += speed * 2.5; if(t.position.z > 20) t.position.z = -450; }); if(frame % Math.floor(Math.max(20, 80 - curD)) === 0) spawn(); renderer.render(scene, camera); }
+        function move(x) { if(!gameActive) return; const delta = (x - lastX) * 0.07; truck.position.x = Math.max(-4.8, Math.min(4.8, truck.position.x + delta)); lastX = x; }
+        view.addEventListener('mousedown', e => lastX = e.clientX); view.addEventListener('mousemove', e => { if(e.buttons) move(e.clientX) }); view.addEventListener('touchstart', e => { lastX = e.touches[0].clientX; }); view.addEventListener('touchmove', e => { move(e.touches[0].clientX); e.preventDefault(); }, {passive: false});
+        window.addEventListener('resize', () => { camera.aspect = view.clientWidth / view.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(view.clientWidth, view.clientHeight); });
+        loop();
+    </script>
+</body>
+</html>
