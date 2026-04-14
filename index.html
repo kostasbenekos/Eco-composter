@@ -3,141 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER v66 Stable</title>
+    <title>ECO-COMPOSTER v67 Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #020617; font-family: 'Inter', sans-serif; }
-        #wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
-        #canvas-zone { flex: 1; position: relative; background: #7dd3fc; touch-action: none; }
+        #game-layout { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
+        #canvas-area { flex: 1; position: relative; background: #7dd3fc; touch-action: none; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
-        .ui-panel { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); z-index: 50; }
-        .overlay { position: absolute; inset: 0; z-index: 9999; background: rgba(2, 6, 23, 0.98); display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .scroll-v::-webkit-scrollbar { width: 6px; }
-        .scroll-v::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
-        .active-btn { background: #10b981; box-shadow: 0 4px 0 #059669; color: white; cursor: pointer; pointer-events: auto !important; }
-        .active-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #059669; }
+        .ui-blur { background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .full-overlay { position: absolute; inset: 0; z-index: 1000; background: rgba(2, 6, 23, 0.98); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .scroll-y::-webkit-scrollbar { width: 6px; }
+        .scroll-y::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+        .btn-main { background: #10b981; box-shadow: 0 4px 0 #059669; transition: all 0.1s; color: white; cursor: pointer; }
+        .btn-main:active { transform: translateY(3px); box-shadow: 0 0 0 #059669; }
     </style>
 </head>
 <body>
 
-    <div id="wrapper">
-        <div class="p-3 bg-slate-900 border-b border-emerald-500/30 flex justify-between items-center relative z-[100]">
+    <div id="game-layout">
+        <!-- HUD - Εμφάνιση Σκορ -->
+        <div class="p-3 bg-slate-900 border-b border-emerald-500/30 flex justify-between items-center z-50">
             <div class="flex gap-2">
-                <div class="ui-panel px-4 py-1 rounded-xl text-center min-w-[70px]">
-                    <div class="text-[8px] text-emerald-400 font-black uppercase tracking-widest">ΣΚΟΡ</div>
-                    <div id="u-score" class="text-lg font-black text-white">0</div>
+                <div class="ui-blur px-4 py-1 rounded-xl text-center min-w-[75px]">
+                    <p class="text-[8px] text-emerald-400 font-black uppercase tracking-widest leading-none mb-1">ΣΚΟΡ</p>
+                    <p id="hud-score" class="text-lg font-black text-white leading-none">0</p>
                 </div>
-                <div class="ui-panel px-4 py-1 rounded-xl text-center min-w-[70px]">
-                    <div class="text-[8px] text-red-400 font-black uppercase tracking-widest">ΛΑΘΗ</div>
-                    <div id="u-mistakes" class="text-lg font-black text-white">0/12</div>
+                <div class="ui-blur px-4 py-1 rounded-xl text-center min-w-[75px]">
+                    <p class="text-[8px] text-red-400 font-black uppercase tracking-widest leading-none mb-1">ΛΑΘΗ</p>
+                    <p id="hud-mistakes" class="text-lg font-black text-white leading-none">0/12</p>
                 </div>
             </div>
-            <div id="u-boost" class="hidden text-yellow-400 font-black animate-pulse text-[10px] bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20">⚡ BOOST x2</div>
-            <button id="info-trigger" class="ui-panel p-2 rounded-xl text-sky-400 pointer-events-auto">
+            <div id="hud-boost" class="hidden text-yellow-400 font-black animate-pulse text-[10px] italic bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/30">⚡ BOOST x2</div>
+            <button onclick="showInfo(true)" class="ui-blur p-2 rounded-xl text-sky-400">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
             </button>
         </div>
 
-        <div id="canvas-zone">
-            <div id="screen-start" class="overlay">
+        <!-- Χώρος Παιχνιδιού -->
+        <div id="canvas-area">
+            
+            <!-- Οθόνη Εκκίνησης -->
+            <div id="screen-start" class="full-overlay">
                 <div class="max-w-xs w-full bg-slate-800 p-8 rounded-[3rem] border border-white/10 shadow-2xl text-center">
-                    <div class="w-20 h-20 bg-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M5 3l14 9-14 9V3z"/></svg>
+                    <div class="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M5 3l14 9-14 9V3z"/></svg>
                     </div>
-                    <h1 class="text-3xl font-black mb-1 uppercase tracking-tighter italic">ECO-COMPOSTER</h1>
-                    <p class="text-emerald-400 text-[10px] font-black mb-8 uppercase tracking-widest leading-none opacity-60">Stable GitHub Edition v66</p>
-                    <button id="btn-play-now" class="active-btn w-full py-5 rounded-2xl text-xl font-black uppercase tracking-tight">ΠΑΙΞΕ ΤΩΡΑ</button>
+                    <h1 class="text-2xl font-black mb-1 uppercase tracking-tighter italic">ECO-COMPOSTER</h1>
+                    <p class="text-emerald-400 text-[10px] font-black mb-8 uppercase tracking-widest leading-none opacity-60">Stable Edition v67</p>
+                    <button id="start-game-btn" class="btn-main w-full py-5 rounded-2xl text-xl font-black uppercase tracking-tighter">ΠΑΙΞΕ ΤΩΡΑ</button>
                 </div>
             </div>
 
-            <div id="screen-info" class="overlay hidden">
+            <!-- Οθόνη Οδηγιών (Scrollable) -->
+            <div id="screen-info" class="full-overlay hidden">
                 <div class="max-w-md w-full bg-slate-800 rounded-[3rem] border border-white/10 shadow-2xl flex flex-col h-[85vh] overflow-hidden">
-                    <div class="p-6 border-b border-white/5 text-center"><h2 class="text-2xl font-black text-emerald-400 uppercase tracking-tighter">ΟΔΗΓΙΕΣ</h2></div>
-                    <div class="flex-1 overflow-y-auto scroll-v p-6 space-y-6 text-left">
+                    <div class="p-6 border-b border-white/5 text-center">
+                        <h2 class="text-2xl font-black text-emerald-400 uppercase tracking-tighter">ΟΔΗΓΙΕΣ</h2>
+                    </div>
+                    <div class="flex-1 overflow-y-auto scroll-y p-6 space-y-6 text-left">
                         <div class="bg-black/30 p-5 rounded-2xl border border-white/5">
-                            <p class="text-[11px] font-black text-emerald-400 mb-1 uppercase">ΧΕΙΡΙΣΜΟΣ:</p>
-                            <p class="text-sm text-slate-300">Σύρε το δάχτυλο ή το ποντίκι αριστερά-δεξιά.</p>
+                            <p class="text-[11px] font-black text-emerald-400 mb-2 uppercase tracking-widest">ΒΑΘΜΟΛΟΓΙΑ:</p>
+                            <p class="text-sm text-slate-300">✅ Σωστό αντικείμενο: <span class="text-white font-black">+100</span></p>
+                            <p class="text-sm text-slate-300">❌ Λάθος αντικείμενο: <span class="text-red-400 font-black">-100</span></p>
                         </div>
-                        <div class="bg-black/30 p-5 rounded-2xl border border-white/5">
-                            <p class="text-[11px] font-black text-emerald-400 mb-1 uppercase">ΒΑΘΜΟΛΟΓΙΑ:</p>
-                            <p class="text-sm text-slate-300">✅ Σωστό: +100 | ❌ Λάθος: -100</p>
+                        <div class="bg-yellow-400/10 p-5 rounded-2xl border border-yellow-400/20">
+                            <p class="text-[11px] font-black text-yellow-400 mb-1 uppercase tracking-widest">BOOST:</p>
+                            <p class="text-sm text-slate-300 italic leading-relaxed">Μάζεψε 10 σωστά αντικείμενα στη σειρά για διπλάσιους πόντους!</p>
                         </div>
                         <div>
-                            <p class="text-[10px] text-slate-500 font-black mb-4 uppercase text-center tracking-widest">ΠΕΤΑΜΕ (ΝΑΙ):</p>
-                            <div class="grid grid-cols-5 gap-3 text-4xl text-center"><span>🍌</span><span>🍎</span><span>🥦</span><span>🌿</span><span>🌱</span><span>🥚</span><span>📄</span><span>📰</span><span>📦</span><span>🪱</span></div>
+                            <p class="text-[10px] text-slate-500 font-black mb-4 uppercase tracking-widest text-center">ΣΩΣΤΑ (ΝΑΙ):</p>
+                            <div class="grid grid-cols-5 gap-3 text-3xl text-center">
+                                <span>🍌</span><span>🍎</span><span>🥦</span><span>🌿</span><span>🌱</span><span>🥚</span><span>📄</span><span>📰</span><span>📦</span><span>🪱</span>
+                            </div>
                         </div>
-                        <button id="info-close" class="w-full bg-slate-700 py-5 rounded-2xl font-black text-white uppercase mt-4">ΠΙΣΩ</button>
+                        <div>
+                            <p class="text-[10px] text-red-500/50 font-black mb-4 uppercase tracking-widest text-center">ΛΑΘΟΣ (ΟΧΙ):</p>
+                            <div class="grid grid-cols-5 gap-3 text-3xl text-center grayscale opacity-30">
+                                <span>🥛</span><span>🍾</span><span>🍲</span><span>🥩</span><span>🍼</span>
+                            </div>
+                        </div>
+                        <div class="pb-6">
+                            <button onclick="showInfo(false)" class="w-full bg-slate-700 py-5 rounded-2xl font-black text-white uppercase tracking-widest text-xs">ΠΙΣΩ ΣΤΟ ΠΑΙΧΝΙΔΙ</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="screen-end" class="overlay hidden">
-                <div class="max-w-md w-full bg-slate-800 p-10 rounded-[3rem] border border-white/10 shadow-2xl text-center flex flex-col gap-6">
+            <!-- Οθόνη Τέλους & Leaderboard -->
+            <div id="screen-end" class="full-overlay hidden">
+                <div class="max-w-md w-full bg-slate-800 p-10 rounded-[3rem] border border-white/10 shadow-2xl text-center flex flex-col gap-6 max-h-[90vh] overflow-y-auto scroll-y">
                     <div class="text-6xl animate-bounce">🏆</div>
                     <h2 class="text-3xl font-black uppercase leading-none">ΤΕΛΟΣ!</h2>
                     <div class="bg-emerald-500/10 py-5 rounded-3xl border border-emerald-400/30">
-                        <p id="final-sc" class="text-5xl font-black text-white">0</p>
+                        <p class="text-[10px] text-emerald-400 font-black uppercase mb-1">ΤΕΛΙΚΟ ΣΚΟΡ</p>
+                        <p id="final-score" class="text-5xl font-black text-white leading-none">0</p>
                     </div>
-                    <div id="save-ui" class="space-y-3">
-                        <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-5 rounded-2xl text-center font-bold text-white uppercase">
-                        <button id="btn-save-score" class="active-btn w-full py-5 rounded-2xl font-black text-emerald-950 uppercase">ΑΠΟΘΗΚΕΥΣΗ</button>
+                    <div id="save-area" class="space-y-3">
+                        <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-5 rounded-2xl text-center font-bold text-white uppercase focus:border-emerald-500 outline-none">
+                        <button id="save-btn" onclick="saveScore()" class="btn-main w-full py-5 rounded-2xl text-emerald-950 font-black uppercase">ΑΠΟΘΗΚΕΥΣΗ</button>
                     </div>
-                    <div id="lead-list" class="space-y-2 max-h-[150px] overflow-y-auto scroll-v pr-2 text-xs"></div>
+                    <div id="leaderboard-ui" class="space-y-2 mt-4">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">ΚΟΡΥΦΑΙΟΙ ΠΑΙΚΤΕΣ (TOP 10)</p>
+                        <div id="leaderboard-list" class="space-y-2"></div>
+                    </div>
                     <button onclick="location.reload()" class="text-emerald-400 font-bold uppercase text-[10px] tracking-widest mt-4">ΠΑΙΞΕ ΞΑΝΑ</button>
                 </div>
             </div>
         </div>
+
+        <div class="p-3 bg-slate-950 text-center opacity-30 text-[8px] font-black uppercase tracking-[0.4em]">
+            Educational Game Portal • GitHub v67
+        </div>
     </div>
 
     <script>
-        // --- Setup ---
-        const fbConfig = JSON.parse(__firebase_config);
-        firebase.initializeApp(fbConfig);
-        const db = firebase.firestore();
+        // --- SAFE FIREBASE INITIALIZATION ---
+        let db = null;
+        try {
+            // Check if firebase config exists (only in Gemini)
+            if (typeof __firebase_config !== 'undefined') {
+                const config = JSON.parse(__firebase_config);
+                firebase.initializeApp(config);
+                db = firebase.firestore();
+                console.log("Firebase initialized from environment.");
+            } else {
+                console.warn("Firebase config not found. Leaderboard will be disabled.");
+                document.getElementById('leaderboard-ui').innerHTML = "<p class='text-[8px] opacity-50'>Leaderboard disabled on local preview.</p>";
+            }
+        } catch (e) { console.error("Firebase Init Error:", e); }
 
+        // --- GAME VARIABLES ---
         let gameActive = false, score = 0, mistakes = 0, streak = 0, speed = 0.15, frame = 0, progression = 0, lastX = 0;
         let items = [], decor = [], audioCtx, musicInt;
 
-        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        // --- AUDIO ENGINE ---
+        function initAudio() { try { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }
         function playSfx(f, dur=0.2, v=0.03) {
             if(!gameActive || !audioCtx) return;
-            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-            o.type = 'sine'; o.connect(g); g.connect(audioCtx.destination);
-            o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(v, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-            o.start(); o.stop(audioCtx.currentTime + dur);
+            try {
+                const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+                o.type = 'sine'; o.connect(g); g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(f, audioCtx.currentTime);
+                g.gain.setValueAtTime(v, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+                o.start(); o.stop(audioCtx.currentTime + dur);
+            } catch(e){}
         }
 
-        // --- 3D Scene ---
-        const container = document.getElementById('canvas-zone');
-        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x7dd3fc); scene.fog = new THREE.Fog(0x7dd3fc, 20, 140);
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, 0.1, 1000);
+        // --- 3D ENGINE (Three.js) ---
+        const container = document.getElementById('canvas-area');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x7dd3fc);
+        scene.fog = new THREE.Fog(0x7dd3fc, 20, 140);
+
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
         scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-        const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(5, 20, 5); scene.add(sun);
+        const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+        sun.position.set(5, 20, 5); scene.add(sun);
+
         const road = new THREE.Mesh(new THREE.PlaneGeometry(12, 1000), new THREE.MeshPhongMaterial({ color: 0x854d0e }));
         road.rotation.x = -Math.PI / 2; scene.add(road);
 
         const truck = new THREE.Group();
         const body = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.3, 2.4), new THREE.MeshPhongMaterial({ color: 0x333333 }));
         body.position.y = 0.4; truck.add(body);
-        const createBinTex = () => {
+        
+        const genLabel = () => {
             const c = document.createElement('canvas'); c.width = 512; c.height = 1024;
             const x = c.getContext('2d'); x.fillStyle = '#16a34a'; x.fillRect(0,0,512,1024);
             x.fillStyle = 'white'; x.textAlign = 'center'; x.font = 'bold 85px Inter, Arial';
-            x.save(); x.translate(256, 512); x.rotate(-Math.PI/2); x.fillText('ΚΑΔΟΣ ΚΟΜΠΟΣΤΟΠΟΙΗΣΗΣ', 0, 0); x.restore();
+            x.save(); x.translate(256, 512); x.rotate(-Math.PI/2);
+            x.fillText('ΚΑΔΟΣ ΚΟΜΠΟΣΤΟΠΟΙΗΣΗΣ', 0, 0); x.restore();
             return new THREE.CanvasTexture(c);
         };
-        const bin = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.6, 1.3), new THREE.MeshPhongMaterial({ map: createBinTex(), emissive: 0x000000 }));
+        const bin = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.6, 1.3), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 }));
         bin.position.set(0, 1.3, 0.3); truck.add(bin); scene.add(truck);
 
         for(let i=0; i<60; i++) {
@@ -149,48 +199,48 @@
             scene.add(t); decor.push(t);
         }
 
-        // --- Event Listeners Fixed ---
-        document.getElementById('btn-play-now').addEventListener('click', () => {
-            initAudio(); if(audioCtx.state === 'suspended') audioCtx.resume();
-            gameActive = true; score = 0; mistakes = 0; streak = 0; progression = 0; speed = 0.15;
+        // --- BUTTON HANDLERS ---
+        document.getElementById('start-game-btn').addEventListener('click', function() {
+            initAudio(); if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            gameActive = true; frame = 0; score = 0; mistakes = 0; streak = 0; progression = 0; speed = 0.15;
             items.forEach(it => scene.remove(it)); items = [];
             document.getElementById('screen-start').classList.add('hidden');
-            document.getElementById('u-score').innerText = '0';
+            document.getElementById('screen-end').classList.add('hidden');
+            updateUI();
             if(musicInt) clearInterval(musicInt);
             musicInt = setInterval(() => { if(gameActive) playSfx(261.63, 0.8, 0.02); }, 800);
         });
 
-        document.getElementById('info-trigger').addEventListener('click', () => {
-            document.getElementById('screen-info').classList.remove('hidden');
-        });
+        window.showInfo = (s) => document.getElementById('screen-info').classList.toggle('hidden', !s);
 
-        document.getElementById('info-close').addEventListener('click', () => {
-            document.getElementById('screen-info').classList.add('hidden');
-        });
+        window.saveScore = async () => {
+            const n = document.getElementById('p-name').value.trim();
+            if(!n || !db) return;
+            const btn = document.getElementById('save-btn');
+            btn.innerText = "WAIT..."; btn.disabled = true;
+            try {
+                await db.collection('artifacts').doc('eco-comp-v67').collection('public').doc('data').collection('leaderboard').add({
+                    name: n.toUpperCase(), score, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                document.getElementById('save-area').classList.add('hidden');
+                loadLeaderboard();
+            } catch(e) { btn.innerText = "ERROR"; btn.disabled = false; }
+        };
 
-        document.getElementById('btn-save-score').addEventListener('click', async () => {
-            const name = document.getElementById('p-name').value.trim();
-            if(!name || score === 0) return;
-            const btn = document.getElementById('btn-save-score');
-            btn.innerText = 'WAIT...'; btn.disabled = true;
-            await db.collection('artifacts').doc('eco-comp-v66').collection('public').doc('data').collection('leaderboard').add({
-                name: name.toUpperCase(), score, timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            document.getElementById('save-ui').classList.add('hidden');
-            loadBoard();
-        });
-
-        async function loadBoard() {
-            const list = document.getElementById('lead-list'); list.innerHTML = 'LOADING...';
-            const snap = await db.collection('artifacts').doc('eco-comp-v66').collection('public').doc('data').collection('leaderboard').orderBy('score','desc').limit(10).get();
-            list.innerHTML = '';
-            snap.forEach((d, i) => {
-                const v = d.data();
-                list.innerHTML += `<div class="flex justify-between p-2 bg-white/5 rounded-lg border border-white/5 mb-1">
-                    <span class="text-emerald-500">${i+1}. ${v.name}</span>
-                    <span class="text-emerald-400 font-black">${v.score}</span>
-                </div>`;
-            });
+        async function loadLeaderboard() {
+            if(!db) return;
+            const l = document.getElementById('leaderboard-list');
+            l.innerHTML = 'LOADING...';
+            try {
+                const snap = await db.collection('artifacts').doc('eco-comp-v67').collection('public').doc('data').collection('leaderboard').orderBy('score','desc').limit(10).get();
+                l.innerHTML = '';
+                snap.forEach((d, i) => {
+                    const v = d.data();
+                    l.innerHTML += `<div class="flex justify-between p-3 bg-white/5 rounded-xl text-xs font-bold border border-white/5">
+                        <span>${i+1}. ${v.name}</span><span>${v.score}</span>
+                    </div>`;
+                });
+            } catch(e) { l.innerHTML = "Error loading."; }
         }
 
         function spawn() {
@@ -199,16 +249,16 @@
             const type = idx < 10 ? 'good' : 'bad';
             const c = document.createElement('canvas'); c.width=128; c.height=128;
             const x = c.getContext('2d'); x.font='90px Arial'; x.textAlign='center'; x.fillText(icons[idx], 64, 100);
-            const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(c)}));
-            sprite.position.set((Math.random()-0.5)*9, 1.4, -130);
-            sprite.scale.set(3.4, 3.4, 1); sprite.userData = { type };
-            scene.add(sprite); items.push(sprite);
+            const s = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(c)}));
+            s.position.set((Math.random()-0.5)*9, 1.4, -130);
+            s.scale.set(3.4, 3.4, 1); s.userData = { type };
+            scene.add(s); items.push(s);
         }
 
         function updateUI() {
-            document.getElementById('u-score').innerText = score;
-            document.getElementById('u-mistakes').innerText = `${mistakes}/12`;
-            document.getElementById('u-boost').style.display = streak >= 10 ? 'block' : 'none';
+            document.getElementById('hud-score').innerText = score;
+            document.getElementById('hud-mistakes').innerText = `${mistakes}/12`;
+            document.getElementById('hud-boost').style.display = streak >= 10 ? 'block' : 'none';
         }
 
         function loop() {
@@ -227,8 +277,8 @@
                         score = Math.max(0, score - 100); mistakes++; streak = 0;
                         playSfx(140, 'square', 0.4, 0.05);
                         if(mistakes >= 12) {
-                            gameActive = false; document.getElementById('final-sc').innerText = score;
-                            document.getElementById('screen-end').classList.remove('hidden'); loadBoard();
+                            gameActive = false; document.getElementById('final-score').innerText = score;
+                            document.getElementById('screen-end').classList.remove('hidden'); loadLeaderboard();
                         }
                     }
                     scene.remove(it); items.splice(i, 1); updateUI();
@@ -242,16 +292,16 @@
             renderer.render(scene, camera);
         }
 
-        function move(x) {
+        function onMove(x) {
             if(!gameActive) return;
             const delta = (x - lastX) * 0.07;
             truck.position.x = Math.max(-4.8, Math.min(4.8, truck.position.x + delta));
             lastX = x;
         }
         container.addEventListener('mousedown', e => lastX = e.clientX);
-        container.addEventListener('mousemove', e => { if(e.buttons) move(e.clientX) });
+        container.addEventListener('mousemove', e => { if(e.buttons) onMove(e.clientX) });
         container.addEventListener('touchstart', e => { lastX = e.touches[0].clientX; });
-        container.addEventListener('touchmove', e => { move(e.touches[0].clientX); e.preventDefault(); }, {passive: false});
+        container.addEventListener('touchmove', e => { onMove(e.touches[0].clientX); e.preventDefault(); }, {passive: false});
         window.addEventListener('resize', () => {
             camera.aspect = container.clientWidth / container.clientHeight; camera.updateProjectionMatrix();
             renderer.setSize(container.clientWidth, container.clientHeight);
