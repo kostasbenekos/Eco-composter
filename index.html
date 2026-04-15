@@ -236,7 +236,15 @@
                 let u = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(u);
             }
         };
-
+const btnExit = document.getElementById('btn-exit');
+btnExit.onclick = () => {
+    if (!gameActive) return; 
+    gameActive = false;
+    playMusicLoop = false;
+    document.getElementById('final-score').innerText = score;
+    document.getElementById('screen-end').classList.add('overlay-active');
+    loadLeaderboard();
+};
         const emojiNames = {
             '🍌': 'Μπανάνα', '🍎': 'Μήλο', '🥦': 'Μπρόκολο', '🌿': 'Φύλλα', '🌱': 'Φυτό',
             '🥚': 'Αυγό', '📄': 'Χαρτί', '📰': 'Εφημερίδα', '📦': 'Χαρτόκουτο', '🪱': 'Σκουλήκι',
