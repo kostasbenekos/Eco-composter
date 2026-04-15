@@ -331,6 +331,17 @@ btnExit.onclick = () => {
             startBackgroundMusic(); playMusicLoop = true; gameActive = true; progression = 0; score = 0; mistakes = 0; streak = 0; frame = 0; speed = 0.35; turboActive = false; turboCount = 0;
             document.getElementById('screen-start').classList.remove('overlay-active'); updateUI(); loop(); 
         };
+        document.getElementById('start-btn').onclick = () => {
+    document.getElementById('screen-start').classList.remove('overlay-active');
+    score = 0; lives = 12; frame = 0; items.forEach(it => scene.remove(it)); items = [];
+    gameActive = true; 
+    playMusicLoop = true;
+
+    // ΑΥΤΗ Η ΓΡΑΜΜΗ ΕΜΦΑΝΙΖΕΙ ΤΗ ΜΠΑΡΑ
+    document.getElementById('game-ui').style.display = 'flex'; 
+
+    updateUI();
+};
         async function saveScoreToCloud() {
             const btn = document.getElementById('submit-btn');
             if (!db || !auth || !auth.currentUser) {
