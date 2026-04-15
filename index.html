@@ -127,15 +127,33 @@
                             </div>
                         </div>
                         <div class="info-page" data-id="2">
-                            <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 gap-3 text-4xl text-center bg-white/20 p-4 rounded-[2rem] border-2 border-white/30">
-                                <span>🍌</span><span>🍎</span><span>🥦</span><span>🌿</span> <span>🌱</span><span>🥚</span><span>📄</span><span>📰</span> <span>📦</span><span>🪱</span><span>🍂</span><span>🌾</span>
+                            <h2 class="text-2xl font-black text-white mb-2 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 gap-2 text-center bg-white/20 p-3 rounded-[2rem] border-2 border-white/30 overflow-y-auto max-h-[250px] custom-scroll">
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍌</span><span class="text-[9px] font-bold leading-none mt-1">Μπανάνα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍎</span><span class="text-[9px] font-bold leading-none mt-1">Μήλο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🥦</span><span class="text-[9px] font-bold leading-none mt-1">Μπρόκολο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🌿</span><span class="text-[9px] font-bold leading-none mt-1">Φύλλα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🌱</span><span class="text-[9px] font-bold leading-none mt-1">Φυτό</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🥚</span><span class="text-[9px] font-bold leading-none mt-1">Αυγό</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📄</span><span class="text-[9px] font-bold leading-none mt-1">Χαρτί</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📰</span><span class="text-[9px] font-bold leading-none mt-1">Εφημερίδα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📦</span><span class="text-[9px] font-bold leading-none mt-1">Χαρτόκουτο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🪱</span><span class="text-[9px] font-bold leading-none mt-1">Σκουλήκι</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍂</span><span class="text-[9px] font-bold leading-none mt-1">Ξερά φύλλα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🪵</span><span class="text-[9px] font-bold leading-none mt-1">Κλαδιά</span></div>
                             </div>
                         </div>
                         <div class="info-page" data-id="3">
-                            <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 gap-3 text-4xl text-center bg-black/20 p-4 rounded-[2rem] border-2 border-white/20 grayscale opacity-50">
-                                <span>🥛</span><span>🍾</span><span>🍲</span><span>🥩</span> <span>🍼</span><span>🥫</span><span>🔋</span><span>🪣</span>
+                            <h2 class="text-2xl font-black text-white mb-2 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 gap-2 text-center bg-black/20 p-3 rounded-[2rem] border-2 border-white/20 overflow-y-auto max-h-[250px] custom-scroll">
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥛</span><span class="text-[9px] font-bold leading-none mt-1">Γάλα</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍾</span><span class="text-[9px] font-bold leading-none mt-1">Μπουκάλι</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍲</span><span class="text-[9px] font-bold leading-none mt-1">Φαγητό</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥩</span><span class="text-[9px] font-bold leading-none mt-1">Κρέας</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍼</span><span class="text-[9px] font-bold leading-none mt-1">Μπιμπερό</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥫</span><span class="text-[9px] font-bold leading-none mt-1">Κονσέρβα</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🔋</span><span class="text-[9px] font-bold leading-none mt-1">Μπαταρία</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🪣</span><span class="text-[9px] font-bold leading-none mt-1">Κουβάς</span></div>
                             </div>
                         </div>
                     </div>
@@ -264,7 +282,7 @@
         const emojiNames = {
             '🍌': 'Μπανάνα', '🍎': 'Μήλο', '🥦': 'Μπρόκολο', '🌿': 'Φύλλα', '🌱': 'Φυτό',
             '🥚': 'Αυγό', '📄': 'Χαρτί', '📰': 'Εφημερίδα', '📦': 'Χαρτόκουτο', '🪱': 'Σκουλήκι',
-            '🍂': 'Ξερά φύλλα', '🌾': 'Σιτάρι', '🥛': 'Γάλα', '🍾': 'Μπουκάλι', '🍲': 'Φαγητό',
+            '🍂': 'Ξερά φύλλα', '🪵': 'Κλαδιά', '🥛': 'Γάλα', '🍾': 'Μπουκάλι', '🍲': 'Φαγητό',
             '🥩': 'Κρέας', '🍼': 'Μπιμπερό', '🥫': 'Κονσέρβα', '🔋': 'Μπαταρία', '🪣': 'Κουβάς'
         };
 
@@ -422,7 +440,7 @@
         for(let i=0; i<70; i++) { const r = Math.random(); let asset; if(r < 0.10) asset = createTurbine(); else if(r < 0.30) asset = createHouse(); else if(r < 0.65) asset = createRoundTree(); else asset = createConeTree(); const side = Math.random() > 0.5 ? 1 : -1; const px = side * (Math.random() * 150 + 85); const pz = -i * 45 + (Math.random() * 120); asset.position.set(px, 0, pz); scene.add(asset); assetPool.push(asset); }
         
         function spawn() {
-            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🌾','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const tex = getTexture(item, type, optsHalos); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex})); const spread = (Math.random()-0.5) * (roadWidth - 10); sprite.position.set(spread, 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type, itemStr: item }; scene.add(sprite); items.push(sprite);
+            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🪵','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const tex = getTexture(item, type, optsHalos); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex})); const spread = (Math.random()-0.5) * (roadWidth - 10); sprite.position.set(spread, 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type, itemStr: item }; scene.add(sprite); items.push(sprite);
         }
 
         function updateUI() { 
