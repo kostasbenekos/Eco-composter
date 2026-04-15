@@ -420,7 +420,22 @@ btnExit.onclick = () => {
         function spawn() {
             const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🌾','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const tex = getTexture(item, type, optsHalos); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex})); const spread = (Math.random()-0.5) * (roadWidth - 10); sprite.position.set(spread, 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type, itemStr: item }; scene.add(sprite); items.push(sprite);
         }
-        function updateUI() { document.getElementById('hud-score').innerText = score; document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; document.getElementById('hud-speed').innerText = Math.floor(speed * 100); document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; }
+        function updateUI() {
+    lblScore.innerText = score; // Έτσι είναι στον κώδικα σου
+    lblLives.innerText = lives; // Έτσι είναι στον κώδικα σου
+    
+    if(lives <= 0 && gameActive) {
+        gameActive = false;
+        playMusicLoop = false;
+        
+        // ΠΡΟΣΘΗΚΗ: Κρύβουμε τη μπάρα όταν χάνει ο παίκτης
+        document.getElementById('game-ui').style.display = 'none'; 
+        
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('screen-end').classList.add('overlay-active');
+        loadLeaderboard();
+    }
+}
         
         const keys = { ArrowLeft: false, ArrowRight: false };
         window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
