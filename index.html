@@ -428,9 +428,6 @@
         let isDragging = false; viewport.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; });
         viewport.addEventListener('mousemove', e => { if(!isDragging || !gameActive) return; const dx = (e.clientX - lastX) * 0.25; truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx)); lastX = e.clientX; });
         viewport.addEventListener('mouseup', () => { isDragging = false; }); viewport.addEventListener('mouseleave', () => { isDragging = false; });
-        
-        renderer.render(scene, camera);
-    <script>
         document.addEventListener('DOMContentLoaded', () => {
     const btnExit = document.getElementById('btn-exit');
 
@@ -448,5 +445,7 @@
         loadLeaderboard();
     });
 });>
+        renderer.render(scene, camera);
+    </script>
 </body>
 </html>
