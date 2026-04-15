@@ -213,17 +213,22 @@
         const btnVoice = document.getElementById('btn-voice'); const lblVoice = document.getElementById('lbl-voice');
         const btnFreeze = document.getElementById('btn-freeze'); const lblFreeze = document.getElementById('lbl-freeze');
         const btnExit = document.getElementById('btn-exit');
+        document.addEventListener('DOMContentLoaded', () => {
+    const btnExit = document.getElementById('btn-exit');
 
-btnExit.addEventListener('click', () => {
-    if (!gameActive) return;
+    btnExit.addEventListener('click', () => {
+        console.log("EXIT CLICKED");
 
-    gameActive = false;
-    playMusicLoop = false;
+        if (!gameActive) return;
 
-    document.getElementById('final-score').innerText = score;
-    document.getElementById('screen-end').classList.add('overlay-active');
+        gameActive = false;
+        playMusicLoop = false;
 
-    loadLeaderboard();
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('screen-end').classList.add('overlay-active');
+
+        loadLeaderboard();
+    });
 });
         btnZen.onclick = () => {
             optsZen = !optsZen; lblZen.innerText = optsZen ? 'ON' : 'OFF';
