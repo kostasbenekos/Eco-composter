@@ -15,31 +15,23 @@
         #root { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
         #game-viewport { flex: 1; position: relative; background: #0ea5e9; touch-action: none; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
-        
         .ui-glass { background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px); border: 2px solid rgba(255,255,255,0.1); }
         .panel-ochre { background-color: #b45309; border: 4px solid #f59e0b; box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.6); }
-        
         .overlay-layer { position: absolute; inset: 0; z-index: 5000; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; padding: 10px; }
         .overlay-active { display: flex !important; }
-        
         .btn-green { background: #10b981; box-shadow: 0 6px 0 #059669; transition: all 0.1s; cursor: pointer; color: white; font-weight: 900; }
         .btn-green:active { transform: translateY(3px); box-shadow: 0 2px 0 #059669; }
-        
         .info-page { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .page-active { display: flex !important; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: background 0.3s; }
         .dot-active { background: white; width: 25px; border-radius: 5px; }
-        
         .hud-label { font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
-        
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 10px; }
     </style>
 </head>
 <body>
-
     <div id="root">
-        <!-- HUD Dashboard -->
         <div class="p-3 bg-slate-900 border-b-4 border-emerald-500 flex justify-between items-center z-50">
             <div class="flex gap-2">
                 <div class="ui-glass px-3 py-2 rounded-2xl text-center min-w-[80px]">
@@ -60,9 +52,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
             </button>
         </div>
-
         <div id="game-viewport">
-            <!-- Αρχική Οθόνη -->
             <div id="screen-start" class="overlay-layer overlay-active">
                 <div class="max-w-xs w-full panel-ochre p-8 rounded-[4rem] text-center space-y-6">
                     <div class="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
@@ -78,8 +68,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Οδηγίες -->
             <div id="screen-info" class="overlay-layer">
                 <div class="max-w-sm w-full panel-ochre rounded-[3rem] flex flex-col p-6 max-h-[90vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
@@ -101,16 +89,13 @@
                         <div class="info-page" data-id="1">
                             <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
                             <div class="grid grid-cols-4 gap-3 text-4xl text-center bg-white/20 p-4 rounded-[2rem] border-2 border-white/30">
-                                <span>🍌</span><span>🍎</span><span>🥦</span><span>🌿</span>
-                                <span>🌱</span><span>🥚</span><span>📄</span><span>📰</span>
-                                <span>📦</span><span>🪱</span><span>🍂</span><span>🌾</span>
+                                <span>🍌</span><span>🍎</span><span>🥦</span><span>🌿</span> <span>🌱</span><span>🥚</span><span>📄</span><span>📰</span> <span>📦</span><span>🪱</span><span>🍂</span><span>🌾</span>
                             </div>
                         </div>
                         <div class="info-page" data-id="2">
                             <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
                             <div class="grid grid-cols-4 gap-3 text-4xl text-center bg-black/20 p-4 rounded-[2rem] border-2 border-white/20 grayscale opacity-50">
-                                <span>🥛</span><span>🍾</span><span>🍲</span><span>🥩</span>
-                                <span>🍼</span><span>🥫</span><span>🔋</span><span>🪣</span>
+                                <span>🥛</span><span>🍾</span><span>🍲</span><span>🥩</span> <span>🍼</span><span>🥫</span><span>🔋</span><span>🪣</span>
                             </div>
                         </div>
                     </div>
@@ -128,56 +113,37 @@
                     <button id="close-info-btn" class="w-full bg-emerald-600 py-4 rounded-2xl font-black text-white uppercase text-sm mt-4 shadow-xl cursor-pointer">ΚΛΕΙΣΙΜΟ</button>
                 </div>
             </div>
-
-            <!-- Τέλος Παιχνιδιού -->
             <div id="screen-end" class="overlay-layer">
                 <div class="w-full max-w-sm panel-ochre p-4 rounded-[2rem] text-center space-y-3 max-h-[95vh] flex flex-col overflow-hidden">
                     <div>
                         <div class="text-5xl">😊</div>
                         <p class="text-white font-black text-sm uppercase italic animate-bounce tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p>
                     </div>
-                    
                     <div class="bg-black/20 py-2 rounded-3xl border-2 border-white/20 shrink-0">
                         <p class="text-[8px] text-amber-200 font-black uppercase tracking-widest leading-none">ΣΥΝΟΛΙΚΟ ΣΚΟΡ</p>
                         <p id="final-score" class="text-4xl font-black text-white leading-none mt-1">0</p>
                     </div>
-                    
                     <div id="save-ui" class="space-y-2 shrink-0">
                         <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-2.5 rounded-xl text-center font-black text-white uppercase outline-none text-base focus:border-amber-400">
                         <button id="submit-btn" class="btn-green w-full py-2.5 rounded-xl uppercase text-emerald-950 font-black text-lg shadow-lg cursor-pointer" onclick="saveScoreToCloud()">ΑΠΟΘΗΚΕΥΣΗ</button>
                     </div>
-                    
                     <div id="leader-board-container" class="flex-1 flex flex-col min-h-0 text-left border-t border-white/20 pt-2">
                         <p class="text-[9px] font-black text-white uppercase tracking-widest text-center leading-none shrink-0 mb-1">ΠΑΓΚΟΣΜΙΑ ΚΑΤΑΤΑΞΗ</p>
                         <div id="leader-board" class="flex-1 overflow-y-auto custom-scroll pr-1 space-y-1"></div>
                     </div>
-                    
                     <button onclick="location.reload()" class="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200 pt-2 hover:text-white cursor-pointer shrink-0">ΠΑΙΞΕ ΞΑΝΑ</button>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
-        // --- Firebase Core Setup (ΥΠΟΣΤΗΡΙΞΗ ΓΙΑ GITHUB ΚΑΙ ΤΟΠΙΚΟ PREVIEW) ---
         let db = null; let auth = null;
-        // Το κοινό ID για τη λίστα παικτών
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'eco-composter-github-db';
-
         try { 
             let firebaseConfig = null;
-            
             if (typeof __firebase_config !== 'undefined') { 
-                // Αν τρέχει στο περιβάλλον δοκιμής
                 firebaseConfig = JSON.parse(__firebase_config);
             } else {
-                
-                // ==============================================================================
-                // ⚠️ ΡΥΘΜΙΣΕΙΣ ΓΙΑ GITHUB PAGES Η ΑΛΛΟ HOSTING (ΓΡΑΜΜΗ 160) ⚠️
-                // Αντικαταστήστε τα παρακάτω με τα στοιχεία του δικού σας Firebase Web App.
-                // Σβήστε τη λέξη "ΒΑΛΤΕ_ΤΟ_ΔΙΚΟ_ΣΑΣ..." και βάλτε το κλειδί σας.
-                // ΠΡΟΣΟΧΗ: Κρατήστε τα εισαγωγικά ("")!
-                // ==============================================================================
                 firebaseConfig = {
                     apiKey: "AIzaSyCsJuhBykWzaknCkG96WrfIjmTDZDXlJVk",
                     authDomain: "eco-composter.firebaseapp.com",
@@ -186,13 +152,9 @@
                     messagingSenderId: "184680739885",
                     appId: "1:184680739885:web:e591d729bd916a8680f4a4"
                 };
-                // ==============================================================================
-                
             }
-
-            // Ενεργοποιείται μόνο αν έχετε βάλει τα δικά σας κλειδιά (ή αν τρέχει στο preview)
             if (firebaseConfig && firebaseConfig.projectId && !firebaseConfig.projectId.includes("ΒΑΛΤΕ_ΤΟ_ΔΙΚΟ_ΣΑΣ")) {
-                firebase.initializeApp(firebaseConfig); 
+                firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore(); 
                 auth = firebase.auth();
                 const initAuth = async () => {
@@ -200,56 +162,39 @@
                         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                             await auth.signInWithCustomToken(__initial_auth_token);
                         } else {
-                            await auth.signInAnonymously(); 
+                            await auth.signInAnonymously();
                         }
                     } catch (e) { console.error("Firebase auth error", e); }
                 }; initAuth();
             } else {
-                console.warn("Το Firebase δεν έχει ρυθμιστεί στο Github. Η αποθήκευση στο Leaderboard θα βγάζει μήνυμα σφάλματος.");
+                console.warn("Το Firebase δεν έχει ρυθμιστεί στο Github.");
             }
         } catch(e){ console.error("Firebase init error", e); }
 
-        // --- Game Variables ---
         let gameActive = false, score = 0, mistakes = 0, streak = 0, speed = 0.35, frame = 0, progression = 0, lastX = 0;
-        let turboActive = false, turboCount = 0;
-        let items = [], decor = [], audioCtx, musicInt;
-        
-        // --- Music Logic ---
-        let bgAudioActive = false;
-        let playMusicLoop = true; 
-        
+        let turboActive = false, turboCount = 0; let items = [], decor = [], audioCtx, musicInt;
+        let bgAudioActive = false; let playMusicLoop = true;
         function startBackgroundMusic() {
             if (bgAudioActive) return;
-            
             if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if(audioCtx.state === 'suspended') audioCtx.resume();
-            
             bgAudioActive = true;
-            
-            const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
-            let mIdx = 0;
-            
+            const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; let mIdx = 0;
             musicInt = setInterval(() => {
                 if(!playMusicLoop) return; 
-                
                 if(audioCtx.state === 'suspended') audioCtx.resume();
                 try {
                     const o = audioCtx.createOscillator(), g = audioCtx.createGain();
                     o.type = 'triangle'; o.connect(g); g.connect(audioCtx.destination);
                     o.frequency.setValueAtTime(melody[mIdx], audioCtx.currentTime);
-                    
                     g.gain.setValueAtTime(0.006, audioCtx.currentTime);
                     g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
-                    o.start(); o.stop(audioCtx.currentTime + 0.4);
-                    mIdx = (mIdx + 1) % melody.length;
+                    o.start(); o.stop(audioCtx.currentTime + 0.4); mIdx = (mIdx + 1) % melody.length;
                 } catch(e){}
-            }, 350); 
+            }, 350);
         }
-
         document.body.addEventListener('click', startBackgroundMusic, { once: true });
         document.body.addEventListener('touchstart', startBackgroundMusic, { once: true });
-
-        // --- Sound Effects ---
         function playSfx(f, type = 'sine', dur = 0.2, v = 0.005) {
             if(!gameActive || !audioCtx) return;
             try {
@@ -261,8 +206,6 @@
                 o.start(); o.stop(audioCtx.currentTime + dur);
             } catch(e){}
         }
-
-        // --- UI & Buttons Logic ---
         let infoPageIdx = 0;
         const updatePages = () => {
             document.querySelectorAll('.info-page').forEach((p, i) => p.classList.toggle('page-active', i === infoPageIdx));
@@ -270,334 +213,119 @@
         };
         const navigate = (dir) => { infoPageIdx = (infoPageIdx + dir + 3) % 3; updatePages(); };
         const openInfo = (s) => { document.getElementById('screen-info').classList.toggle('overlay-active', s); if(s) { infoPageIdx = 0; updatePages(); } };
-
         document.getElementById('info-btn').onclick = () => openInfo(true);
         document.getElementById('instr-btn').onclick = () => openInfo(true);
         document.getElementById('close-info-btn').onclick = () => openInfo(false);
         document.getElementById('prev-page-btn').onclick = () => navigate(-1);
         document.getElementById('next-page-btn').onclick = () => navigate(1);
-
         document.getElementById('start-btn').onclick = () => {
-            startBackgroundMusic(); 
-            playMusicLoop = true; 
-            
-            gameActive = true; progression = 0; score = 0; mistakes = 0; streak = 0; frame = 0; speed = 0.35;
-            turboActive = false; turboCount = 0;
-            
-            document.getElementById('screen-start').classList.remove('overlay-active');
-            updateUI(); 
-            loop(); 
+            startBackgroundMusic(); playMusicLoop = true; gameActive = true; progression = 0; score = 0; mistakes = 0; streak = 0; frame = 0; speed = 0.35; turboActive = false; turboCount = 0;
+            document.getElementById('screen-start').classList.remove('overlay-active'); updateUI(); loop(); 
         };
-
-        // --- Leaderboard Logic ---
         async function saveScoreToCloud() {
-            const btn = document.getElementById('submit-btn'); 
-            
+            const btn = document.getElementById('submit-btn');
             if (!db || !auth || !auth.currentUser) {
-                btn.innerText = "ΑΠΑΙΤΕΙΤΑΙ FIREBASE";
-                btn.classList.replace('btn-green', 'bg-red-600');
-                btn.classList.add('text-white');
-                document.getElementById('p-name').value = "Λείπουν Κλειδιά";
-                return;
+                btn.innerText = "ΑΠΑΙΤΕΙΤΑΙ FIREBASE"; btn.classList.replace('btn-green', 'bg-red-600'); btn.classList.add('text-white'); document.getElementById('p-name').value = "Λείπουν Κλειδιά"; return;
             }
-
-            const name = document.getElementById('p-name').value.trim();
-            if (!name) return;
-            
+            const name = document.getElementById('p-name').value.trim(); if (!name) return;
             btn.innerText = "ΑΝΑΜΟΝΗ..."; btn.disabled = true;
-            
             try {
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').add({
-                    name: name.toUpperCase(), 
-                    score: score, 
-                    mistakes: mistakes, 
-                    duration: frame, 
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    name: name.toUpperCase(), score: score, mistakes: mistakes, duration: frame, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                document.getElementById('save-ui').style.display = 'none';
-                loadLeaderboard();
-            } catch (e) { 
-                btn.innerText = "ΣΦΑΛΜΑ"; btn.disabled = false; 
-            }
+                document.getElementById('save-ui').style.display = 'none'; loadLeaderboard();
+            } catch (e) { btn.innerText = "ΣΦΑΛΜΑ"; btn.disabled = false; }
         }
-        
         window.saveScoreToCloud = saveScoreToCloud;
-
         async function loadLeaderboard() {
             const list = document.getElementById('leader-board');
             if (!db) {
-                list.innerHTML = `
-                <div class="bg-red-900/40 p-2 text-center rounded-xl border border-red-500/50 mt-2">
-                    <p class="text-white text-[10px] font-bold">ΠΡΟΣΟΧΗ</p>
-                    <p class="text-red-200 text-[9px] mt-1">Για να λειτουργήσει το Leaderboard στο Github, βάλτε τα στοιχεία του Firebase σας στον κώδικα (γραμμή 160).</p>
-                </div>`;
-                return;
+                list.innerHTML = `<div class="bg-red-900/40 p-2 text-center rounded-xl border border-red-500/50 mt-2"><p class="text-white text-[10px] font-bold">ΠΡΟΣΟΧΗ</p><p class="text-red-200 text-[9px] mt-1">Για να λειτουργήσει το Leaderboard στο Github, βάλτε τα στοιχεία του Firebase σας στον κώδικα.</p></div>`; return;
             }
-            
             list.innerHTML = '<p class="text-center text-white opacity-40 text-[10px]">ΦΟΡΤΩΣΗ...</p>';
             try {
                 const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
                 let data = []; snap.forEach(doc => data.push(doc.data()));
                 data.sort((a, b) => {
-                    if (b.score !== a.score) return b.score - a.score;
-                    if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
-                    return b.duration - a.duration;
+                    if (b.score !== a.score) return b.score - a.score; if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes; return b.duration - a.duration;
                 });
-                const top10 = data.slice(0, 10);
-                list.innerHTML = '';
+                const top10 = data.slice(0, 10); list.innerHTML = '';
                 top10.forEach((v, i) => {
                     const timeInSeconds = Math.floor(v.duration / 60);
-                    list.innerHTML += `
-                        <div class="flex justify-between items-center py-2 border-b border-white/10">
-                            <div class="font-black text-[#fcd34d] text-[15px] truncate w-1/2">${i + 1}. ${v.name}</div>
-                            <div class="text-right w-1/2">
-                                <div class="font-black text-white text-[17px] leading-none">${v.score} <span class="text-[10px] text-white/50 font-bold">Π.</span></div>
-                                <div class="text-[11px] font-bold mt-1 text-gray-300">
-                                    ΛΑΘΗ: <span class="text-red-400">${v.mistakes}</span> | ΧΡΟΝΟΣ: <span class="text-sky-300">${timeInSeconds}s</span>
-                                </div>
-                            </div>
-                        </div>`;
+                    list.innerHTML += `<div class="flex justify-between items-center py-2 border-b border-white/10"><div class="font-black text-[#fcd34d] text-[15px] truncate w-1/2">${i + 1}. ${v.name}</div><div class="text-right w-1/2"><div class="font-black text-white text-[17px] leading-none">${v.score} <span class="text-[10px] text-white/50 font-bold">Π.</span></div><div class="text-[11px] font-bold mt-1 text-gray-300">ΛΑΘΗ: <span class="text-red-400">${v.mistakes}</span> | ΧΡΟΝΟΣ: <span class="text-sky-300">${timeInSeconds}s</span></div></div></div>`;
                 });
             } catch (e) { list.innerHTML = '<p class="text-center text-red-300 text-[10px]">Σφάλμα λίστας.</p>'; }
         }
 
-        // --- 3D Scene Setup ---
-        const viewport = document.getElementById('game-viewport');
-        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0ea5e9); 
+        const viewport = document.getElementById('game-viewport'); const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0ea5e9); const camera = new THREE.PerspectiveCamera(50, viewport.clientWidth/viewport.clientHeight, 2.0, 3000); const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(viewport.clientWidth, viewport.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding; viewport.appendChild(renderer.domElement);
+        window.addEventListener('resize', () => { if (viewport && renderer && camera) { const width = viewport.clientWidth; const height = viewport.clientHeight; renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix(); } });
         
-        const camera = new THREE.PerspectiveCamera(50, viewport.clientWidth/viewport.clientHeight, 2.0, 3000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(viewport.clientWidth, viewport.clientHeight); 
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        scene.add(new THREE.AmbientLight(0xffffff, 1.0)); const sun = new THREE.DirectionalLight(0xfff5e6, 2.0); sun.position.set(20, 50, 20); scene.add(sun);
         
-        // sRGBEncoding για ζωντανά χρώματα
-        renderer.outputEncoding = THREE.sRGBEncoding; 
-        
-        viewport.appendChild(renderer.domElement);
-
-        window.addEventListener('resize', () => {
-            if (viewport && renderer && camera) {
-                const width = viewport.clientWidth;
-                const height = viewport.clientHeight;
-                renderer.setSize(width, height);
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-            }
-        });
-
-        // Φωτισμός
-        scene.add(new THREE.AmbientLight(0xffffff, 0.95)); 
-        const sun = new THREE.DirectionalLight(0xfff5e6, 1.8); sun.position.set(20, 50, 20); scene.add(sun);
-
-        // Χώμα: Πιο έντονο ζεστό καφέ
-        const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshPhongMaterial({ color: 0x5c3a21 }));
+        // Χώμα: Βαθύ καφέ για αντίθεση
+        const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshPhongMaterial({ color: 0x4a2c18 }));
         ground.rotation.x = -Math.PI / 2; ground.position.y = -2.0; scene.add(ground);
-
-        // Δρόμος: Φαρδύς και βαθύ γκρι
+        
+        // Δρόμος: Πολύ σκούρο γκρι για ένταση
         const roadWidth = 110;
-        const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x1a1a1a }));
-        road.rotation.x = -Math.PI / 2; road.position.y = 0.0;
-        scene.add(road);
-
-        const truck = new THREE.Group();
-        const chassis = new THREE.Mesh(new THREE.BoxGeometry(12.0, 1.5, 11.0), new THREE.MeshPhongMaterial({ color: 0x1e293b }));
-        chassis.position.y = 1.5; truck.add(chassis);
+        const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x0a0a0a }));
+        road.rotation.x = -Math.PI / 2; road.position.y = 0.0; scene.add(road);
         
-        const wheels = [];
-        for(let i=0; i<4; i++) {
-            const w = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 2.0, 24), new THREE.MeshPhongMaterial({color: 0x0f172a}));
-            w.rotation.z = Math.PI/2; wheels.push(w); truck.add(w);
-        }
-        wheels[0].position.set(6.0, 1.6, 4.0); wheels[1].position.set(-6.0, 1.6, 4.0);
-        wheels[2].position.set(6.0, 1.6, -4.0); wheels[3].position.set(-6.0, 1.6, -4.0);
-
-        const genLabel = () => {
-            const c = document.createElement('canvas'); c.width = 1024; c.height = 1024;
-            const x = c.getContext('2d'); 
-            x.fillStyle = '#005c00'; 
-            x.fillRect(0,0,1024,1024);
-            x.fillStyle = 'white'; x.textAlign = 'center'; x.textBaseline = 'middle';
-            x.font = 'bold 190px Inter, Arial'; x.fillText('ΚΑΔΟΣ', 512, 280);
-            x.font = 'bold 135px Inter, Arial'; x.fillText('ΚΟΜΠΟΣΤΟ-', 512, 490); 
-            x.fillText('ΠΟΙΗΣΗΣ', 512, 670);
-            return new THREE.CanvasTexture(c);
-        };
-        
-        const bin = new THREE.Mesh(new THREE.BoxGeometry(14.0, 15.0, 9.5), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 }));
-        bin.position.set(0, 9.8, 0.5); truck.add(bin); scene.add(truck);
+        const truck = new THREE.Group(); const chassis = new THREE.Mesh(new THREE.BoxGeometry(12.0, 1.5, 11.0), new THREE.MeshPhongMaterial({ color: 0x1e293b })); chassis.position.y = 1.5; truck.add(chassis); const wheels = []; for(let i=0; i<4; i++) { const w = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 2.0, 24), new THREE.MeshPhongMaterial({color: 0x0f172a})); w.rotation.z = Math.PI/2; wheels.push(w); truck.add(w); } wheels[0].position.set(6.0, 1.6, 4.0); wheels[1].position.set(-6.0, 1.6, 4.0); wheels[2].position.set(6.0, 1.6, -4.0); wheels[3].position.set(-6.0, 1.6, -4.0);
+        const genLabel = () => { const c = document.createElement('canvas'); c.width = 1024; c.height = 1024; const x = c.getContext('2d'); x.fillStyle = '#005c00'; x.fillRect(0,0,1024,1024); x.fillStyle = 'white'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = 'bold 190px Inter, Arial'; x.fillText('ΚΑΔΟΣ', 512, 280); x.font = 'bold 135px Inter, Arial'; x.fillText('ΚΟΜΠΟΣΤΟ-', 512, 490); x.fillText('ΠΟΙΗΣΗΣ', 512, 670); return new THREE.CanvasTexture(c); };
+        const bin = new THREE.Mesh(new THREE.BoxGeometry(14.0, 15.0, 9.5), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 })); bin.position.set(0, 9.8, 0.5); truck.add(bin); scene.add(truck);
 
         const assetPool = []; const turbineBlades = [];
-
         function createHouse() {
-            const g = new THREE.Group();
-            const colors = [0xffd700, 0x00e676, 0xff3d00, 0x2979ff, 0xffffff];
-            const base = new THREE.Mesh(new THREE.BoxGeometry(11.2, 16.8, 11.2), new THREE.MeshPhongMaterial({color: colors[Math.floor(Math.random()*colors.length)]}));
-            base.position.y = 8.4; g.add(base);
-            const roof = new THREE.Mesh(new THREE.ConeGeometry(10.5, 9.8, 4), new THREE.MeshPhongMaterial({color: 0x6d2800}));
-            roof.position.y = 21.7; roof.rotation.y = Math.PI/4; g.add(roof);
-            return g;
+            const g = new THREE.Group(); const colors = [0xffd700, 0x00e676, 0xff3d00, 0x2979ff, 0xffffff]; const base = new THREE.Mesh(new THREE.BoxGeometry(11.2, 16.8, 11.2), new THREE.MeshPhongMaterial({color: colors[Math.floor(Math.random()*colors.length)]})); base.position.y = 8.4; g.add(base); const roof = new THREE.Mesh(new THREE.ConeGeometry(10.5, 9.8, 4), new THREE.MeshPhongMaterial({color: 0x6d2800})); roof.position.y = 21.7; roof.rotation.y = Math.PI/4; g.add(roof); return g;
         }
         function createRoundTree() {
             const g = new THREE.Group();
-            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 14), new THREE.MeshPhongMaterial({color: 0x6b3e11}));
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 14), new THREE.MeshPhongMaterial({color: 0x3d2511}));
             trunk.position.y = 7;
-            const foliage = new THREE.Mesh(new THREE.SphereGeometry(9.8, 12, 12), new THREE.MeshPhongMaterial({color: 0x15b01a}));
+            const foliage = new THREE.Mesh(new THREE.SphereGeometry(9.8, 12, 12), new THREE.MeshPhongMaterial({color: 0x1f911a}));
             foliage.position.y = 18.2; g.add(trunk); g.add(foliage); return g;
         }
         function createConeTree() {
             const g = new THREE.Group();
-            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 12.6), new THREE.MeshPhongMaterial({color: 0x6b3e11}));
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 12.6), new THREE.MeshPhongMaterial({color: 0x3d2511}));
             trunk.position.y = 6.3;
-            const foliage = new THREE.Mesh(new THREE.ConeGeometry(8.4, 30.8, 8), new THREE.MeshPhongMaterial({color: 0x00852b}));
+            const foliage = new THREE.Mesh(new THREE.ConeGeometry(8.4, 30.8, 8), new THREE.MeshPhongMaterial({color: 0x006b21}));
             foliage.position.y = 21; g.add(trunk); g.add(foliage); return g;
         }
         function createTurbine() {
-            const g = new THREE.Group();
-            const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.2, 50), new THREE.MeshPhongMaterial({color: 0xf0f0f0}));
-            tower.position.y = 25; g.add(tower);
-            const blades = new THREE.Group(); blades.position.y = 45; g.add(blades);
-            for(let i=0; i<3; i++) {
-                const b = new THREE.Mesh(new THREE.BoxGeometry(0.8, 22, 0.2), new THREE.MeshPhongMaterial({color:0xffffff}));
-                b.position.y = 11; const p = new THREE.Group(); p.rotation.z = (i*Math.PI*2)/3; p.add(b); blades.add(p);
-            }
-            turbineBlades.push(blades); return g;
+            const g = new THREE.Group(); const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.2, 50), new THREE.MeshPhongMaterial({color: 0xf0f0f0})); tower.position.y = 25; g.add(tower); const blades = new THREE.Group(); blades.position.y = 45; g.add(blades); for(let i=0; i<3; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.8, 22, 0.2), new THREE.MeshPhongMaterial({color:0xffffff})); b.position.y = 11; const p = new THREE.Group(); p.rotation.z = (i*Math.PI*2)/3; p.add(b); blades.add(p); } turbineBlades.push(blades); return g;
         }
-
-        for(let i=0; i<70; i++) {
-            const r = Math.random();
-            let asset;
-            if(r < 0.10) asset = createTurbine();
-            else if(r < 0.30) asset = createHouse();
-            else if(r < 0.65) asset = createRoundTree();
-            else asset = createConeTree();
-            
-            const side = Math.random() > 0.5 ? 1 : -1;
-            const px = side * (Math.random() * 150 + 85);
-            const pz = -i * 45 + (Math.random() * 120);
-            asset.position.set(px, 0, pz);
-            scene.add(asset); assetPool.push(asset);
-        }
-
+        for(let i=0; i<70; i++) { const r = Math.random(); let asset; if(r < 0.10) asset = createTurbine(); else if(r < 0.30) asset = createHouse(); else if(r < 0.65) asset = createRoundTree(); else asset = createConeTree(); const side = Math.random() > 0.5 ? 1 : -1; const px = side * (Math.random() * 150 + 85); const pz = -i * 45 + (Math.random() * 120); asset.position.set(px, 0, pz); scene.add(asset); assetPool.push(asset); }
         function spawn() {
-            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🌾','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣'];
-            const idx = Math.floor(Math.random()*icons.length);
-            const item = icons[idx];
-            const type = idx < 12 ? 'good' : 'bad';
-            
-            const c = document.createElement('canvas'); c.width=256; c.height=256;
-            const x = c.getContext('2d'); 
-            x.filter = 'saturate(200%)'; 
-            x.font = '200px Arial'; x.textAlign='center'; x.textBaseline='middle';
-            x.fillText(item, 128, 128);
-            
-            const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(c)}));
-            const spread = (Math.random()-0.5) * (roadWidth - 10); 
-            
-            sprite.position.set(spread, 4.5, -350);
-            sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type };
-            scene.add(sprite); items.push(sprite);
+            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🌾','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const c = document.createElement('canvas'); c.width=256; c.height=256; const x = c.getContext('2d'); x.filter = 'saturate(200%)'; x.font = '200px Arial'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(item, 128, 128); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(c)})); const spread = (Math.random()-0.5) * (roadWidth - 10); sprite.position.set(spread, 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type }; scene.add(sprite); items.push(sprite);
         }
-
-        function updateUI() {
-            document.getElementById('hud-score').innerText = score;
-            document.getElementById('hud-mistakes').innerText = `${mistakes}/12`;
-            document.getElementById('hud-speed').innerText = Math.floor(speed * 100);
-            document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none';
-        }
-
-        // --- Game Loop ---
+        function updateUI() { document.getElementById('hud-score').innerText = score; document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; document.getElementById('hud-speed').innerText = Math.floor(speed * 100); document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; }
         function loop() {
-            if(!gameActive) return;
-            requestAnimationFrame(loop);
-            frame++; 
-            
-            speed = (35 + Math.floor(frame / 2000) * 10) / 100;
-            
-            camera.position.set(truck.position.x*0.4, 50, 100); 
-            camera.lookAt(truck.position.x, 22, -35);
-            
-            wheels.forEach(w => w.rotation.x += speed * 4);
-            turbineBlades.forEach(b => b.rotation.z += 0.05);
-
-            if(turboActive) {
-                bin.material.emissive.setRGB(0, (frame % 8 < 4 ? 1.0 : 0.1), 0);
-            } else bin.material.emissive.setHex(0x000000);
-
+            if(!gameActive) return; requestAnimationFrame(loop); frame++; speed = (35 + Math.floor(frame / 2000) * 10) / 100; camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
+            if(turboActive) { bin.material.emissive.setRGB(0, (frame % 8 < 4 ? 1.0 : 0.1), 0); } else bin.material.emissive.setHex(0x000000);
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
                     if(it.userData.type === 'good') {
-                        if(!turboActive) { 
-                            streak++; 
-                            if(streak >= 10) { turboActive = true; turboCount = 10; streak = 0; } 
-                            score += 100; 
-                        } else { 
-                            score += 200; turboCount--; 
-                            if(turboCount <= 0) turboActive = false; 
-                        }
-                        progression += 100; playSfx(600 + streak*20, 'sine', 0.15, 0.005);
+                        if(!turboActive) { streak++; if(streak >= 10) { turboActive = true; turboCount = 10; streak = 0; } score += 100; } else { score += 200; turboCount--; if(turboCount <= 0) turboActive = false; } progression += 100; playSfx(600 + streak*20, 'sine', 0.15, 0.005);
                     } else {
-                        score = Math.max(0, score - 100); mistakes++; streak = 0; turboActive = false;
-                        playSfx(120, 'square', 0.4, 0.008);
-                        if(mistakes >= 12) { 
-                            gameActive = false; 
-                            playMusicLoop = false; 
-                            document.getElementById('final-score').innerText = score; 
-                            document.getElementById('screen-end').classList.add('overlay-active'); 
-                            loadLeaderboard(); 
-                        }
+                        score = Math.max(0, score - 100); mistakes++; streak = 0; turboActive = false; playSfx(120, 'square', 0.4, 0.008);
+                        if(mistakes >= 12) { gameActive = false; playMusicLoop = false; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); }
                     }
                     scene.remove(it); items.splice(i,1); updateUI();
-                } else if(it.position.z > 50) { 
-                    if(it.userData.type === 'good') {
-                        streak = 0; 
-                        if(turboActive) { turboActive = false; turboCount = 0; }
-                    }
-                    scene.remove(it); items.splice(i,1); updateUI(); 
-                }
+                } else if(it.position.z > 50) { if(it.userData.type === 'good') { streak = 0; if(turboActive) { turboActive = false; turboCount = 0; } } scene.remove(it); items.splice(i,1); updateUI(); }
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
-            
-            if(frame % Math.floor(Math.max(12, 55 - (Math.floor(frame/2000)*10))) === 0) spawn();
-            
-            renderer.render(scene, camera);
+            if(frame % Math.floor(Math.max(12, 55 - (Math.floor(frame/2000)*10))) === 0) spawn(); renderer.render(scene, camera);
         }
-
-        // --- CONTROLS: Touch ---
         viewport.addEventListener('touchstart', e => { lastX = e.touches[0].clientX; }, {passive: false});
-        viewport.addEventListener('touchmove', e => { 
-            if(!gameActive) return;
-            const dx = (e.touches[0].clientX - lastX) * 0.25;
-            truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx));
-            lastX = e.touches[0].clientX; e.preventDefault();
-        }, {passive: false});
-
-        // --- CONTROLS: Mouse ---
-        let isDragging = false;
-        viewport.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; });
-        viewport.addEventListener('mousemove', e => { 
-            if(!isDragging || !gameActive) return;
-            const dx = (e.clientX - lastX) * 0.25;
-            truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx));
-            lastX = e.clientX;
-        });
-        viewport.addEventListener('mouseup', () => { isDragging = false; });
-        viewport.addEventListener('mouseleave', () => { isDragging = false; });
-
-        // --- CONTROLS: Keyboard ---
-        window.addEventListener('keydown', e => {
-            if(!gameActive) return;
-            const moveSpeed = 4.5;
-            if(e.key === 'ArrowLeft') {
-                truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - moveSpeed);
-            } else if(e.key === 'ArrowRight') {
-                truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + moveSpeed);
-            }
-        });
-        
-        // Render initial static frame before game starts
+        viewport.addEventListener('touchmove', e => { if(!gameActive) return; const dx = (e.touches[0].clientX - lastX) * 0.25; truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx)); lastX = e.touches[0].clientX; e.preventDefault(); }, {passive: false});
+        let isDragging = false; viewport.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; });
+        viewport.addEventListener('mousemove', e => { if(!isDragging || !gameActive) return; const dx = (e.clientX - lastX) * 0.25; truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx)); lastX = e.clientX; });
+        viewport.addEventListener('mouseup', () => { isDragging = false; }); viewport.addEventListener('mouseleave', () => { isDragging = false; });
+        window.addEventListener('keydown', e => { if(!gameActive) return; const moveSpeed = 4.5; if(e.key === 'ArrowLeft') { truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - moveSpeed); } else if(e.key === 'ArrowRight') { truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + moveSpeed); } });
         renderer.render(scene, camera);
-
     </script>
 </body>
 </html>
