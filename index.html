@@ -32,8 +32,8 @@
 </head>
 <body>
     <div id="root">
-        <div class="p-3 bg-slate-900 border-b-4 border-emerald-500 flex justify-between items-center z-50">
-            <div class="flex gap-2">
+        <div class="p-3 bg-slate-900 border-b-4 border-emerald-500 flex justify-between items-center z-50 overflow-x-auto">
+            <div class="flex gap-2 shrink-0">
                 <div class="ui-glass px-3 py-2 rounded-2xl text-center min-w-[80px]">
                     <p class="hud-label text-emerald-400 font-black">ΣΚΟΡ</p>
                     <p id="hud-score" class="text-xl font-black text-white leading-none">0</p>
@@ -47,10 +47,29 @@
                     <p id="hud-speed" class="text-xl font-black text-white leading-none">35</p>
                 </div>
             </div>
-            <div id="hud-boost" class="hidden text-yellow-400 font-black animate-pulse text-[12px] italic bg-yellow-400/20 px-4 py-2 rounded-full border-2 border-yellow-400">⚡ BOOST x2</div>
-            <button id="info-btn" class="ui-glass p-3 rounded-2xl text-sky-400 hover:text-white transition-all cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-            </button>
+            <div id="hud-boost" class="hidden text-yellow-400 font-black animate-pulse text-[12px] italic bg-yellow-400/20 px-4 py-2 rounded-full border-2 border-yellow-400 mx-2 shrink-0">⚡ BOOST x2</div>
+            
+            <div class="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto">
+                <button id="btn-zen" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
+                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px]">ZEN</p>
+                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none" id="lbl-zen">OFF</p>
+                </button>
+                <button id="btn-freeze" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
+                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px]">SPEED FREEZE</p>
+                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none" id="lbl-freeze">OFF</p>
+                </button>
+                <button id="btn-halo" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
+                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px]">ΚΥΚΛΟΙ</p>
+                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none" id="lbl-halo">OFF</p>
+                </button>
+                <button id="btn-voice" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
+                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px]">ΦΩΝΗ</p>
+                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none" id="lbl-voice">OFF</p>
+                </button>
+                <button id="info-btn" class="ui-glass p-2 sm:p-3 rounded-2xl text-sky-400 hover:text-white transition-all cursor-pointer shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                </button>
+            </div>
         </div>
         <div id="game-viewport">
             <div id="screen-start" class="overlay-layer overlay-active">
@@ -73,7 +92,7 @@
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
                         <div class="info-page page-active" data-id="0">
                             <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΟΔΗΓΙΕΣ</h2>
-                            <div class="space-y-4 w-full text-base font-bold text-amber-50">
+                            <div class="space-y-3 w-full text-base font-bold text-amber-50">
                                 <p class="leading-tight text-sm">Οδήγησε με σύρσιμο (αφή/ποντίκι) ή με τα βελάκια ⬅️ ➡️.</p>
                                 <div class="p-3 bg-black/20 border-2 border-white/20 rounded-2xl">
                                     <p class="text-yellow-300 text-lg font-black uppercase leading-none">TURBO BOOSTER!</p>
@@ -87,12 +106,21 @@
                             </div>
                         </div>
                         <div class="info-page" data-id="1">
+                            <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΒΟΗΘΗΜΑΤΑ</h2>
+                            <div class="p-3 bg-blue-900/40 border-2 border-blue-400/50 rounded-2xl text-left space-y-3 w-full">
+                                <p class="text-xs text-blue-200 uppercase leading-tight"><strong class="text-white">ZEN:</strong><br>Τα λάθη δεν σε σταματάνε ποτέ!</p>
+                                <p class="text-xs text-amber-200 uppercase leading-tight"><strong class="text-white">SPEED FREEZE:</strong><br>Η ταχύτητα μένει σταθερή, δεν αυξάνεται.</p>
+                                <p class="text-xs text-emerald-200 uppercase leading-tight"><strong class="text-white">ΚΥΚΛΟΙ:</strong><br>Δείχνουν σωστά/λάθος με έντονο χρώμα.</p>
+                                <p class="text-xs text-purple-300 uppercase leading-tight"><strong class="text-white">ΦΩΝΗ:</strong><br>Ακούς το όνομα του αντικειμένου.</p>
+                            </div>
+                        </div>
+                        <div class="info-page" data-id="2">
                             <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
                             <div class="grid grid-cols-4 gap-3 text-4xl text-center bg-white/20 p-4 rounded-[2rem] border-2 border-white/30">
                                 <span>🍌</span><span>🍎</span><span>🥦</span><span>🌿</span> <span>🌱</span><span>🥚</span><span>📄</span><span>📰</span> <span>📦</span><span>🪱</span><span>🍂</span><span>🌾</span>
                             </div>
                         </div>
-                        <div class="info-page" data-id="2">
+                        <div class="info-page" data-id="3">
                             <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
                             <div class="grid grid-cols-4 gap-3 text-4xl text-center bg-black/20 p-4 rounded-[2rem] border-2 border-white/20 grayscale opacity-50">
                                 <span>🥛</span><span>🍾</span><span>🍲</span><span>🥩</span> <span>🍼</span><span>🥫</span><span>🔋</span><span>🪣</span>
@@ -104,7 +132,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg>
                         </button>
                         <div class="flex gap-2">
-                            <div class="dot dot-active" id="dot-0"></div><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div>
+                            <div class="dot dot-active" id="dot-0"></div><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div><div class="dot" id="dot-3"></div>
                         </div>
                         <button id="next-page-btn" class="p-3 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg>
@@ -174,6 +202,59 @@
         let gameActive = false, score = 0, mistakes = 0, streak = 0, speed = 0.35, frame = 0, progression = 0, lastX = 0;
         let turboActive = false, turboCount = 0; let items = [], decor = [], audioCtx, musicInt;
         let bgAudioActive = false; let playMusicLoop = true;
+        
+        let optsZen = false; let optsHalos = false; let optsVoice = false; let optsFreeze = false;
+        const btnZen = document.getElementById('btn-zen'); const lblZen = document.getElementById('lbl-zen');
+        const btnHalo = document.getElementById('btn-halo'); const lblHalo = document.getElementById('lbl-halo');
+        const btnVoice = document.getElementById('btn-voice'); const lblVoice = document.getElementById('lbl-voice');
+        const btnFreeze = document.getElementById('btn-freeze'); const lblFreeze = document.getElementById('lbl-freeze');
+        
+        btnZen.onclick = () => {
+            optsZen = !optsZen; lblZen.innerText = optsZen ? 'ON' : 'OFF';
+            lblZen.className = optsZen ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none';
+        };
+        btnFreeze.onclick = () => {
+            optsFreeze = !optsFreeze; lblFreeze.innerText = optsFreeze ? 'ON' : 'OFF';
+            lblFreeze.className = optsFreeze ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none';
+        };
+        btnHalo.onclick = () => {
+            optsHalos = !optsHalos; lblHalo.innerText = optsHalos ? 'ON' : 'OFF';
+            lblHalo.className = optsHalos ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none';
+            items.forEach(it => {
+                if (it.material.map) it.material.map.dispose();
+                it.material.map = getTexture(it.userData.itemStr, it.userData.type, optsHalos);
+            });
+        };
+        btnVoice.onclick = () => {
+            optsVoice = !optsVoice; lblVoice.innerText = optsVoice ? 'ON' : 'OFF';
+            lblVoice.className = optsVoice ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none';
+            if (optsVoice && window.speechSynthesis) {
+                let u = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(u);
+            }
+        };
+
+        const emojiNames = {
+            '🍌': 'Μπανάνα', '🍎': 'Μήλο', '🥦': 'Μπρόκολο', '🌿': 'Φύλλα', '🌱': 'Φυτό',
+            '🥚': 'Αυγό', '📄': 'Χαρτί', '📰': 'Εφημερίδα', '📦': 'Χαρτόκουτο', '🪱': 'Σκουλήκι',
+            '🍂': 'Ξερά φύλλα', '🌾': 'Σιτάρι', '🥛': 'Γάλα', '🍾': 'Μπουκάλι', '🍲': 'Φαγητό',
+            '🥩': 'Κρέας', '🍼': 'Μπιμπερό', '🥫': 'Κονσέρβα', '🔋': 'Μπαταρία', '🪣': 'Κουβάς'
+        };
+
+        function getTexture(itemStr, type, useHalo) {
+            const c = document.createElement('canvas'); c.width=256; c.height=256; const x = c.getContext('2d');
+            if(useHalo) {
+                x.beginPath(); x.arc(128, 128, 112, 0, Math.PI * 2);
+                x.lineWidth = 16; 
+                x.strokeStyle = type === 'good' ? '#22c55e' : '#ef4444'; 
+                x.stroke();
+            }
+            x.filter = 'saturate(200%)'; 
+            x.font = useHalo ? '140px Arial' : '200px Arial'; 
+            x.textAlign='center'; x.textBaseline='middle'; 
+            x.fillText(itemStr, 128, 128);
+            return new THREE.CanvasTexture(c);
+        }
+
         function startBackgroundMusic() {
             if (bgAudioActive) return;
             if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -211,7 +292,7 @@
             document.querySelectorAll('.info-page').forEach((p, i) => p.classList.toggle('page-active', i === infoPageIdx));
             document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('dot-active', i === infoPageIdx));
         };
-        const navigate = (dir) => { infoPageIdx = (infoPageIdx + dir + 3) % 3; updatePages(); };
+        const navigate = (dir) => { infoPageIdx = (infoPageIdx + dir + 4) % 4; updatePages(); };
         const openInfo = (s) => { document.getElementById('screen-info').classList.toggle('overlay-active', s); if(s) { infoPageIdx = 0; updatePages(); } };
         document.getElementById('info-btn').onclick = () => openInfo(true);
         document.getElementById('instr-btn').onclick = () => openInfo(true);
@@ -262,11 +343,9 @@
         
         scene.add(new THREE.AmbientLight(0xffffff, 1.0)); const sun = new THREE.DirectionalLight(0xfff5e6, 2.0); sun.position.set(20, 50, 20); scene.add(sun);
         
-        // Χώμα: Βαθύ καφέ για αντίθεση
         const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshPhongMaterial({ color: 0x4a2c18 }));
         ground.rotation.x = -Math.PI / 2; ground.position.y = -2.0; scene.add(ground);
         
-        // Δρόμος: Πολύ σκούρο γκρι για ένταση
         const roadWidth = 110;
         const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x0a0a0a }));
         road.rotation.x = -Math.PI / 2; road.position.y = 0.0; scene.add(road);
@@ -298,20 +377,41 @@
         }
         for(let i=0; i<70; i++) { const r = Math.random(); let asset; if(r < 0.10) asset = createTurbine(); else if(r < 0.30) asset = createHouse(); else if(r < 0.65) asset = createRoundTree(); else asset = createConeTree(); const side = Math.random() > 0.5 ? 1 : -1; const px = side * (Math.random() * 150 + 85); const pz = -i * 45 + (Math.random() * 120); asset.position.set(px, 0, pz); scene.add(asset); assetPool.push(asset); }
         function spawn() {
-            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🌾','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const c = document.createElement('canvas'); c.width=256; c.height=256; const x = c.getContext('2d'); x.filter = 'saturate(200%)'; x.font = '200px Arial'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(item, 128, 128); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(c)})); const spread = (Math.random()-0.5) * (roadWidth - 10); sprite.position.set(spread, 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type }; scene.add(sprite); items.push(sprite);
+            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🌾','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const tex = getTexture(item, type, optsHalos); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex})); const spread = (Math.random()-0.5) * (roadWidth - 10); sprite.position.set(spread, 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type, itemStr: item }; scene.add(sprite); items.push(sprite);
         }
         function updateUI() { document.getElementById('hud-score').innerText = score; document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; document.getElementById('hud-speed').innerText = Math.floor(speed * 100); document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; }
+        
+        const keys = { ArrowLeft: false, ArrowRight: false };
+        window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+
         function loop() {
-            if(!gameActive) return; requestAnimationFrame(loop); frame++; speed = (35 + Math.floor(frame / 2000) * 10) / 100; camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
+            if(!gameActive) return; requestAnimationFrame(loop); frame++; 
+            if(!optsFreeze) speed = (35 + Math.floor(frame / 2000) * 10) / 100; 
+            
+            camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
+            
+            const moveSpeed = 2.5;
+            if(keys.ArrowLeft) truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - moveSpeed);
+            if(keys.ArrowRight) truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + moveSpeed);
+
             if(turboActive) { bin.material.emissive.setRGB(0, (frame % 8 < 4 ? 1.0 : 0.1), 0); } else bin.material.emissive.setHex(0x000000);
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
+                    
+                    if(optsVoice && window.speechSynthesis) {
+                        window.speechSynthesis.cancel();
+                        let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || "");
+                        u.lang = 'el-GR'; u.rate = 1.6; // Πιο γρήγορη ταχύτητα ομιλίας
+                        window.speechSynthesis.speak(u);
+                    }
+
                     if(it.userData.type === 'good') {
                         if(!turboActive) { streak++; if(streak >= 10) { turboActive = true; turboCount = 10; streak = 0; } score += 100; } else { score += 200; turboCount--; if(turboCount <= 0) turboActive = false; } progression += 100; playSfx(600 + streak*20, 'sine', 0.15, 0.005);
                     } else {
                         score = Math.max(0, score - 100); mistakes++; streak = 0; turboActive = false; playSfx(120, 'square', 0.4, 0.008);
-                        if(mistakes >= 12) { gameActive = false; playMusicLoop = false; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); }
+                        if(mistakes >= 12 && !optsZen) { gameActive = false; playMusicLoop = false; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); }
                     }
                     scene.remove(it); items.splice(i,1); updateUI();
                 } else if(it.position.z > 50) { if(it.userData.type === 'good') { streak = 0; if(turboActive) { turboActive = false; turboCount = 0; } } scene.remove(it); items.splice(i,1); updateUI(); }
@@ -324,7 +424,7 @@
         let isDragging = false; viewport.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; });
         viewport.addEventListener('mousemove', e => { if(!isDragging || !gameActive) return; const dx = (e.clientX - lastX) * 0.25; truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx)); lastX = e.clientX; });
         viewport.addEventListener('mouseup', () => { isDragging = false; }); viewport.addEventListener('mouseleave', () => { isDragging = false; });
-        window.addEventListener('keydown', e => { if(!gameActive) return; const moveSpeed = 4.5; if(e.key === 'ArrowLeft') { truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - moveSpeed); } else if(e.key === 'ArrowRight') { truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + moveSpeed); } });
+        
         renderer.render(scene, camera);
     </script>
 </body>
