@@ -257,6 +257,8 @@ btnExit.onclick = () => {
     if (!gameActive) return; 
     gameActive = false;
     playMusicLoop = false;
+    // ΚΡΥΒΕΙ ΤΗ ΜΠΑΡΑ
+    document.getElementById('game-ui').style.display = 'none';
     document.getElementById('final-score').innerText = score;
     document.getElementById('screen-end').classList.add('overlay-active');
     loadLeaderboard();
