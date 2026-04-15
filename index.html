@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER v104 | Vivid Colors</title>
+    <title>ECO-COMPOSTER | GitHub Firebase Ready</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -70,7 +70,7 @@
                     </div>
                     <div>
                         <h1 class="text-3xl font-black uppercase tracking-tighter italic leading-none text-white">ECO-COMPOSTER</h1>
-                        <p class="text-amber-200 text-[10px] font-black uppercase mt-2 tracking-widest leading-none">v104 Vivid Colors</p>
+                        <p class="text-amber-200 text-[10px] font-black uppercase mt-2 tracking-widest leading-none">GitHub Edition</p>
                     </div>
                     <div class="flex flex-col gap-3">
                         <button id="start-btn" class="btn-green w-full py-5 rounded-3xl text-2xl uppercase shadow-lg cursor-pointer">ΠΑΙΞΕ</button>
@@ -159,14 +159,40 @@
     </div>
 
     <script>
-        // --- Firebase Core Setup ---
+        // --- Firebase Core Setup (ΥΠΟΣΤΗΡΙΞΗ ΓΙΑ GITHUB ΚΑΙ ΤΟΠΙΚΟ PREVIEW) ---
         let db = null; let auth = null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eco-composter-v104-vivid';
+        // Το κοινό ID για τη λίστα παικτών
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eco-composter-github-db';
 
         try { 
+            let firebaseConfig = null;
+            
             if (typeof __firebase_config !== 'undefined') { 
-                const config = JSON.parse(__firebase_config);
-                firebase.initializeApp(config); 
+                // Αν τρέχει στο περιβάλλον δοκιμής
+                firebaseConfig = JSON.parse(__firebase_config);
+            } else {
+                
+                // ==============================================================================
+                // ⚠️ ΡΥΘΜΙΣΕΙΣ ΓΙΑ GITHUB PAGES Η ΑΛΛΟ HOSTING (ΓΡΑΜΜΗ 160) ⚠️
+                // Αντικαταστήστε τα παρακάτω με τα στοιχεία του δικού σας Firebase Web App.
+                // Σβήστε τη λέξη "ΒΑΛΤΕ_ΤΟ_ΔΙΚΟ_ΣΑΣ..." και βάλτε το κλειδί σας.
+                // ΠΡΟΣΟΧΗ: Κρατήστε τα εισαγωγικά ("")!
+                // ==============================================================================
+                firebaseConfig = {
+                    apiKey: "AIzaSyCsJuhBykWzaknCkG96WrfIjmTDZDXlJVk",
+                    authDomain: "eco-composter.firebaseapp.com",
+                    projectId: "eco-composter",
+                    storageBucket: "eco-composter.firebasestorage.app",
+                    messagingSenderId: "184680739885",
+                    appId: "1:184680739885:web:e591d729bd916a8680f4a4"
+                };
+                // ==============================================================================
+                
+            }
+
+            // Ενεργοποιείται μόνο αν έχετε βάλει τα δικά σας κλειδιά (ή αν τρέχει στο preview)
+            if (firebaseConfig && firebaseConfig.projectId && !firebaseConfig.projectId.includes("ΒΑΛΤΕ_ΤΟ_ΔΙΚΟ_ΣΑΣ")) {
+                firebase.initializeApp(firebaseConfig); 
                 db = firebase.firestore(); 
                 auth = firebase.auth();
                 const initAuth = async () => {
@@ -176,10 +202,12 @@
                         } else {
                             await auth.signInAnonymously(); 
                         }
-                    } catch (e) { console.error("Firebase auth error"); }
+                    } catch (e) { console.error("Firebase auth error", e); }
                 }; initAuth();
-            } 
-        } catch(e){ console.error("Firebase init error"); }
+            } else {
+                console.warn("Το Firebase δεν έχει ρυθμιστεί στο Github. Η αποθήκευση στο Leaderboard θα βγάζει μήνυμα σφάλματος.");
+            }
+        } catch(e){ console.error("Firebase init error", e); }
 
         // --- Game Variables ---
         let gameActive = false, score = 0, mistakes = 0, streak = 0, speed = 0.35, frame = 0, progression = 0, lastX = 0;
@@ -263,10 +291,19 @@
 
         // --- Leaderboard Logic ---
         async function saveScoreToCloud() {
-            const name = document.getElementById('p-name').value.trim();
-            if (!name || !db || !auth.currentUser) return;
-            
             const btn = document.getElementById('submit-btn'); 
+            
+            if (!db || !auth || !auth.currentUser) {
+                btn.innerText = "ΑΠΑΙΤΕΙΤΑΙ FIREBASE";
+                btn.classList.replace('btn-green', 'bg-red-600');
+                btn.classList.add('text-white');
+                document.getElementById('p-name').value = "Λείπουν Κλειδιά";
+                return;
+            }
+
+            const name = document.getElementById('p-name').value.trim();
+            if (!name) return;
+            
             btn.innerText = "ΑΝΑΜΟΝΗ..."; btn.disabled = true;
             
             try {
@@ -287,8 +324,16 @@
         window.saveScoreToCloud = saveScoreToCloud;
 
         async function loadLeaderboard() {
-            if (!db) return;
             const list = document.getElementById('leader-board');
+            if (!db) {
+                list.innerHTML = `
+                <div class="bg-red-900/40 p-2 text-center rounded-xl border border-red-500/50 mt-2">
+                    <p class="text-white text-[10px] font-bold">ΠΡΟΣΟΧΗ</p>
+                    <p class="text-red-200 text-[9px] mt-1">Για να λειτουργήσει το Leaderboard στο Github, βάλτε τα στοιχεία του Firebase σας στον κώδικα (γραμμή 160).</p>
+                </div>`;
+                return;
+            }
+            
             list.innerHTML = '<p class="text-center text-white opacity-40 text-[10px]">ΦΟΡΤΩΣΗ...</p>';
             try {
                 const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
@@ -302,7 +347,6 @@
                 list.innerHTML = '';
                 top10.forEach((v, i) => {
                     const timeInSeconds = Math.floor(v.duration / 60);
-                    
                     list.innerHTML += `
                         <div class="flex justify-between items-center py-2 border-b border-white/10">
                             <div class="font-black text-[#fcd34d] text-[15px] truncate w-1/2">${i + 1}. ${v.name}</div>
@@ -326,6 +370,7 @@
         renderer.setSize(viewport.clientWidth, viewport.clientHeight); 
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
+        // sRGBEncoding για ζωντανά χρώματα
         renderer.outputEncoding = THREE.sRGBEncoding; 
         
         viewport.appendChild(renderer.domElement);
@@ -348,7 +393,7 @@
         const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshPhongMaterial({ color: 0x5c3a21 }));
         ground.rotation.x = -Math.PI / 2; ground.position.y = -2.0; scene.add(ground);
 
-        // Δρόμος: Πιο έντονο βαθύ γκρι
+        // Δρόμος: Φαρδύς και βαθύ γκρι
         const roadWidth = 110;
         const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x1a1a1a }));
         road.rotation.x = -Math.PI / 2; road.position.y = 0.0;
@@ -385,21 +430,17 @@
 
         function createHouse() {
             const g = new THREE.Group();
-            // Σπίτια: Πολύ πιο ζωντανά χρώματα
             const colors = [0xffd700, 0x00e676, 0xff3d00, 0x2979ff, 0xffffff];
             const base = new THREE.Mesh(new THREE.BoxGeometry(11.2, 16.8, 11.2), new THREE.MeshPhongMaterial({color: colors[Math.floor(Math.random()*colors.length)]}));
             base.position.y = 8.4; g.add(base);
-            // Σκεπές: Πιο ζωντανό σκούρο κεραμιδί/καφέ
             const roof = new THREE.Mesh(new THREE.ConeGeometry(10.5, 9.8, 4), new THREE.MeshPhongMaterial({color: 0x6d2800}));
             roof.position.y = 21.7; roof.rotation.y = Math.PI/4; g.add(roof);
             return g;
         }
         function createRoundTree() {
             const g = new THREE.Group();
-            // Κορμοί: Πιο ζωντανό καφέ
             const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 14), new THREE.MeshPhongMaterial({color: 0x6b3e11}));
             trunk.position.y = 7;
-            // Φύλλα: Πολύ έντονο ανοιχτό πράσινο
             const foliage = new THREE.Mesh(new THREE.SphereGeometry(9.8, 12, 12), new THREE.MeshPhongMaterial({color: 0x15b01a}));
             foliage.position.y = 18.2; g.add(trunk); g.add(foliage); return g;
         }
@@ -407,7 +448,6 @@
             const g = new THREE.Group();
             const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 12.6), new THREE.MeshPhongMaterial({color: 0x6b3e11}));
             trunk.position.y = 6.3;
-            // Φύλλα: Έντονο βαθύ πράσινο
             const foliage = new THREE.Mesh(new THREE.ConeGeometry(8.4, 30.8, 8), new THREE.MeshPhongMaterial({color: 0x00852b}));
             foliage.position.y = 21; g.add(trunk); g.add(foliage); return g;
         }
@@ -446,10 +486,7 @@
             
             const c = document.createElement('canvas'); c.width=256; c.height=256;
             const x = c.getContext('2d'); 
-            
-            // ΠΡΟΣΘΗΚΗ: Φίλτρο κορεσμού για πολύ πιο έντονα χρώματα στα αντικείμενα!
             x.filter = 'saturate(200%)'; 
-            
             x.font = '200px Arial'; x.textAlign='center'; x.textBaseline='middle';
             x.fillText(item, 128, 128);
             
