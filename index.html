@@ -40,11 +40,12 @@
         }
         .turbo-text { animation: golden-blink 0.5s infinite; }
         
-        /* Mobile Specific Utility & Orientation tweaks */
+        /* Mobile Specific HUD Layout */
         @media (max-width: 640px) {
-            #game-ui-bar { flex-wrap: wrap; justify-content: center; gap: 4px !important; }
+            #game-ui-bar { flex-wrap: wrap; justify-content: center; gap: 4px !important; padding: 4px !important; }
             .hud-item { min-width: 55px !important; padding: 2px 4px !important; }
             .btn-hud { padding: 4px 6px !important; }
+            #hud-boost { order: -1; width: 100%; text-align: center; margin-bottom: 4px; }
         }
 
         /* Landscape optimization (low height) - Prevent clipping */
@@ -55,8 +56,9 @@
             #hud-score, #hud-mistakes, #hud-speed { font-size: 12px !important; }
             .turbo-text { font-size: 8px !important; padding: 2px 8px !important; }
             #info-btn { padding: 4px !important; }
+            #hud-boost { width: auto; order: 0; }
 
-            /* Scaling start screen & info for landscape */
+            /* Scaling panels for landscape */
             .panel-ochre { padding: 1.25rem !important; space-y: 0.5rem !important; max-width: 95% !important; }
             .panel-ochre h1 { font-size: 1.15rem !important; }
             .panel-ochre .w-14, .panel-ochre .h-14, .panel-ochre .w-20, .panel-ochre .h-20 { width: 2.5rem !important; height: 2.5rem !important; border-radius: 0.5rem !important; }
@@ -64,7 +66,6 @@
             .panel-ochre .btn-green { py: 0.4rem !important; font-size: 0.9rem !important; }
             .panel-ochre #instr-btn { py: 0.3rem !important; font-size: 8px !important; }
             
-            /* Allow scrolling within panels if height is extremely small */
             .panel-ochre { overflow-y: auto !important; max-height: 95vh !important; }
             .grid-container { max-height: 150px !important; }
         }
@@ -83,7 +84,6 @@
                     <p class="hud-label text-red-400">ΛΑΘΗ</p>
                     <p id="hud-mistakes" class="text-xs sm:text-lg font-black text-white leading-none">0/12</p>
                 </div>
-                <!-- Εμφάνιση ταχύτητας παντού -->
                 <div class="ui-glass hud-item px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[50px] sm:min-w-[70px]">
                     <p class="hud-label text-sky-400">ΤΑΧ/ΤΑ</p>
                     <p id="hud-speed" class="text-xs sm:text-lg font-black text-white leading-none">35</p>
@@ -381,14 +381,25 @@
             try {
                 const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
                 let data = []; snap.forEach(doc => data.push(doc.data()));
+                
+                // Νέα λογική κατάταξης
                 data.sort((a, b) => {
-                    const aIsPenalty = (a.zenUsed && a.mistakes > 12);
-                    const bIsPenalty = (b.zenUsed && b.mistakes > 12);
-                    if (aIsPenalty !== bIsPenalty) return aIsPenalty ? 1 : -1;
+                    const aSafe = a.mistakes <= 12;
+                    const bSafe = b.mistakes <= 12;
+
+                    // Ομάδα Α (<=12) πάντα πάνω από Ομάδα Β (>12)
+                    if (aSafe && !bSafe) return -1;
+                    if (!aSafe && bSafe) return 1;
+
+                    // Στην ίδια ομάδα:
+                    // 1. Μεγαλύτερο Σκορ
                     if (b.score !== a.score) return b.score - a.score;
+                    // 2. Μικρότερο αριθμό λαθών
                     if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
+                    // 3. Μεγαλύτερη διάρκεια παιχνιδιού
                     return b.duration - a.duration;
                 });
+                
                 lbData = data; lbCurrentPage = 0; renderLBPage();
             } catch (e) { list.innerHTML = '<p class="text-center">Error.</p>'; }
         }
@@ -403,8 +414,8 @@
             const pageItems = lbData.slice(lbCurrentPage * lbPageSize, (lbCurrentPage + 1) * lbPageSize);
             pageItems.forEach((v, i) => {
                 const rank = (lbCurrentPage * lbPageSize) + i + 1;
-                const penalty = (v.zenUsed && v.mistakes > 12);
-                list.innerHTML += `<div class="flex justify-between items-center py-1.5 border-b border-white/5"><div class="font-black text-[#fcd34d] text-[10px] sm:text-xs truncate w-1/2">${rank}. ${v.name}${penalty?' <span class="text-[6px] text-amber-500 border border-amber-500 px-1 rounded">Z+</span>':''}</div><div class="text-right w-1/2"><div class="font-black text-white text-xs sm:text-sm leading-none">${v.score}</div><div class="text-[8px] font-bold mt-1 text-gray-400">L:${v.mistakes} | ${Math.floor(v.duration/60)}s</div></div></div>`;
+                const penalty = (v.mistakes > 12);
+                list.innerHTML += `<div class="flex justify-between items-center py-1.5 border-b border-white/5"><div class="font-black text-[#fcd34d] text-[10px] sm:text-xs truncate w-1/2">${rank}. ${v.name}${penalty?' <span class="text-[6px] text-amber-500 border border-amber-500 px-1 rounded">ZEN</span>':''}</div><div class="text-right w-1/2"><div class="font-black text-white text-xs sm:text-sm leading-none">${v.score}</div><div class="text-[8px] font-bold mt-1 text-gray-400">L:${v.mistakes} | ${Math.floor(v.duration/60)}s</div></div></div>`;
             });
         }
         document.getElementById('lb-prev').onclick = () => { if(lbCurrentPage > 0) { lbCurrentPage--; renderLBPage(); } };
