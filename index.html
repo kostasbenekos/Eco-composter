@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Responsive & Landscape</title>
+    <title>ECO-COMPOSTER | Responsive & Stability</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -11,7 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0ea5e9; font-family: 'Inter', sans-serif; color: white; cursor: default; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0ea5e9; font-family: 'Inter', sans-serif; color: white; cursor: default; -webkit-tap-highlight-color: transparent; }
         #root { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
         #game-viewport { flex: 1; position: relative; background: #0ea5e9; touch-action: none; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
@@ -42,28 +42,31 @@
         
         /* Mobile Specific Utility & Orientation tweaks */
         @media (max-width: 640px) {
-            .mobile-hide { display: none; }
+            #game-ui-bar { flex-wrap: wrap; justify-content: center; gap: 4px !important; }
+            .hud-item { min-width: 55px !important; padding: 2px 4px !important; }
+            .btn-hud { padding: 4px 6px !important; }
         }
 
         /* Landscape optimization (low height) - Prevent clipping */
         @media (max-height: 500px) {
-            #game-ui-bar { padding: 4px 8px !important; }
+            #game-ui-bar { padding: 4px 8px !important; flex-wrap: nowrap !important; justify-content: space-between !important; }
             .ui-glass { padding-top: 2px !important; padding-bottom: 2px !important; }
             .hud-label { font-size: 6px !important; }
-            #hud-score, #hud-mistakes { font-size: 14px !important; }
+            #hud-score, #hud-mistakes, #hud-speed { font-size: 12px !important; }
             .turbo-text { font-size: 8px !important; padding: 2px 8px !important; }
             #info-btn { padding: 4px !important; }
 
             /* Scaling start screen & info for landscape */
-            .panel-ochre { padding: 1.5rem !important; space-y: 1rem !important; }
-            .panel-ochre h1 { font-size: 1.25rem !important; }
-            .panel-ochre .w-14, .panel-ochre .h-14, .panel-ochre .w-20, .panel-ochre .h-20 { width: 3rem !important; height: 3rem !important; border-radius: 1rem !important; }
-            .panel-ochre svg { width: 20px !important; height: 20px !important; }
-            .panel-ochre .btn-green { py: 0.5rem !important; font-size: 1rem !important; }
-            .panel-ochre #instr-btn { py: 0.4rem !important; font-size: 8px !important; }
+            .panel-ochre { padding: 1.25rem !important; space-y: 0.5rem !important; max-width: 95% !important; }
+            .panel-ochre h1 { font-size: 1.15rem !important; }
+            .panel-ochre .w-14, .panel-ochre .h-14, .panel-ochre .w-20, .panel-ochre .h-20 { width: 2.5rem !important; height: 2.5rem !important; border-radius: 0.5rem !important; }
+            .panel-ochre svg { width: 18px !important; height: 18px !important; }
+            .panel-ochre .btn-green { py: 0.4rem !important; font-size: 0.9rem !important; }
+            .panel-ochre #instr-btn { py: 0.3rem !important; font-size: 8px !important; }
             
             /* Allow scrolling within panels if height is extremely small */
             .panel-ochre { overflow-y: auto !important; max-height: 95vh !important; }
+            .grid-container { max-height: 150px !important; }
         }
     </style>
 </head>
@@ -71,39 +74,39 @@
     <div id="root">
         <!-- HUD Bar -->
         <div id="game-ui-bar" class="p-2 sm:p-3 bg-slate-900 border-b-4 border-emerald-500 flex justify-between items-center z-50 overflow-x-auto gap-2 no-scrollbar" style="display: none;">
-            <div class="flex gap-1.5 shrink-0">
-                <div class="ui-glass px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[60px] sm:min-w-[80px]">
+            <div class="flex gap-1 sm:gap-1.5 shrink-0 items-center">
+                <div class="ui-glass hud-item px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[55px] sm:min-w-[80px]">
                     <p class="hud-label text-emerald-400">ΣΚΟΡ</p>
-                    <p id="hud-score" class="text-sm sm:text-lg font-black text-white leading-none">0</p>
+                    <p id="hud-score" class="text-xs sm:text-lg font-black text-white leading-none">0</p>
                 </div>
-                <div class="ui-glass px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[60px] sm:min-w-[80px]">
+                <div class="ui-glass hud-item px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[55px] sm:min-w-[80px]">
                     <p class="hud-label text-red-400">ΛΑΘΗ</p>
-                    <p id="hud-mistakes" class="text-sm sm:text-lg font-black text-white leading-none">0/12</p>
+                    <p id="hud-mistakes" class="text-xs sm:text-lg font-black text-white leading-none">0/12</p>
                 </div>
-                <div class="ui-glass px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[50px] sm:min-w-[70px] mobile-hide">
+                <!-- Εμφάνιση ταχύτητας παντού -->
+                <div class="ui-glass hud-item px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[50px] sm:min-w-[70px]">
                     <p class="hud-label text-sky-400">ΤΑΧ/ΤΑ</p>
-                    <p id="hud-speed" class="text-sm sm:text-lg font-black text-white leading-none">35</p>
+                    <p id="hud-speed" class="text-xs sm:text-lg font-black text-white leading-none">35</p>
                 </div>
             </div>
             
             <div id="hud-boost" class="hidden turbo-text font-black text-[8px] sm:text-[10px] uppercase italic bg-yellow-400/20 px-2 sm:px-3 py-1.5 rounded-full border-2 border-yellow-400 mx-1 shrink-0">⚡ TURBO</div>
             
             <div class="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto pointer-events-auto">
-                <button id="btn-zen" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
+                <button id="btn-zen" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ZEN</p>
                     <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-zen">OFF</p>
                 </button>
-                <button id="btn-halo" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
+                <button id="btn-halo" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΚΥΚΛΟΙ</p>
                     <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-halo">OFF</p>
                 </button>
-                <!-- Διορθωμένο: Αφαιρέθηκε η κλάση mobile-hide για να φαίνεται στα κινητά -->
-                <button id="btn-voice" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
+                <button id="btn-voice" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΦΩΝΗ</p>
                     <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-voice">OFF</p>
                 </button>
                 
-                <button id="btn-exit" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center bg-red-900/20 border-red-500/50 hover:bg-red-600/40 cursor-pointer">
+                <button id="btn-exit" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center bg-red-900/20 border-red-500/50 hover:bg-red-600/40 cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-red-400 leading-none mb-0.5">ΕΞΟΔΟΣ</p>
                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="mx-auto sm:w-3 sm:h-3"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 </button>
@@ -117,7 +120,6 @@
         <div id="game-viewport">
             <!-- Screen Start -->
             <div id="screen-start" class="overlay-layer overlay-active">
-                <!-- Enlarged Initial Screen Panel -->
                 <div class="max-w-[90%] sm:max-w-md w-full panel-ochre p-8 sm:p-12 rounded-[3rem] sm:rounded-[4rem] text-center space-y-6 sm:space-y-8">
                     <div class="w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="#b45309" class="sm:w-16 sm:h-16"><path d="M5 3l14 9-14 9V3z"/></svg>
@@ -135,12 +137,11 @@
 
             <!-- Screen Info -->
             <div id="screen-info" class="overlay-layer">
-                <!-- Enlarged Instructions Panel -->
                 <div class="max-w-[95%] sm:max-w-2xl w-full panel-ochre rounded-[2.5rem] sm:rounded-[3.5rem] flex flex-col p-6 sm:p-10 max-h-[95vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
                         <div class="info-page page-active" data-id="0">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none">ΟΔΗΓΙΕΣ</h2>
-                            <div class="space-y-3 sm:space-y-5 w-full text-base sm:text-xl font-bold text-amber-50">
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none shrink-0">ΟΔΗΓΙΕΣ</h2>
+                            <div class="space-y-3 sm:space-y-5 w-full text-base sm:text-xl font-bold text-amber-50 overflow-y-auto custom-scroll">
                                 <p class="leading-tight text-[12px] sm:text-lg">Οδήγησε με σύρσιμο (αφή/ποντίκι) ή με τα βελάκια ⬅️ ➡️.</p>
                                 <div class="p-4 sm:p-6 bg-black/20 border-2 border-white/20 rounded-3xl">
                                     <p class="text-yellow-300 text-lg sm:text-2xl font-black uppercase leading-none">TURBO BOOSTER!</p>
@@ -149,16 +150,16 @@
                             </div>
                         </div>
                         <div class="info-page" data-id="1">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none">ΒΟΗΘΗΜΑΤΑ</h2>
-                            <div class="p-4 sm:p-8 bg-blue-900/40 border-2 border-blue-400/50 rounded-[2rem] text-left space-y-3 sm:space-y-5 w-full">
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none shrink-0">ΒΟΗΘΗΜΑΤΑ</h2>
+                            <div class="p-4 sm:p-8 bg-blue-900/40 border-2 border-blue-400/50 rounded-[2rem] text-left space-y-3 sm:space-y-5 w-full overflow-y-auto custom-scroll">
                                 <p class="text-[11px] sm:text-lg text-blue-200 uppercase leading-tight"><strong class="text-white">ZEN:</strong> Τα λάθη δεν σε σταματάνε!</p>
                                 <p class="text-[11px] sm:text-lg text-emerald-200 uppercase leading-tight"><strong class="text-white">ΚΥΚΛΟΙ:</strong> Δείχνουν σωστά/λάθος.</p>
                                 <p class="text-[11px] sm:text-lg text-purple-300 uppercase leading-tight"><strong class="text-white">ΦΩΝΗ:</strong> Ακούς το υλικό.</p>
                             </div>
                         </div>
                         <div class="info-page" data-id="2">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-4 text-center bg-white/20 p-4 rounded-[2.5rem] border-2 border-white/30 overflow-y-auto max-h-[200px] sm:max-h-[350px] custom-scroll">
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none shrink-0">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
+                            <div class="grid-container grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-4 text-center bg-white/20 p-4 rounded-[2.5rem] border-2 border-white/30 overflow-y-auto max-h-[250px] sm:max-h-[450px] custom-scroll">
                                 <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🍌</span><span class="text-[9px] font-bold mt-1">Μπανάνα</span></div>
                                 <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🍎</span><span class="text-[9px] font-bold mt-1">Μήλο</span></div>
                                 <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🥦</span><span class="text-[9px] font-bold mt-1">Μπρόκολο</span></div>
@@ -174,8 +175,8 @@
                             </div>
                         </div>
                         <div class="info-page" data-id="3">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center bg-black/20 p-4 rounded-[2.5rem] border-2 border-white/20 overflow-y-auto max-h-[200px] sm:max-h-[350px] custom-scroll">
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none shrink-0">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
+                            <div class="grid-container grid grid-cols-4 gap-2 sm:gap-4 text-center bg-black/20 p-4 rounded-[2.5rem] border-2 border-white/20 overflow-y-auto max-h-[250px] sm:max-h-[450px] custom-scroll">
                                 <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🥛</span><span class="text-[9px] font-bold mt-1">Γάλα</span></div>
                                 <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🍾</span><span class="text-[9px] font-bold mt-1">Μπουκάλι</span></div>
                                 <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🍲</span><span class="text-[9px] font-bold mt-1">Φαγητό</span></div>
@@ -421,15 +422,8 @@
             const aspect = width / height;
             renderer.setSize(width, height);
             camera.aspect = aspect;
-            
-            // Προσαρμογή FOV ανάλογα με τον προσανατολισμό
-            if (aspect < 1.0) {
-                // Portrait
-                camera.fov = 55 + (1.0 - aspect) * 25; 
-            } else {
-                // Landscape
-                camera.fov = 45; // Πιο κλειστό FOV για οριζόντια οθόνη για καλύτερη αίσθηση βάθους
-            }
+            if (aspect < 1.0) camera.fov = 55 + (1.0 - aspect) * 25; 
+            else camera.fov = 45; 
             camera.updateProjectionMatrix();
         }
         window.addEventListener('resize', onResize);
