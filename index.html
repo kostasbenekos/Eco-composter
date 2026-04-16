@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Enhanced UI Edition</title>
+    <title>ECO-COMPOSTER | Optimized Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -11,7 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0ea5e9; font-family: 'Inter', sans-serif; color: white; cursor: default; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0ea5e9; font-family: 'Inter', sans-serif; color: white; cursor: default; -webkit-tap-highlight-color: transparent; }
         #root { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
         #game-viewport { flex: 1; position: relative; background: #0ea5e9; touch-action: none; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
@@ -21,7 +21,7 @@
         .panel-ochre { background-color: #b45309; border: 4px solid #f59e0b; box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.6); }
         .overlay-layer { position: absolute; inset: 0; z-index: 5000; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
         .overlay-active { display: flex !important; }
-        .btn-green { background: #10b981; box-shadow: 0 6px 0 #059669; transition: all 0.1s; cursor: pointer; color: white; font-weight: 900; }
+        .btn-green { background: #10b981; box-shadow: 0 6px 0 #059669; transition: all 0.1s; cursor: pointer; color: white; font-weight: 900; border: none; }
         .btn-green:active { transform: translateY(3px); box-shadow: 0 2px 0 #059669; }
         
         /* Info Pages */
@@ -40,7 +40,7 @@
         }
         .turbo-text { animation: golden-blink 0.5s infinite; }
         
-        /* Mobile Utility */
+        /* Mobile Specific Utility */
         @media (max-width: 640px) {
             .mobile-hide { display: none; }
         }
@@ -89,17 +89,14 @@
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΚΥΚΛΟΙ</p>
                     <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-halo">OFF</p>
                 </button>
-                <!-- ΚΟΥΜΠΙ ΦΩΝΗΣ: Αφαίρεση mobile-hide για να φαίνεται παντού -->
                 <button id="btn-voice" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΦΩΝΗ</p>
                     <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-voice">OFF</p>
                 </button>
-                
                 <button id="btn-exit" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center bg-red-900/20 border-red-500/50 hover:bg-red-600/40 cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-red-400 leading-none mb-0.5">ΕΞΟΔΟΣ</p>
                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="mx-auto sm:w-3 sm:h-3"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 </button>
-
                 <button id="info-btn" class="ui-glass p-2 sm:p-2.5 rounded-xl text-sky-400 hover:text-white cursor-pointer shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" class="sm:w-5 sm:h-5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                 </button>
@@ -109,7 +106,6 @@
         <div id="game-viewport">
             <!-- Αρχική Οθόνη -->
             <div id="screen-start" class="overlay-layer overlay-active">
-                <!-- Enlarged Panel for PC (sm:max-w-2xl) -->
                 <div class="max-w-[90%] sm:max-w-2xl w-full panel-ochre p-8 sm:p-20 rounded-[3rem] sm:rounded-[5rem] text-center space-y-6 sm:space-y-12">
                     <div class="w-20 h-20 sm:w-36 sm:h-36 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="#b45309" class="sm:w-20 sm:h-20"><path d="M5 3l14 9-14 9V3z"/></svg>
@@ -127,7 +123,6 @@
 
             <!-- Παράθυρο Οδηγιών -->
             <div id="screen-info" class="overlay-layer">
-                <!-- Enlarged Panel for PC (sm:max-w-4xl) -->
                 <div class="max-w-[95%] sm:max-w-4xl w-full panel-ochre rounded-[2.5rem] sm:rounded-[4rem] flex flex-col p-6 sm:p-16 max-h-[95vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
                         <div class="info-page page-active" data-id="0">
@@ -191,17 +186,14 @@
                         <div class="text-3xl sm:text-5xl">😊</div>
                         <p class="text-white font-black text-xs sm:text-sm uppercase italic animate-bounce tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p>
                     </div>
-                    
                     <div class="bg-black/20 py-1.5 rounded-2xl border-2 border-white/20 shrink-0">
                         <p class="text-[7px] text-amber-200 font-black uppercase tracking-widest leading-none">ΣΥΝΟΛΙΚΟ ΣΚΟΡ</p>
                         <p id="final-score" class="text-3xl sm:text-4xl font-black text-white leading-none mt-1">0</p>
                     </div>
-
                     <div id="save-ui" class="space-y-2 shrink-0 py-2 bg-black/10 rounded-xl border border-white/10 px-2 my-1">
                         <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-2 rounded-lg text-center font-black text-white uppercase outline-none text-sm focus:border-amber-400">
                         <button id="submit-btn" class="btn-green w-full py-2 rounded-lg uppercase text-emerald-950 font-black text-base shadow-lg cursor-pointer" onclick="saveScoreToCloud()">ΑΠΟΘΗΚΕΥΣΗ</button>
                     </div>
-
                     <div id="leader-board-container" class="flex-1 flex flex-col min-h-0 text-left border-t border-white/20 pt-1 overflow-hidden">
                         <p class="text-[8px] font-black text-white uppercase tracking-widest text-center leading-none shrink-0 mb-1">ΚΑΤΑΤΑΞΗ</p>
                         <div id="leader-board" class="flex-1 overflow-y-auto custom-scroll pr-1 space-y-1"></div>
@@ -261,13 +253,36 @@
         const lbPageSize = 5;
 
         let optsZen = false, optsHalos = false, optsVoice = false;
-        const btnZen = document.getElementById('btn-zen');
-        const btnHalo = document.getElementById('btn-halo');
-        const btnVoice = document.getElementById('btn-voice');
 
-        btnZen.onclick = () => { optsZen = !optsZen; document.getElementById('lbl-zen').innerText = optsZen ? 'ON' : 'OFF'; document.getElementById('lbl-zen').className = optsZen ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; };
-        btnHalo.onclick = () => { optsHalos = !optsHalos; document.getElementById('lbl-halo').innerText = optsHalos ? 'ON' : 'OFF'; document.getElementById('lbl-halo').className = optsHalos ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; items.forEach(it => { if (it.material.map) it.material.map.dispose(); it.material.map = getTexture(it.userData.itemStr, it.userData.type, optsHalos); }); };
-        btnVoice.onclick = () => { optsVoice = !optsVoice; document.getElementById('lbl-voice').innerText = optsVoice ? 'ON' : 'OFF'; document.getElementById('lbl-voice').className = optsVoice ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; if (optsVoice && window.speechSynthesis) { let u = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(u); } };
+        // "Προθέρμανση" speechSynthesis για κινητά
+        function warmUpVoice() {
+            if (window.speechSynthesis) {
+                const u = new SpeechSynthesisUtterance("");
+                u.volume = 0;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        document.getElementById('btn-zen').onclick = () => { 
+            optsZen = !optsZen; 
+            document.getElementById('lbl-zen').innerText = optsZen ? 'ON' : 'OFF'; 
+            document.getElementById('lbl-zen').className = optsZen ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; 
+        };
+        document.getElementById('btn-halo').onclick = () => { 
+            optsHalos = !optsHalos; 
+            document.getElementById('lbl-halo').innerText = optsHalos ? 'ON' : 'OFF'; 
+            document.getElementById('lbl-halo').className = optsHalos ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; 
+            items.forEach(it => { 
+                if (it.material.map) it.material.map.dispose(); 
+                it.material.map = getTexture(it.userData.itemStr, it.userData.type, optsHalos); 
+            }); 
+        };
+        document.getElementById('btn-voice').onclick = () => { 
+            warmUpVoice();
+            optsVoice = !optsVoice; 
+            document.getElementById('lbl-voice').innerText = optsVoice ? 'ON' : 'OFF'; 
+            document.getElementById('lbl-voice').className = optsVoice ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; 
+        };
         document.getElementById('btn-exit').onclick = () => endGame();
 
         const emojiNames = { '🍌': 'Μπανάνα', '🍎': 'Μήλο', '🥦': 'Μπρόκολο', '🌿': 'Φύλλα', '🌱': 'Φυτό', '🥚': 'Τσόφλια', '📄': 'Χαρτί', '📰': 'Εφημερίδα', '📦': 'Χαρτόκουτο', '🪱': 'Σκουλήκια', '🍂': 'Ξερά φύλλα', '🪵': 'Κλαδιά', '🥛': 'Γάλα', '🍾': 'Μπουκάλι', '🍲': 'Φαγητό', '🥩': 'Κρέας', '🍼': 'Μπιμπερό', '🥫': 'Κονσέρβα', '🔋': 'Μπαταρία', '🪣': 'Κουβάς' };
@@ -282,28 +297,30 @@
 
         function startBackgroundMusic() {
             if (bgAudioActive) return;
-            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            bgAudioActive = true;
-            const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; let mIdx = 0;
-            musicInt = setInterval(() => {
-                if(!playMusicLoop) return; 
-                try {
-                    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-                    o.type = 'triangle'; o.connect(g); g.connect(audioCtx.destination);
-                    o.frequency.setValueAtTime(melody[mIdx], audioCtx.currentTime);
-                    g.gain.setValueAtTime(0.006, audioCtx.currentTime);
-                    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
-                    o.start(); o.stop(audioCtx.currentTime + 0.4); mIdx = (mIdx + 1) % melody.length;
-                } catch(e){}
-            }, 350);
+            try {
+                if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                bgAudioActive = true;
+                const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; let mIdx = 0;
+                musicInt = setInterval(() => {
+                    if(!playMusicLoop) return; 
+                    try {
+                        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+                        o.type = 'triangle'; o.connect(g); g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(melody[mIdx], audioCtx.currentTime);
+                        g.gain.setValueAtTime(0.006, audioCtx.currentTime);
+                        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
+                        o.start(); o.stop(audioCtx.currentTime + 0.4); mIdx = (mIdx + 1) % melody.length;
+                    } catch(e){}
+                }, 350);
+            } catch(e) {}
         }
         
-        document.addEventListener('mousedown', startBackgroundMusic, { once: true });
-        document.addEventListener('touchstart', startBackgroundMusic, { once: true });
+        document.addEventListener('touchstart', () => { startBackgroundMusic(); warmUpVoice(); }, { once: true });
+        document.addEventListener('mousedown', () => { startBackgroundMusic(); warmUpVoice(); }, { once: true });
         
         function playSfx(f, type = 'sine', dur = 0.2, v = 0.005) {
-            if(!audioCtx) return;
+            if(!audioCtx || audioCtx.state === 'suspended') return;
             try {
                 const o = audioCtx.createOscillator(), g = audioCtx.createGain();
                 o.type = type; o.connect(g); g.connect(audioCtx.destination);
@@ -326,12 +343,15 @@
         document.getElementById('close-info-btn').onclick = () => document.getElementById('screen-info').classList.remove('overlay-active');
 
         document.getElementById('start-btn').onclick = () => {
-            if(!bgAudioActive) startBackgroundMusic();
-            playMusicLoop = true; gameActive = true; 
+            warmUpVoice();
+            startBackgroundMusic();
+            playMusicLoop = true; 
             score = 0; mistakes = 0; frame = 0; speed = 0.35; turboActive = false; turboEndTime = 0; nextTurboFrame = 1500;
             document.getElementById('game-ui-bar').style.display = 'flex';
             document.getElementById('screen-start').classList.remove('overlay-active'); 
-            updateUI(); loop(); 
+            gameActive = true;
+            updateUI(); 
+            requestAnimationFrame(loop);
         };
 
         function endGame() {
@@ -394,8 +414,12 @@
         const viewport = document.getElementById('game-viewport'); 
         const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0ea5e9); 
         const camera = new THREE.PerspectiveCamera(55, viewport.clientWidth/viewport.clientHeight, 2.0, 3000); 
-        const renderer = new THREE.WebGLRenderer({ antialias: true }); 
-        renderer.setSize(viewport.clientWidth, viewport.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding; viewport.appendChild(renderer.domElement);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" }); 
+        renderer.setSize(viewport.clientWidth, viewport.clientHeight); 
+        // Περιορισμός pixel ratio στα κινητά για αποφυγή παγώματος
+        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+        renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : Math.min(window.devicePixelRatio, 2)); 
+        renderer.outputEncoding = THREE.sRGBEncoding; viewport.appendChild(renderer.domElement);
 
         function onResize() {
             const width = viewport.clientWidth;
@@ -403,16 +427,12 @@
             const aspect = width / height;
             renderer.setSize(width, height);
             camera.aspect = aspect;
-            
-            if (aspect < 1.0) {
-                camera.fov = 55 + (1.0 - aspect) * 25; 
-            } else {
-                camera.fov = 45; 
-            }
+            if (aspect < 1.0) camera.fov = 55 + (1.0 - aspect) * 25; 
+            else camera.fov = 45; 
             camera.updateProjectionMatrix();
         }
         window.addEventListener('resize', onResize);
-        window.addEventListener('orientationchange', () => setTimeout(onResize, 200));
+        window.addEventListener('orientationchange', () => setTimeout(onResize, 250));
         onResize();
         
         scene.add(new THREE.AmbientLight(0xffffff, 1.0)); 
@@ -443,15 +463,27 @@
             const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🪵','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const tex = getTexture(item, type, optsHalos); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex})); sprite.position.set((Math.random()-0.5) * (roadWidth - 10), 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type, itemStr: item }; scene.add(sprite); items.push(sprite);
         }
 
-        function updateUI() { document.getElementById('hud-score').innerText = score; document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; document.getElementById('hud-speed').innerText = Math.floor(speed * 100); document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; }
+        function updateUI() { 
+            document.getElementById('hud-score').innerText = score; 
+            document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; 
+            document.getElementById('hud-speed').innerText = Math.floor(speed * 100); 
+            document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; 
+        }
         
         const keys = { ArrowLeft: false, ArrowRight: false };
         window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
 
         function loop() {
-            if(!gameActive) return; requestAnimationFrame(loop); frame++; 
-            if(!optsFreeze) { let k = Math.floor(frame / 2000); let val = (k <= 1) ? (35 + k * 10) : (45 + (k - 1) * 5); speed = val / 100; }
+            if(!gameActive) return; 
+            requestAnimationFrame(loop); 
+            frame++; 
+
+            if(!optsFreeze) { 
+                let k = Math.floor(frame / 2000); 
+                let val = (k <= 1) ? (35 + k * 10) : (45 + (k - 1) * 5); 
+                speed = val / 100; 
+            }
             camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
             const moveSpeed = 2.5; if(keys.ArrowLeft) truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - moveSpeed); if(keys.ArrowRight) truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + moveSpeed);
 
@@ -459,19 +491,34 @@
                 turboActive = true; let durationFrames = Math.max(240, Math.floor(960 - 1028.57 * speed));
                 turboEndTime = frame + durationFrames; nextTurboFrame = frame + 2500; updateUI(); playSfx(880, 'sine', 0.5, 0.01);
             }
-            if(turboActive) { if (frame > turboEndTime) { turboActive = false; bin.material.emissive.setHex(0x000000); updateUI(); } else { bin.material.emissive.setRGB((frame % 6 < 3 ? 0.8 : 0.1), (frame % 6 < 3 ? 0.7 : 0.1), 0); } }
+            if(turboActive) { 
+                if (frame > turboEndTime) { 
+                    turboActive = false; bin.material.emissive.setHex(0x000000); updateUI(); 
+                } else { 
+                    bin.material.emissive.setRGB((frame % 6 < 3 ? 0.8 : 0.1), (frame % 6 < 3 ? 0.7 : 0.1), 0); 
+                } 
+            }
 
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
-                    if(optsVoice && window.speechSynthesis) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || ""); u.lang = 'el-GR'; u.rate = 1.6; window.speechSynthesis.speak(u); }
+                    if(optsVoice && window.speechSynthesis) { 
+                        // Πρόληψη παγώματος: Ακύρωση μόνο αν υπάρχει ενεργή ομιλία
+                        window.speechSynthesis.cancel();
+                        try {
+                            let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || "");
+                            u.lang = 'el-GR'; u.rate = 1.6;
+                            window.speechSynthesis.speak(u); 
+                        } catch(err) {}
+                    }
                     if(it.userData.type === 'good') { score += (turboActive ? 200 : 100); playSfx(600, 'sine', 0.15, 0.005); } 
                     else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square', 0.4, 0.008); if(mistakes >= 12 && !optsZen) { endGame(); } }
                     scene.remove(it); items.splice(i,1); updateUI();
                 } else if(it.position.z > 50) { scene.remove(it); items.splice(i,1); }
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
-            if(frame % Math.floor(Math.max(12, 55 - (Math.floor(frame/2000)*10))) === 0) spawn(); renderer.render(scene, camera);
+            if(frame % Math.floor(Math.max(12, 55 - (Math.floor(frame/2000)*10))) === 0) spawn(); 
+            renderer.render(scene, camera);
         }
         
         viewport.addEventListener('touchstart', e => { lastX = e.touches[0].clientX; }, {passive: false});
