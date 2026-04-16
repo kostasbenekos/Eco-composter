@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Game</title>
+    <title>ECO-COMPOSTER | Responsive & Landscape</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -15,201 +15,201 @@
         #root { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
         #game-viewport { flex: 1; position: relative; background: #0ea5e9; touch-action: none; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
-        .ui-glass { background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px); border: 2px solid rgba(255,255,255,0.1); }
+        
+        /* UI Styling */
+        .ui-glass { background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
         .panel-ochre { background-color: #b45309; border: 4px solid #f59e0b; box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.6); }
         .overlay-layer { position: absolute; inset: 0; z-index: 5000; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; padding: 10px; }
         .overlay-active { display: flex !important; }
         .btn-green { background: #10b981; box-shadow: 0 6px 0 #059669; transition: all 0.1s; cursor: pointer; color: white; font-weight: 900; }
         .btn-green:active { transform: translateY(3px); box-shadow: 0 2px 0 #059669; }
+        
+        /* Info Pages */
         .info-page { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .page-active { display: flex !important; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: background 0.3s; }
-        .dot-active { background: white; width: 25px; border-radius: 5px; }
-        .hud-label { font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: background 0.3s; }
+        .dot-active { background: white; width: 20px; border-radius: 4px; }
+        
+        .hud-label { font-size: 7px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1px; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 10px; }
+        
         @keyframes golden-blink {
             0%, 100% { color: #fbbf24; text-shadow: 0 0 10px #f59e0b; }
             50% { color: #fff; text-shadow: 0 0 20px #fbbf24; }
         }
         .turbo-text { animation: golden-blink 0.5s infinite; }
+        
+        /* Mobile Specific Utility & Orientation tweaks */
+        @media (max-width: 640px) {
+            .mobile-hide { display: none; }
+        }
+
+        /* Landscape optimization (low height) */
+        @media (max-height: 500px) {
+            #game-ui-bar { padding: 4px 8px !important; }
+            .ui-glass { padding-top: 2px !important; padding-bottom: 2px !important; }
+            .hud-label { font-size: 6px !important; }
+            #hud-score, #hud-mistakes { font-size: 14px !important; }
+            .turbo-text { font-size: 8px !important; padding: 2px 8px !important; }
+            #info-btn { padding: 4px !important; }
+        }
     </style>
 </head>
 <body>
     <div id="root">
         <!-- HUD Bar -->
-        <div id="game-ui-bar" class="p-3 bg-slate-900 border-b-4 border-emerald-500 flex justify-between items-center z-50 overflow-x-auto" style="display: none;">
-            <div class="flex gap-2 shrink-0">
-                <div class="ui-glass px-3 py-2 rounded-2xl text-center min-w-[70px]">
-                    <p class="hud-label text-emerald-400 font-black">ΣΚΟΡ</p>
-                    <p id="hud-score" class="text-lg font-black text-white leading-none">0</p>
+        <div id="game-ui-bar" class="p-2 sm:p-3 bg-slate-900 border-b-4 border-emerald-500 flex justify-between items-center z-50 overflow-x-auto gap-2 no-scrollbar" style="display: none;">
+            <div class="flex gap-1.5 shrink-0">
+                <div class="ui-glass px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[60px] sm:min-w-[80px]">
+                    <p class="hud-label text-emerald-400">ΣΚΟΡ</p>
+                    <p id="hud-score" class="text-sm sm:text-lg font-black text-white leading-none">0</p>
                 </div>
-                <div class="ui-glass px-3 py-2 rounded-2xl text-center min-w-[70px]">
-                    <p class="hud-label text-red-400 font-black">ΛΑΘΗ</p>
-                    <p id="hud-mistakes" class="text-lg font-black text-white leading-none">0/12</p>
+                <div class="ui-glass px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[60px] sm:min-w-[80px]">
+                    <p class="hud-label text-red-400">ΛΑΘΗ</p>
+                    <p id="hud-mistakes" class="text-sm sm:text-lg font-black text-white leading-none">0/12</p>
                 </div>
-                <div class="ui-glass px-3 py-2 rounded-2xl text-center min-w-[70px]">
-                    <p class="hud-label text-sky-400 font-black">ΤΑΧ/ΤΑ</p>
-                    <p id="hud-speed" class="text-lg font-black text-white leading-none">35</p>
+                <div class="ui-glass px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[50px] sm:min-w-[70px] mobile-hide">
+                    <p class="hud-label text-sky-400">ΤΑΧ/ΤΑ</p>
+                    <p id="hud-speed" class="text-sm sm:text-lg font-black text-white leading-none">35</p>
                 </div>
             </div>
             
-            <div id="hud-boost" class="hidden turbo-text font-black text-[9px] uppercase italic bg-yellow-400/20 px-3 py-2 rounded-full border-2 border-yellow-400 mx-2 shrink-0">⚡ TURBO BOOSTER</div>
+            <div id="hud-boost" class="hidden turbo-text font-black text-[8px] sm:text-[10px] uppercase italic bg-yellow-400/20 px-2 sm:px-3 py-1.5 rounded-full border-2 border-yellow-400 mx-1 shrink-0">⚡ TURBO</div>
             
             <div class="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto pointer-events-auto">
-                <button id="btn-zen" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
-                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px] pointer-events-none">ZEN</p>
-                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none" id="lbl-zen">OFF</p>
+                <button id="btn-zen" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
+                    <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ZEN</p>
+                    <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-zen">OFF</p>
                 </button>
-                <button id="btn-freeze" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
-                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px] pointer-events-none">SPEED FREEZE</p>
-                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none" id="lbl-freeze">OFF</p>
+                <button id="btn-halo" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
+                    <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΚΥΚΛΟΙ</p>
+                    <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-halo">OFF</p>
                 </button>
-                <button id="btn-halo" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
-                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px] pointer-events-none">ΚΥΚΛΟΙ</p>
-                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none" id="lbl-halo">OFF</p>
-                </button>
-                <button id="btn-voice" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none">
-                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-slate-300 leading-none mb-[2px] pointer-events-none">ΦΩΝΗ</p>
-                    <p class="text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none" id="lbl-voice">OFF</p>
+                <button id="btn-voice" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer mobile-hide">
+                    <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΦΩΝΗ</p>
+                    <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-voice">OFF</p>
                 </button>
                 
-                <button id="btn-exit" class="ui-glass px-2 py-1 rounded-xl text-center transition-all cursor-pointer select-none bg-red-900/20 border-red-500/50 hover:bg-red-600/40">
-                    <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-red-400 leading-none mb-[2px] pointer-events-none">ΕΞΟΔΟΣ</p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="mx-auto pointer-events-none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <button id="btn-exit" class="ui-glass px-2 py-1 sm:py-1.5 rounded-lg text-center bg-red-900/20 border-red-500/50 hover:bg-red-600/40 cursor-pointer">
+                    <p class="text-[6px] sm:text-[8px] font-black uppercase text-red-400 leading-none mb-0.5">ΕΞΟΔΟΣ</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="mx-auto sm:w-3 sm:h-3"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 </button>
 
-                <button id="info-btn" class="ui-glass p-2 sm:p-3 rounded-2xl text-sky-400 hover:text-white transition-all cursor-pointer shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                <button id="info-btn" class="ui-glass p-2 sm:p-2.5 rounded-xl text-sky-400 hover:text-white cursor-pointer shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" class="sm:w-5 sm:h-5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                 </button>
             </div>
         </div>
 
         <div id="game-viewport">
+            <!-- Screen Start -->
             <div id="screen-start" class="overlay-layer overlay-active">
-                <div class="max-w-xs w-full panel-ochre p-8 rounded-[4rem] text-center space-y-6">
-                    <div class="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="#b45309"><path d="M5 3l14 9-14 9V3z"/></svg>
+                <div class="max-w-[280px] sm:max-w-xs w-full panel-ochre p-6 sm:p-8 rounded-[3rem] sm:rounded-[4rem] text-center space-y-4 sm:space-y-6">
+                    <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#b45309" class="sm:w-10 sm:h-10"><path d="M5 3l14 9-14 9V3z"/></svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-black uppercase tracking-tighter italic leading-none text-white">ECO-COMPOSTER</h1>
-                        <p class="text-amber-200 text-[10px] font-black uppercase mt-2 tracking-widest leading-none">GitHub Edition</p>
+                        <h1 class="text-xl sm:text-3xl font-black uppercase tracking-tighter italic leading-none text-white">ECO-COMPOSTER</h1>
+                        <p class="text-amber-200 text-[8px] sm:text-[10px] font-black uppercase mt-2 tracking-widest leading-none">Responsive Game</p>
                     </div>
-                    <div class="flex flex-col gap-3">
-                        <button id="start-btn" class="btn-green w-full py-5 rounded-3xl text-2xl uppercase shadow-lg cursor-pointer">ΠΑΙΞΕ</button>
-                        <button id="instr-btn" class="w-full py-3 rounded-2xl font-black text-xs text-white uppercase tracking-widest bg-black/30 hover:bg-black/40 transition-all cursor-pointer">ΟΔΗΓΙΕΣ</button>
+                    <div class="flex flex-col gap-2 sm:gap-3">
+                        <button id="start-btn" class="btn-green w-full py-3.5 sm:py-5 rounded-2xl text-lg sm:text-2xl uppercase shadow-lg cursor-pointer">ΠΑΙΞΕ</button>
+                        <button id="instr-btn" class="w-full py-2.5 rounded-xl font-black text-[9px] sm:text-xs text-white uppercase tracking-widest bg-black/30 hover:bg-black/40 cursor-pointer">ΟΔΗΓΙΕΣ</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Screen Info -->
             <div id="screen-info" class="overlay-layer">
-                <div class="max-w-sm w-full panel-ochre rounded-[3rem] flex flex-col p-6 max-h-[90vh] overflow-hidden">
+                <div class="max-w-[320px] sm:max-w-sm w-full panel-ochre rounded-[2.5rem] flex flex-col p-4 sm:p-6 max-h-[90vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
                         <div class="info-page page-active" data-id="0">
-                            <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΟΔΗΓΙΕΣ</h2>
-                            <div class="space-y-3 w-full text-base font-bold text-amber-50">
-                                <p class="leading-tight text-sm">Οδήγησε με σύρσιμο (αφή/ποντίκι) ή με τα βελάκια ⬅️ ➡️.</p>
+                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 sm:mb-4 uppercase italic leading-none">ΟΔΗΓΙΕΣ</h2>
+                            <div class="space-y-2 sm:y-3 w-full text-base font-bold text-amber-50">
+                                <p class="leading-tight text-[11px] sm:text-sm">Οδήγησε με σύρσιμο (αφή/ποντίκι) ή με τα βελάκια ⬅️ ➡️.</p>
                                 <div class="p-3 bg-black/20 border-2 border-white/20 rounded-2xl">
-                                    <p class="text-yellow-300 text-lg font-black uppercase leading-none">TURBO BOOSTER!</p>
-                                    <p class="text-[11px] mt-1 font-black uppercase leading-tight">Ενεργοποιείται τυχαία! Κάθε σωστό υλικό σου δίνει διπλούς πόντους.</p>
+                                    <p class="text-yellow-300 text-base sm:text-lg font-black uppercase leading-none">TURBO BOOSTER!</p>
+                                    <p class="text-[9px] sm:text-[11px] mt-1 font-black uppercase leading-tight">Ενεργοποιείται τυχαία! Δίνει διπλούς πόντους.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="info-page" data-id="1">
-                            <h2 class="text-2xl font-black text-white mb-4 uppercase italic leading-none">ΒΟΗΘΗΜΑΤΑ</h2>
-                            <div class="p-3 bg-blue-900/40 border-2 border-blue-400/50 rounded-2xl text-left space-y-3 w-full">
-                                <p class="text-xs text-blue-200 uppercase leading-tight"><strong class="text-white">ZEN:</strong><br>Τα λάθη δεν σε σταματάνε ποτέ!</p>
-                                <p class="text-xs text-amber-200 uppercase leading-tight"><strong class="text-white">SPEED FREEZE:</strong><br>Η ταχύτητα μένει σταθερή, δεν αυξάνεται.</p>
-                                <p class="text-xs text-emerald-200 uppercase leading-tight"><strong class="text-white">ΚΥΚΛΟΙ:</strong><br>Δείχνουν σωστά/λάθος με έντονο χρώμα.</p>
-                                <p class="text-xs text-purple-300 uppercase leading-tight"><strong class="text-white">ΦΩΝΗ:</strong><br>Ακούς το όνομα του αντικειμένου.</p>
+                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 sm:mb-4 uppercase italic leading-none">ΒΟΗΘΗΜΑΤΑ</h2>
+                            <div class="p-3 bg-blue-900/40 border-2 border-blue-400/50 rounded-2xl text-left space-y-2 w-full">
+                                <p class="text-[9px] sm:text-xs text-blue-200 uppercase leading-tight"><strong class="text-white">ZEN:</strong> Τα λάθη δεν σε σταματάνε!</p>
+                                <p class="text-[9px] sm:text-xs text-emerald-200 uppercase leading-tight"><strong class="text-white">ΚΥΚΛΟΙ:</strong> Δείχνουν σωστά/λάθος.</p>
+                                <p class="text-[9px] sm:text-xs text-purple-300 uppercase leading-tight"><strong class="text-white">ΦΩΝΗ:</strong> Ακούς το υλικό.</p>
                             </div>
                         </div>
                         <div class="info-page" data-id="2">
-                            <h2 class="text-2xl font-black text-white mb-2 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 gap-2 text-center bg-white/20 p-3 rounded-[2rem] border-2 border-white/30 overflow-y-auto max-h-[250px] custom-scroll">
-                                <div class="flex flex-col items-center"><span class="text-3xl">🍌</span><span class="text-[9px] font-bold mt-1">Μπανάνα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🍎</span><span class="text-[9px] font-bold mt-1">Μήλο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🥦</span><span class="text-[9px] font-bold mt-1">Μπρόκολο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🌿</span><span class="text-[9px] font-bold mt-1">Φύλλα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🌱</span><span class="text-[9px] font-bold mt-1">Φυτό</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🥚</span><span class="text-[9px] font-bold mt-1">Τσόφλια</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">📄</span><span class="text-[9px] font-bold mt-1">Χαρτί</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">📰</span><span class="text-[9px] font-bold mt-1">Εφημερίδα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">📦</span><span class="text-[9px] font-bold mt-1">Χαρτόκουτο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🪱</span><span class="text-[9px] font-bold mt-1">Σκουλήκια</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🍂</span><span class="text-[9px] font-bold mt-1">Ξερά φύλλα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🪵</span><span class="text-[9px] font-bold mt-1">Κλαδιά</span></div>
+                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 gap-2 text-center bg-white/20 p-2 rounded-[2rem] border-2 border-white/30 overflow-y-auto max-h-[150px] sm:max-h-[250px] custom-scroll">
+                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🍌</span><span class="text-[8px] font-bold mt-1">Μπανάνα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🍎</span><span class="text-[8px] font-bold mt-1">Μήλο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🥦</span><span class="text-[8px] font-bold mt-1">Μπρόκολο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🌱</span><span class="text-[8px] font-bold mt-1">Φυτό</span></div>
+                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🥚</span><span class="text-[8px] font-bold mt-1">Τσόφλια</span></div>
+                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🪱</span><span class="text-[8px] font-bold mt-1">Σκουλήκια</span></div>
                             </div>
                         </div>
                         <div class="info-page" data-id="3">
-                            <h2 class="text-2xl font-black text-white mb-2 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 gap-2 text-center bg-black/20 p-3 rounded-[2rem] border-2 border-white/20 overflow-y-auto max-h-[250px] custom-scroll">
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥛</span><span class="text-[9px] font-bold mt-1">Γάλα</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍾</span><span class="text-[9px] font-bold mt-1">Μπουκάλι</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍲</span><span class="text-[9px] font-bold mt-1">Φαγητό</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥩</span><span class="text-[9px] font-bold mt-1">Κρέας</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍼</span><span class="text-[9px] font-bold mt-1">Μπιμπερό</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥫</span><span class="text-[9px] font-bold mt-1">Κονσέρβα</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🔋</span><span class="text-[9px] font-bold mt-1">Μπαταρία</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🪣</span><span class="text-[9px] font-bold mt-1">Κουβάς</span></div>
+                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 gap-2 text-center bg-black/20 p-2 rounded-[2rem] border-2 border-white/20 overflow-y-auto max-h-[150px] sm:max-h-[250px] custom-scroll">
+                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🥛</span><span class="text-[8px] font-bold mt-1">Γάλα</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🍾</span><span class="text-[8px] font-bold mt-1">Μπουκάλι</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🥩</span><span class="text-[8px] font-bold mt-1">Κρέας</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🔋</span><span class="text-[8px] font-bold mt-1">Μπαταρία</span></div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-white/20">
-                        <button id="prev-page-btn" class="p-3 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg>
+                    <div class="flex justify-between items-center mt-auto pt-3 border-t border-white/20">
+                        <button id="prev-page-btn" class="p-2.5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg>
                         </button>
-                        <div class="flex gap-2">
+                        <div class="flex gap-1.5">
                             <div class="dot dot-active" id="dot-0"></div><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div><div class="dot" id="dot-3"></div>
                         </div>
-                        <button id="next-page-btn" class="p-3 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg>
+                        <button id="next-page-btn" class="p-2.5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg>
                         </button>
                     </div>
-                    <button id="close-info-btn" class="w-full bg-emerald-600 py-4 rounded-2xl font-black text-white uppercase text-sm mt-4 shadow-xl cursor-pointer">ΚΛΕΙΣΙΜΟ</button>
+                    <button id="close-info-btn" class="w-full bg-emerald-600 py-2.5 rounded-xl font-black text-white uppercase text-[10px] mt-4 shadow-xl cursor-pointer">ΚΛΕΙΣΙΜΟ</button>
                 </div>
             </div>
 
             <!-- Screen End -->
             <div id="screen-end" class="overlay-layer">
-                <div class="w-full max-w-sm panel-ochre p-4 rounded-[2rem] text-center space-y-3 max-h-[98vh] flex flex-col overflow-hidden relative">
+                <div class="w-full max-w-[320px] sm:max-w-sm panel-ochre p-4 sm:p-5 rounded-[2.5rem] text-center space-y-3 max-h-[98vh] flex flex-col overflow-hidden relative">
                     <div class="shrink-0">
-                        <div class="text-5xl">😊</div>
-                        <p class="text-white font-black text-sm uppercase italic animate-bounce tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p>
+                        <div class="text-3xl sm:text-5xl">😊</div>
+                        <p class="text-white font-black text-xs sm:text-sm uppercase italic animate-bounce tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p>
                     </div>
                     
-                    <div class="bg-black/20 py-2 rounded-3xl border-2 border-white/20 shrink-0">
-                        <p class="text-[8px] text-amber-200 font-black uppercase tracking-widest leading-none">ΣΥΝΟΛΙΚΟ ΣΚΟΡ</p>
-                        <p id="final-score" class="text-4xl font-black text-white leading-none mt-1">0</p>
+                    <div class="bg-black/20 py-1.5 rounded-2xl border-2 border-white/20 shrink-0">
+                        <p class="text-[7px] text-amber-200 font-black uppercase tracking-widest leading-none">ΣΥΝΟΛΙΚΟ ΣΚΟΡ</p>
+                        <p id="final-score" class="text-3xl sm:text-4xl font-black text-white leading-none mt-1">0</p>
                     </div>
 
-                    <!-- Fixed User Input in Middle -->
-                    <div id="save-ui" class="space-y-2 shrink-0 py-3 bg-black/10 rounded-2xl border border-white/10 px-2 my-2">
-                        <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-2.5 rounded-xl text-center font-black text-white uppercase outline-none text-base focus:border-amber-400">
-                        <button id="submit-btn" class="btn-green w-full py-2.5 rounded-xl uppercase text-emerald-950 font-black text-lg shadow-lg cursor-pointer" onclick="saveScoreToCloud()">ΑΠΟΘΗΚΕΥΣΗ</button>
+                    <div id="save-ui" class="space-y-2 shrink-0 py-2 bg-black/10 rounded-xl border border-white/10 px-2 my-1">
+                        <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-2 rounded-lg text-center font-black text-white uppercase outline-none text-sm focus:border-amber-400">
+                        <button id="submit-btn" class="btn-green w-full py-2 rounded-lg uppercase text-emerald-950 font-black text-base shadow-lg cursor-pointer" onclick="saveScoreToCloud()">ΑΠΟΘΗΚΕΥΣΗ</button>
                     </div>
 
-                    <!-- Leaderboard Container -->
-                    <div id="leader-board-container" class="flex-1 flex flex-col min-h-0 text-left border-t border-white/20 pt-2 overflow-hidden">
-                        <p class="text-[9px] font-black text-white uppercase tracking-widest text-center leading-none shrink-0 mb-1">ΠΑΓΚΟΣΜΙΑ ΚΑΤΑΤΑΞΗ</p>
-                        
-                        <div id="leader-board" class="flex-1 overflow-y-auto custom-scroll pr-1 space-y-1">
-                            <!-- Scores inject here -->
-                        </div>
-
-                        <!-- Pagination Controls (Arrows) -->
-                        <div class="flex justify-between items-center px-4 py-2 shrink-0 bg-black/20 mt-1 rounded-xl">
-                            <button id="lb-prev" class="p-2 bg-white/10 rounded-full hover:bg-white/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg>
+                    <div id="leader-board-container" class="flex-1 flex flex-col min-h-0 text-left border-t border-white/20 pt-1 overflow-hidden">
+                        <p class="text-[8px] font-black text-white uppercase tracking-widest text-center leading-none shrink-0 mb-1">ΚΑΤΑΤΑΞΗ</p>
+                        <div id="leader-board" class="flex-1 overflow-y-auto custom-scroll pr-1 space-y-1"></div>
+                        <div class="flex justify-between items-center px-3 py-1 shrink-0 bg-black/20 mt-1 rounded-lg">
+                            <button id="lb-prev" class="p-1 bg-white/10 rounded-full hover:bg-white/20 disabled:opacity-30 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg>
                             </button>
-                            <span id="lb-page-info" class="text-[10px] font-black text-amber-200 uppercase tracking-widest">ΣΕΛΙΔΑ 1/1</span>
-                            <button id="lb-next" class="p-2 bg-white/10 rounded-full hover:bg-white/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg>
+                            <span id="lb-page-info" class="text-[8px] font-black text-amber-200 uppercase tracking-widest">1/1</span>
+                            <button id="lb-next" class="p-1 bg-white/10 rounded-full hover:bg-white/20 disabled:opacity-30 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg>
                             </button>
                         </div>
                     </div>
-
-                    <button onclick="location.reload()" class="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200 pt-1 hover:text-white cursor-pointer shrink-0">ΠΑΙΞΕ ΞΑΝΑ</button>
+                    <button onclick="location.reload()" class="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200 pt-1 hover:text-white cursor-pointer shrink-0">ΠΑΙΞΕ ΞΑΝΑ</button>
                 </div>
             </div>
         </div>
@@ -218,6 +218,7 @@
     <script>
         let db = null; let auth = null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'eco-composter-github-db';
+        
         try { 
             let firebaseConfig = null;
             if (typeof __firebase_config !== 'undefined') { firebaseConfig = JSON.parse(__firebase_config); }
@@ -250,30 +251,25 @@
         let gameActive = false, score = 0, mistakes = 0, speed = 0.35, frame = 0, lastX = 0;
         let turboActive = false, turboEndTime = 0, nextTurboFrame = 1000;
         let items = [], audioCtx, musicInt, bgAudioActive = false, playMusicLoop = true;
-        
-        let lbData = [];
-        let lbCurrentPage = 0;
+        let lbData = [], lbCurrentPage = 0;
         const lbPageSize = 5;
 
         let optsZen = false, optsHalos = false, optsVoice = false, optsFreeze = false;
-        const btnZen = document.getElementById('btn-zen'); const lblZen = document.getElementById('lbl-zen');
-        const btnHalo = document.getElementById('btn-halo'); const lblHalo = document.getElementById('lbl-halo');
-        const btnVoice = document.getElementById('btn-voice'); const lblVoice = document.getElementById('lbl-voice');
-        const btnFreeze = document.getElementById('btn-freeze'); const lblFreeze = document.getElementById('lbl-freeze');
-        const btnExit = document.getElementById('btn-exit');
+        const btnZen = document.getElementById('btn-zen');
+        const btnHalo = document.getElementById('btn-halo');
+        const btnVoice = document.getElementById('btn-voice');
 
-        btnZen.onclick = () => { optsZen = !optsZen; lblZen.innerText = optsZen ? 'ON' : 'OFF'; lblZen.className = optsZen ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none pointer-events-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none'; };
-        btnFreeze.onclick = () => { optsFreeze = !optsFreeze; lblFreeze.innerText = optsFreeze ? 'ON' : 'OFF'; lblFreeze.className = optsFreeze ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none pointer-events-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none'; };
-        btnHalo.onclick = () => { optsHalos = !optsHalos; lblHalo.innerText = optsHalos ? 'ON' : 'OFF'; lblHalo.className = optsHalos ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none pointer-events-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none'; items.forEach(it => { if (it.material.map) it.material.map.dispose(); it.material.map = getTexture(it.userData.itemStr, it.userData.type, optsHalos); }); };
-        btnVoice.onclick = () => { optsVoice = !optsVoice; lblVoice.innerText = optsVoice ? 'ON' : 'OFF'; lblVoice.className = optsVoice ? 'text-[10px] sm:text-[12px] font-black text-emerald-400 leading-none pointer-events-none' : 'text-[10px] sm:text-[12px] font-black text-slate-400 leading-none pointer-events-none'; if (optsVoice && window.speechSynthesis) { let u = new SpeechSynthesisUtterance(""); window.speechSynthesis.speak(u); } };
-        btnExit.onclick = () => { if (!gameActive) return; gameActive = false; playMusicLoop = false; document.getElementById('game-ui-bar').style.display = 'none'; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); };
+        btnZen.onclick = () => { optsZen = !optsZen; document.getElementById('lbl-zen').innerText = optsZen ? 'ON' : 'OFF'; document.getElementById('lbl-zen').className = optsZen ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; };
+        btnHalo.onclick = () => { optsHalos = !optsHalos; document.getElementById('lbl-halo').innerText = optsHalos ? 'ON' : 'OFF'; document.getElementById('lbl-halo').className = optsHalos ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; items.forEach(it => { if (it.material.map) it.material.map.dispose(); it.material.map = getTexture(it.userData.itemStr, it.userData.type, optsHalos); }); };
+        btnVoice.onclick = () => { optsVoice = !optsVoice; document.getElementById('lbl-voice').innerText = optsVoice ? 'ON' : 'OFF'; document.getElementById('lbl-voice').className = optsVoice ? 'text-[9px] sm:text-[11px] font-black text-emerald-400' : 'text-[9px] sm:text-[11px] font-black text-slate-400'; };
+        document.getElementById('btn-exit').onclick = () => endGame();
 
         const emojiNames = { '🍌': 'Μπανάνα', '🍎': 'Μήλο', '🥦': 'Μπρόκολο', '🌿': 'Φύλλα', '🌱': 'Φυτό', '🥚': 'Τσόφλια', '📄': 'Χαρτί', '📰': 'Εφημερίδα', '📦': 'Χαρτόκουτο', '🪱': 'Σκουλήκια', '🍂': 'Ξερά φύλλα', '🪵': 'Κλαδιά', '🥛': 'Γάλα', '🍾': 'Μπουκάλι', '🍲': 'Φαγητό', '🥩': 'Κρέας', '🍼': 'Μπιμπερό', '🥫': 'Κονσέρβα', '🔋': 'Μπαταρία', '🪣': 'Κουβάς' };
 
         function getTexture(itemStr, type, useHalo) {
             const c = document.createElement('canvas'); c.width=256; c.height=256; const x = c.getContext('2d');
             x.filter = 'saturate(200%)'; x.textAlign='center'; x.textBaseline='middle'; 
-            const fontSize = 175; x.font = `${fontSize}px Arial`; 
+            x.font = `175px Arial`; 
             if(useHalo) { x.beginPath(); x.arc(128, 128, 115, 0, Math.PI * 2); x.lineWidth = 14; x.strokeStyle = type === 'good' ? '#22c55e' : '#ef4444'; x.stroke(); }
             x.fillText(itemStr, 128, 128); return new THREE.CanvasTexture(c);
         }
@@ -286,7 +282,6 @@
             const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; let mIdx = 0;
             musicInt = setInterval(() => {
                 if(!playMusicLoop) return; 
-                if(audioCtx.state === 'suspended') audioCtx.resume();
                 try {
                     const o = audioCtx.createOscillator(), g = audioCtx.createGain();
                     o.type = 'triangle'; o.connect(g); g.connect(audioCtx.destination);
@@ -302,7 +297,7 @@
         document.addEventListener('touchstart', startBackgroundMusic, { once: true });
         
         function playSfx(f, type = 'sine', dur = 0.2, v = 0.005) {
-            if(!gameActive || !audioCtx) return;
+            if(!audioCtx) return;
             try {
                 const o = audioCtx.createOscillator(), g = audioCtx.createGain();
                 o.type = type; o.connect(g); g.connect(audioCtx.destination);
@@ -318,13 +313,11 @@
             document.querySelectorAll('.info-page').forEach((p, i) => p.classList.toggle('page-active', i === infoPageIdx));
             document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('dot-active', i === infoPageIdx));
         };
-        const navigate = (dir) => { infoPageIdx = (infoPageIdx + dir + 4) % 4; updatePages(); };
-        const openInfo = (s) => { document.getElementById('screen-info').classList.toggle('overlay-active', s); if(s) { infoPageIdx = 0; updatePages(); } };
-        document.getElementById('info-btn').onclick = () => openInfo(true);
-        document.getElementById('instr-btn').onclick = () => openInfo(true);
-        document.getElementById('close-info-btn').onclick = () => openInfo(false);
-        document.getElementById('prev-page-btn').onclick = () => navigate(-1);
-        document.getElementById('next-page-btn').onclick = () => navigate(1);
+        document.getElementById('prev-page-btn').onclick = () => { infoPageIdx = (infoPageIdx - 1 + 4) % 4; updatePages(); };
+        document.getElementById('next-page-btn').onclick = () => { infoPageIdx = (infoPageIdx + 1) % 4; updatePages(); };
+        document.getElementById('info-btn').onclick = () => { document.getElementById('screen-info').classList.add('overlay-active'); infoPageIdx = 0; updatePages(); };
+        document.getElementById('instr-btn').onclick = () => { document.getElementById('screen-info').classList.add('overlay-active'); infoPageIdx = 0; updatePages(); };
+        document.getElementById('close-info-btn').onclick = () => document.getElementById('screen-info').classList.remove('overlay-active');
 
         document.getElementById('start-btn').onclick = () => {
             if(!bgAudioActive) startBackgroundMusic();
@@ -335,108 +328,95 @@
             updateUI(); loop(); 
         };
 
+        function endGame() {
+            gameActive = false; playMusicLoop = false; 
+            document.getElementById('game-ui-bar').style.display = 'none';
+            document.getElementById('final-score').innerText = score; 
+            document.getElementById('screen-end').classList.add('overlay-active'); 
+            loadLeaderboard();
+        }
+
         async function saveScoreToCloud() {
             const btn = document.getElementById('submit-btn');
-            if (!db || !auth || !auth.currentUser) { btn.innerText = "ΑΠΑΙΤΕΙΤΑΙ FIREBASE"; return; }
+            if (!db || !auth || !auth.currentUser) { btn.innerText = "FIREBASE ERROR"; return; }
             const name = document.getElementById('p-name').value.trim(); if (!name) return;
-            btn.innerText = "ΑΝΑΜΟΝΗ..."; btn.disabled = true;
+            btn.innerText = "WAIT..."; btn.disabled = true;
             try {
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').add({
-                    name: name.toUpperCase(), 
-                    score: score, 
-                    mistakes: mistakes, 
-                    duration: frame, 
-                    zenUsed: optsZen,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    name: name.toUpperCase(), score: score, mistakes: mistakes, duration: frame, zenUsed: optsZen, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 document.getElementById('save-ui').style.display = 'none'; loadLeaderboard();
-            } catch (e) { btn.innerText = "ΣΦΑΛΜΑ"; btn.disabled = false; }
+            } catch (e) { btn.innerText = "ERROR"; btn.disabled = false; }
         }
-        window.saveScoreToCloud = saveScoreToCloud;
 
         async function loadLeaderboard() {
             const list = document.getElementById('leader-board');
-            if (!db) { list.innerHTML = `<p class="text-red-300 text-[10px]">Λείπει η σύνδεση Firebase.</p>`; return; }
-            list.innerHTML = '<p class="text-center text-white opacity-40 text-[10px]">ΦΟΡΤΩΣΗ...</p>';
+            if (!db) { list.innerHTML = `<p class="text-red-300">No Connection.</p>`; return; }
+            list.innerHTML = '<p class="text-center opacity-40">Loading...</p>';
             try {
                 const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
                 let data = []; snap.forEach(doc => data.push(doc.data()));
-                
-                // --- CATEGORIZATION & SORTING ---
                 data.sort((a, b) => {
-                    // Category: Penalty Group (ZEN used AND mistakes > 12) vs Normal Group
                     const aIsPenalty = (a.zenUsed && a.mistakes > 12);
                     const bIsPenalty = (b.zenUsed && b.mistakes > 12);
-
-                    // First Criterion: Normal group must ALWAYS come before Penalty group
-                    if (aIsPenalty !== bIsPenalty) {
-                        return aIsPenalty ? 1 : -1;
-                    }
-
-                    // Inside same category:
-                    // 1. Higher Score
+                    if (aIsPenalty !== bIsPenalty) return aIsPenalty ? 1 : -1;
                     if (b.score !== a.score) return b.score - a.score;
-                    // 2. Fewer Mistakes
                     if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
-                    // 3. Higher Duration (survival time)
                     return b.duration - a.duration;
                 });
-
-                lbData = data;
-                lbCurrentPage = 0;
-                renderLBPage();
-            } catch (e) { list.innerHTML = '<p class="text-center text-red-300 text-[10px]">Σφάλμα λίστας.</p>'; }
+                lbData = data; lbCurrentPage = 0; renderLBPage();
+            } catch (e) { list.innerHTML = '<p class="text-center">Error.</p>'; }
         }
 
         function renderLBPage() {
             const list = document.getElementById('leader-board');
-            const pageInfo = document.getElementById('lb-page-info');
-            const btnPrev = document.getElementById('lb-prev');
-            const btnNext = document.getElementById('lb-next');
-
             const totalPages = Math.ceil(lbData.length / lbPageSize) || 1;
-            pageInfo.innerText = `ΣΕΛΙΔΑ ${lbCurrentPage + 1}/${totalPages}`;
-            btnPrev.disabled = lbCurrentPage === 0;
-            btnNext.disabled = lbCurrentPage >= totalPages - 1;
-
+            document.getElementById('lb-page-info').innerText = `${lbCurrentPage + 1}/${totalPages}`;
+            document.getElementById('lb-prev').disabled = lbCurrentPage === 0;
+            document.getElementById('lb-next').disabled = lbCurrentPage >= totalPages - 1;
             list.innerHTML = '';
-            const start = lbCurrentPage * lbPageSize;
-            const end = start + lbPageSize;
-            const pageItems = lbData.slice(start, end);
-
-            if (lbData.length === 0) {
-                list.innerHTML = '<p class="text-center text-white/40 text-xs py-10">ΚΑΜΙΑ ΕΓΓΡΑΦΗ ΑΚΟΜΑ</p>';
-                return;
-            }
-
+            const pageItems = lbData.slice(lbCurrentPage * lbPageSize, (lbCurrentPage + 1) * lbPageSize);
             pageItems.forEach((v, i) => {
-                const globalRank = start + i + 1;
-                const timeInSeconds = Math.floor(v.duration / 60);
-                const isPenalty = (v.zenUsed && v.mistakes > 12);
-                const badge = isPenalty ? '<span class="text-[7px] text-amber-500 border border-amber-500 px-1 rounded ml-1 font-black">ZEN+</span>' : '';
-                
-                list.innerHTML += `
-                <div class="flex justify-between items-center py-2 border-b border-white/10">
-                    <div class="font-black text-[#fcd34d] text-[14px] truncate w-1/2">
-                        ${globalRank}. ${v.name} ${badge}
-                    </div>
-                    <div class="text-right w-1/2">
-                        <div class="font-black text-white text-[16px] leading-none">${v.score}</div>
-                        <div class="text-[9px] font-bold mt-1 text-gray-300">ΛΑΘΗ: ${v.mistakes} | ${timeInSeconds}s</div>
-                    </div>
-                </div>`;
+                const rank = (lbCurrentPage * lbPageSize) + i + 1;
+                const penalty = (v.zenUsed && v.mistakes > 12);
+                list.innerHTML += `<div class="flex justify-between items-center py-1.5 border-b border-white/5"><div class="font-black text-[#fcd34d] text-[10px] sm:text-xs truncate w-1/2">${rank}. ${v.name}${penalty?' <span class="text-[6px] text-amber-500 border border-amber-500 px-1 rounded">Z+</span>':''}</div><div class="text-right w-1/2"><div class="font-black text-white text-xs sm:text-sm leading-none">${v.score}</div><div class="text-[8px] font-bold mt-1 text-gray-400">L:${v.mistakes} | ${Math.floor(v.duration/60)}s</div></div></div>`;
             });
         }
-
         document.getElementById('lb-prev').onclick = () => { if(lbCurrentPage > 0) { lbCurrentPage--; renderLBPage(); } };
         document.getElementById('lb-next').onclick = () => { if(lbCurrentPage < Math.ceil(lbData.length/lbPageSize)-1) { lbCurrentPage++; renderLBPage(); } };
 
-        const viewport = document.getElementById('game-viewport'); const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0ea5e9); const camera = new THREE.PerspectiveCamera(50, viewport.clientWidth/viewport.clientHeight, 2.0, 3000); const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(viewport.clientWidth, viewport.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding; viewport.appendChild(renderer.domElement);
-        window.addEventListener('resize', () => { if (viewport && renderer && camera) { const width = viewport.clientWidth; const height = viewport.clientHeight; renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix(); } });
+        const viewport = document.getElementById('game-viewport'); 
+        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0ea5e9); 
+        const camera = new THREE.PerspectiveCamera(55, viewport.clientWidth/viewport.clientHeight, 2.0, 3000); 
+        const renderer = new THREE.WebGLRenderer({ antialias: true }); 
+        renderer.setSize(viewport.clientWidth, viewport.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding; viewport.appendChild(renderer.domElement);
+
+        function onResize() {
+            const width = viewport.clientWidth;
+            const height = viewport.clientHeight;
+            const aspect = width / height;
+            renderer.setSize(width, height);
+            camera.aspect = aspect;
+            
+            // Προσαρμογή FOV ανάλογα με τον προσανατολισμό
+            if (aspect < 1.0) {
+                // Portrait
+                camera.fov = 55 + (1.0 - aspect) * 25; 
+            } else {
+                // Landscape
+                camera.fov = 45; // Πιο κλειστό FOV για οριζόντια οθόνη για καλύτερη αίσθηση βάθους
+            }
+            camera.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', () => setTimeout(onResize, 200));
+        onResize();
         
-        scene.add(new THREE.AmbientLight(0xffffff, 1.0)); const sun = new THREE.DirectionalLight(0xfff5e6, 2.0); sun.position.set(20, 50, 20); scene.add(sun);
+        scene.add(new THREE.AmbientLight(0xffffff, 1.0)); 
+        const sun = new THREE.DirectionalLight(0xfff5e6, 2.0); sun.position.set(20, 50, 20); scene.add(sun);
         const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshPhongMaterial({ color: 0x4a2c18 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -2.0; scene.add(ground);
-        const roadWidth = 110; const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x0a0a0a })); road.rotation.x = -Math.PI / 2; road.position.y = 0.0; scene.add(road);
+        const roadWidth = 110; 
+        const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x0a0a0a })); road.rotation.x = -Math.PI / 2; road.position.y = 0.0; scene.add(road);
         
         const truck = new THREE.Group(); 
         const chassis = new THREE.Mesh(new THREE.BoxGeometry(12.0, 1.5, 11.0), new THREE.MeshPhongMaterial({ color: 0x1e293b })); chassis.position.y = 1.5; truck.add(chassis); 
@@ -446,7 +426,7 @@
         } 
         wheels[0].position.set(6.0, 1.6, 4.0); wheels[1].position.set(-6.0, 1.6, 4.0); wheels[2].position.set(6.0, 1.6, -4.0); wheels[3].position.set(-6.0, 1.6, -4.0);
         
-        const genLabel = () => { const c = document.createElement('canvas'); c.width = 1024; c.height = 1024; const x = c.getContext('2d'); x.fillStyle = '#005c00'; x.fillRect(0,0,1024,1024); x.fillStyle = 'white'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = 'bold 190px Inter, Arial'; x.fillText('ΚΑΔΟΣ', 512, 280); x.font = 'bold 135px Inter, Arial'; x.fillText('ΚΟΜΠΟΣΤΟ-', 512, 490); x.fillText('ΠΟΙΗΣΗΣ', 512, 670); return new THREE.CanvasTexture(c); };
+        const genLabel = () => { const c = document.createElement('canvas'); c.width = 1024; c.height = 1024; const x = c.getContext('2d'); x.fillStyle = '#005c00'; x.fillRect(0,0,1024,1024); x.fillStyle = 'white'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = 'bold 190px Arial'; x.fillText('ΚΑΔΟΣ', 512, 280); x.font = 'bold 135px Arial'; x.fillText('ΚΟΜΠΟΣΤΟ-', 512, 490); x.fillText('ΠΟΙΗΣΗΣ', 512, 670); return new THREE.CanvasTexture(c); };
         const bin = new THREE.Mesh(new THREE.BoxGeometry(14.0, 15.0, 9.5), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 })); bin.position.set(0, 9.8, 0.5); truck.add(bin); scene.add(truck);
 
         const assetPool = []; const turbineBlades = [];
@@ -466,8 +446,6 @@
         window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
 
-        function stopTurbo() { turboActive = false; bin.material.emissive.setHex(0x000000); updateUI(); }
-
         function loop() {
             if(!gameActive) return; requestAnimationFrame(loop); frame++; 
             if(!optsFreeze) { let k = Math.floor(frame / 2000); let val = (k <= 1) ? (35 + k * 10) : (45 + (k - 1) * 5); speed = val / 100; }
@@ -478,15 +456,14 @@
                 turboActive = true; let durationFrames = Math.max(240, Math.floor(960 - 1028.57 * speed));
                 turboEndTime = frame + durationFrames; nextTurboFrame = frame + 2500; updateUI(); playSfx(880, 'sine', 0.5, 0.01);
             }
-
-            if(turboActive) { if (frame > turboEndTime) { stopTurbo(); } else { bin.material.emissive.setRGB((frame % 6 < 3 ? 0.8 : 0.1), (frame % 6 < 3 ? 0.7 : 0.1), 0); } }
+            if(turboActive) { if (frame > turboEndTime) { turboActive = false; bin.material.emissive.setHex(0x000000); updateUI(); } else { bin.material.emissive.setRGB((frame % 6 < 3 ? 0.8 : 0.1), (frame % 6 < 3 ? 0.7 : 0.1), 0); } }
 
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
                     if(optsVoice && window.speechSynthesis) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || ""); u.lang = 'el-GR'; u.rate = 1.6; window.speechSynthesis.speak(u); }
                     if(it.userData.type === 'good') { score += (turboActive ? 200 : 100); playSfx(600, 'sine', 0.15, 0.005); } 
-                    else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square', 0.4, 0.008); if(mistakes >= 12 && !optsZen) { gameActive = false; playMusicLoop = false; document.getElementById('game-ui-bar').style.display = 'none'; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); } }
+                    else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square', 0.4, 0.008); if(mistakes >= 12 && !optsZen) { endGame(); } }
                     scene.remove(it); items.splice(i,1); updateUI();
                 } else if(it.position.z > 50) { scene.remove(it); items.splice(i,1); }
             }
@@ -499,7 +476,8 @@
         let isDragging = false; viewport.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; });
         viewport.addEventListener('mousemove', e => { if(!isDragging || !gameActive) return; const dx = (e.clientX - lastX) * 0.25; truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx)); lastX = e.clientX; });
         viewport.addEventListener('mouseup', () => { isDragging = false; }); viewport.addEventListener('mouseleave', () => { isDragging = false; });
+        
         renderer.render(scene, camera);
     </script>
 </body>
-</html>
+</html
