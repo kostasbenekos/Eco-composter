@@ -19,7 +19,7 @@
         /* UI Styling */
         .ui-glass { background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
         .panel-ochre { background-color: #b45309; border: 4px solid #f59e0b; box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.6); }
-        .overlay-layer { position: absolute; inset: 0; z-index: 5000; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; padding: 10px; }
+        .overlay-layer { position: absolute; inset: 0; z-index: 5000; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
         .overlay-active { display: flex !important; }
         .btn-green { background: #10b981; box-shadow: 0 6px 0 #059669; transition: all 0.1s; cursor: pointer; color: white; font-weight: 900; }
         .btn-green:active { transform: translateY(3px); box-shadow: 0 2px 0 #059669; }
@@ -45,7 +45,7 @@
             .mobile-hide { display: none; }
         }
 
-        /* Landscape optimization (low height) */
+        /* Landscape optimization (low height) - Prevent clipping */
         @media (max-height: 500px) {
             #game-ui-bar { padding: 4px 8px !important; }
             .ui-glass { padding-top: 2px !important; padding-bottom: 2px !important; }
@@ -53,6 +53,17 @@
             #hud-score, #hud-mistakes { font-size: 14px !important; }
             .turbo-text { font-size: 8px !important; padding: 2px 8px !important; }
             #info-btn { padding: 4px !important; }
+
+            /* Scaling start screen & info for landscape */
+            .panel-ochre { padding: 1.5rem !important; space-y: 1rem !important; }
+            .panel-ochre h1 { font-size: 1.25rem !important; }
+            .panel-ochre .w-14, .panel-ochre .h-14, .panel-ochre .w-20, .panel-ochre .h-20 { width: 3rem !important; height: 3rem !important; border-radius: 1rem !important; }
+            .panel-ochre svg { width: 20px !important; height: 20px !important; }
+            .panel-ochre .btn-green { py: 0.5rem !important; font-size: 1rem !important; }
+            .panel-ochre #instr-btn { py: 0.4rem !important; font-size: 8px !important; }
+            
+            /* Allow scrolling within panels if height is extremely small */
+            .panel-ochre { overflow-y: auto !important; max-height: 95vh !important; }
         }
     </style>
 </head>
@@ -105,76 +116,78 @@
         <div id="game-viewport">
             <!-- Screen Start -->
             <div id="screen-start" class="overlay-layer overlay-active">
-                <div class="max-w-[280px] sm:max-w-xs w-full panel-ochre p-6 sm:p-8 rounded-[3rem] sm:rounded-[4rem] text-center space-y-4 sm:space-y-6">
-                    <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#b45309" class="sm:w-10 sm:h-10"><path d="M5 3l14 9-14 9V3z"/></svg>
+                <!-- Enlarged Initial Screen Panel -->
+                <div class="max-w-[90%] sm:max-w-md w-full panel-ochre p-8 sm:p-12 rounded-[3rem] sm:rounded-[4rem] text-center space-y-6 sm:space-y-8">
+                    <div class="w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="#b45309" class="sm:w-16 sm:h-16"><path d="M5 3l14 9-14 9V3z"/></svg>
                     </div>
                     <div>
-                        <h1 class="text-xl sm:text-3xl font-black uppercase tracking-tighter italic leading-none text-white">ECO-COMPOSTER</h1>
-                        <p class="text-amber-200 text-[8px] sm:text-[10px] font-black uppercase mt-2 tracking-widest leading-none">Responsive Game</p>
+                        <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tighter italic leading-none text-white">ECO-COMPOSTER</h1>
+                        <p class="text-amber-200 text-[10px] sm:text-[14px] font-black uppercase mt-3 tracking-widest leading-none">Responsive Game</p>
                     </div>
-                    <div class="flex flex-col gap-2 sm:gap-3">
-                        <button id="start-btn" class="btn-green w-full py-3.5 sm:py-5 rounded-2xl text-lg sm:text-2xl uppercase shadow-lg cursor-pointer">ΠΑΙΞΕ</button>
-                        <button id="instr-btn" class="w-full py-2.5 rounded-xl font-black text-[9px] sm:text-xs text-white uppercase tracking-widest bg-black/30 hover:bg-black/40 cursor-pointer">ΟΔΗΓΙΕΣ</button>
+                    <div class="flex flex-col gap-3 sm:gap-5">
+                        <button id="start-btn" class="btn-green w-full py-5 sm:py-7 rounded-2xl sm:rounded-[2.5rem] text-2xl sm:text-4xl uppercase shadow-lg cursor-pointer">ΠΑΙΞΕ</button>
+                        <button id="instr-btn" class="w-full py-3 sm:py-5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-lg text-white uppercase tracking-widest bg-black/30 hover:bg-black/40 cursor-pointer">ΟΔΗΓΙΕΣ</button>
                     </div>
                 </div>
             </div>
 
             <!-- Screen Info -->
             <div id="screen-info" class="overlay-layer">
-                <div class="max-w-[320px] sm:max-w-sm w-full panel-ochre rounded-[2.5rem] flex flex-col p-4 sm:p-6 max-h-[90vh] overflow-hidden">
+                <!-- Enlarged Instructions Panel -->
+                <div class="max-w-[95%] sm:max-w-2xl w-full panel-ochre rounded-[2.5rem] sm:rounded-[3.5rem] flex flex-col p-6 sm:p-10 max-h-[95vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
                         <div class="info-page page-active" data-id="0">
-                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 sm:mb-4 uppercase italic leading-none">ΟΔΗΓΙΕΣ</h2>
-                            <div class="space-y-2 sm:y-3 w-full text-base font-bold text-amber-50">
-                                <p class="leading-tight text-[11px] sm:text-sm">Οδήγησε με σύρσιμο (αφή/ποντίκι) ή με τα βελάκια ⬅️ ➡️.</p>
-                                <div class="p-3 bg-black/20 border-2 border-white/20 rounded-2xl">
-                                    <p class="text-yellow-300 text-base sm:text-lg font-black uppercase leading-none">TURBO BOOSTER!</p>
-                                    <p class="text-[9px] sm:text-[11px] mt-1 font-black uppercase leading-tight">Ενεργοποιείται τυχαία! Δίνει διπλούς πόντους.</p>
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none">ΟΔΗΓΙΕΣ</h2>
+                            <div class="space-y-3 sm:space-y-5 w-full text-base sm:text-xl font-bold text-amber-50">
+                                <p class="leading-tight text-[12px] sm:text-lg">Οδήγησε με σύρσιμο (αφή/ποντίκι) ή με τα βελάκια ⬅️ ➡️.</p>
+                                <div class="p-4 sm:p-6 bg-black/20 border-2 border-white/20 rounded-3xl">
+                                    <p class="text-yellow-300 text-lg sm:text-2xl font-black uppercase leading-none">TURBO BOOSTER!</p>
+                                    <p class="text-[10px] sm:text-sm mt-2 font-black uppercase leading-tight">Ενεργοποιείται τυχαία! Δίνει διπλούς πόντους.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="info-page" data-id="1">
-                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 sm:mb-4 uppercase italic leading-none">ΒΟΗΘΗΜΑΤΑ</h2>
-                            <div class="p-3 bg-blue-900/40 border-2 border-blue-400/50 rounded-2xl text-left space-y-2 w-full">
-                                <p class="text-[9px] sm:text-xs text-blue-200 uppercase leading-tight"><strong class="text-white">ZEN:</strong> Τα λάθη δεν σε σταματάνε!</p>
-                                <p class="text-[9px] sm:text-xs text-emerald-200 uppercase leading-tight"><strong class="text-white">ΚΥΚΛΟΙ:</strong> Δείχνουν σωστά/λάθος.</p>
-                                <p class="text-[9px] sm:text-xs text-purple-300 uppercase leading-tight"><strong class="text-white">ΦΩΝΗ:</strong> Ακούς το υλικό.</p>
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none">ΒΟΗΘΗΜΑΤΑ</h2>
+                            <div class="p-4 sm:p-8 bg-blue-900/40 border-2 border-blue-400/50 rounded-[2rem] text-left space-y-3 sm:space-y-5 w-full">
+                                <p class="text-[11px] sm:text-lg text-blue-200 uppercase leading-tight"><strong class="text-white">ZEN:</strong> Τα λάθη δεν σε σταματάνε!</p>
+                                <p class="text-[11px] sm:text-lg text-emerald-200 uppercase leading-tight"><strong class="text-white">ΚΥΚΛΟΙ:</strong> Δείχνουν σωστά/λάθος.</p>
+                                <p class="text-[11px] sm:text-lg text-purple-300 uppercase leading-tight"><strong class="text-white">ΦΩΝΗ:</strong> Ακούς το υλικό.</p>
                             </div>
                         </div>
                         <div class="info-page" data-id="2">
-                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 gap-2 text-center bg-white/20 p-2 rounded-[2rem] border-2 border-white/30 overflow-y-auto max-h-[150px] sm:max-h-[250px] custom-scroll">
-                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🍌</span><span class="text-[8px] font-bold mt-1">Μπανάνα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🍎</span><span class="text-[8px] font-bold mt-1">Μήλο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🥦</span><span class="text-[8px] font-bold mt-1">Μπρόκολο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🌱</span><span class="text-[8px] font-bold mt-1">Φυτό</span></div>
-                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🥚</span><span class="text-[8px] font-bold mt-1">Τσόφλια</span></div>
-                                <div class="flex flex-col items-center"><span class="text-2xl sm:text-3xl">🪱</span><span class="text-[8px] font-bold mt-1">Σκουλήκια</span></div>
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-4 text-center bg-white/20 p-4 rounded-[2.5rem] border-2 border-white/30 overflow-y-auto max-h-[200px] sm:max-h-[350px] custom-scroll">
+                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-5xl">🍌</span><span class="text-[9px] sm:text-xs font-bold mt-1">Μπανάνα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-5xl">🍎</span><span class="text-[9px] sm:text-xs font-bold mt-1">Μήλο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-5xl">🥦</span><span class="text-[9px] sm:text-xs font-bold mt-1">Μπρόκολο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-5xl">🌱</span><span class="text-[9px] sm:text-xs font-bold mt-1">Φυτό</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-5xl">🥚</span><span class="text-[9px] sm:text-xs font-bold mt-1">Τσόφλια</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-5xl">🪱</span><span class="text-[9px] sm:text-xs font-bold mt-1">Σκουλήκια</span></div>
                             </div>
                         </div>
                         <div class="info-page" data-id="3">
-                            <h2 class="text-lg sm:text-2xl font-black text-white mb-2 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 gap-2 text-center bg-black/20 p-2 rounded-[2rem] border-2 border-white/20 overflow-y-auto max-h-[150px] sm:max-h-[250px] custom-scroll">
-                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🥛</span><span class="text-[8px] font-bold mt-1">Γάλα</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🍾</span><span class="text-[8px] font-bold mt-1">Μπουκάλι</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🥩</span><span class="text-[8px] font-bold mt-1">Κρέας</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-2xl sm:text-3xl grayscale">🔋</span><span class="text-[8px] font-bold mt-1">Μπαταρία</span></div>
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center bg-black/20 p-4 rounded-[2.5rem] border-2 border-white/20 overflow-y-auto max-h-[200px] sm:max-h-[350px] custom-scroll">
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-5xl grayscale">🥛</span><span class="text-[9px] sm:text-xs font-bold mt-1">Γάλα</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-5xl grayscale">🍾</span><span class="text-[9px] sm:text-xs font-bold mt-1">Μπουκάλι</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-5xl grayscale">🥩</span><span class="text-[9px] sm:text-xs font-bold mt-1">Κρέας</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-5xl grayscale">🔋</span><span class="text-[9px] sm:text-xs font-bold mt-1">Μπαταρία</span></div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex justify-between items-center mt-auto pt-3 border-t border-white/20">
-                        <button id="prev-page-btn" class="p-2.5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg>
+                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-white/20">
+                        <button id="prev-page-btn" class="p-3 sm:p-5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" class="sm:w-8 sm:h-8"><path d="M15 18l-6-6 6-6"/></svg>
                         </button>
-                        <div class="flex gap-1.5">
+                        <div class="flex gap-2">
                             <div class="dot dot-active" id="dot-0"></div><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div><div class="dot" id="dot-3"></div>
                         </div>
-                        <button id="next-page-btn" class="p-2.5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg>
+                        <button id="next-page-btn" class="p-3 sm:p-5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" class="sm:w-8 sm:h-8"><path d="M9 18l6-6-6-6"/></svg>
                         </button>
                     </div>
-                    <button id="close-info-btn" class="w-full bg-emerald-600 py-2.5 rounded-xl font-black text-white uppercase text-[10px] mt-4 shadow-xl cursor-pointer">ΚΛΕΙΣΙΜΟ</button>
+                    <button id="close-info-btn" class="w-full bg-emerald-600 py-3 sm:py-5 rounded-2xl font-black text-white uppercase text-xs sm:text-lg mt-5 shadow-xl cursor-pointer">ΚΛΕΙΣΙΜΟ</button>
                 </div>
             </div>
 
@@ -480,4 +493,4 @@
         renderer.render(scene, camera);
     </script>
 </body>
-</html
+</html>
