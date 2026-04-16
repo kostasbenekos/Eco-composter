@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Responsive & Stability</title>
+    <title>ECO-COMPOSTER | ENEEGYL Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -16,7 +16,7 @@
         #game-viewport { flex: 1; position: relative; background: #0ea5e9; touch-action: none; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
         
-        /* UI Styling */
+        /* UI Glassmorphism */
         .ui-glass { background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
         .panel-ochre { background-color: #b45309; border: 4px solid #f59e0b; box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.6); }
         .overlay-layer { position: absolute; inset: 0; z-index: 5000; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
@@ -24,7 +24,6 @@
         .btn-green { background: #10b981; box-shadow: 0 6px 0 #059669; transition: all 0.1s; cursor: pointer; color: white; font-weight: 900; }
         .btn-green:active { transform: translateY(3px); box-shadow: 0 2px 0 #059669; }
         
-        /* Info Pages */
         .info-page { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .page-active { display: flex !important; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: background 0.3s; }
@@ -40,33 +39,22 @@
         }
         .turbo-text { animation: golden-blink 0.5s infinite; }
         
-        /* Mobile Specific HUD Layout */
+        /* Responsive HUD */
         @media (max-width: 640px) {
             #game-ui-bar { flex-wrap: wrap; justify-content: center; gap: 4px !important; padding: 4px !important; }
             .hud-item { min-width: 55px !important; padding: 2px 4px !important; }
             .btn-hud { padding: 4px 6px !important; }
-            #hud-boost { order: -1; width: 100%; text-align: center; margin-bottom: 4px; }
+            #hud-boost { width: 100%; text-align: center; margin-bottom: 4px; order: -1; }
         }
 
-        /* Landscape optimization (low height) - Prevent clipping */
+        /* Landscape optimization */
         @media (max-height: 500px) {
             #game-ui-bar { padding: 4px 8px !important; flex-wrap: nowrap !important; justify-content: space-between !important; }
             .ui-glass { padding-top: 2px !important; padding-bottom: 2px !important; }
             .hud-label { font-size: 6px !important; }
             #hud-score, #hud-mistakes, #hud-speed { font-size: 12px !important; }
-            .turbo-text { font-size: 8px !important; padding: 2px 8px !important; }
-            #info-btn { padding: 4px !important; }
             #hud-boost { width: auto; order: 0; }
-
-            /* Scaling panels for landscape */
-            .panel-ochre { padding: 1.25rem !important; space-y: 0.5rem !important; max-width: 95% !important; }
-            .panel-ochre h1 { font-size: 1.15rem !important; }
-            .panel-ochre .w-14, .panel-ochre .h-14, .panel-ochre .w-20, .panel-ochre .h-20 { width: 2.5rem !important; height: 2.5rem !important; border-radius: 0.5rem !important; }
-            .panel-ochre svg { width: 18px !important; height: 18px !important; }
-            .panel-ochre .btn-green { py: 0.4rem !important; font-size: 0.9rem !important; }
-            .panel-ochre #instr-btn { py: 0.3rem !important; font-size: 8px !important; }
-            
-            .panel-ochre { overflow-y: auto !important; max-height: 95vh !important; }
+            .panel-ochre { padding: 1.25rem !important; space-y: 0.5rem !important; max-width: 95% !important; overflow-y: auto !important; max-height: 95vh !important; }
             .grid-container { max-height: 150px !important; }
         }
     </style>
@@ -86,7 +74,7 @@
                 </div>
                 <div class="ui-glass hud-item px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[50px] sm:min-w-[70px]">
                     <p class="hud-label text-sky-400">ΤΑΧ/ΤΑ</p>
-                    <p id="hud-speed" class="text-xs sm:text-lg font-black text-white leading-none">35</p>
+                    <p id="hud-speed" class="text-xs sm:text-lg font-black text-white leading-none">20</p>
                 </div>
             </div>
             
@@ -105,12 +93,10 @@
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΦΩΝΗ</p>
                     <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-voice">OFF</p>
                 </button>
-                
                 <button id="btn-exit" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center bg-red-900/20 border-red-500/50 hover:bg-red-600/40 cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-red-400 leading-none mb-0.5">ΕΞΟΔΟΣ</p>
                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="mx-auto sm:w-3 sm:h-3"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 </button>
-
                 <button id="info-btn" class="ui-glass p-2 sm:p-2.5 rounded-xl text-sky-400 hover:text-white cursor-pointer shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" class="sm:w-5 sm:h-5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                 </button>
@@ -210,17 +196,14 @@
                         <div class="text-3xl sm:text-5xl">😊</div>
                         <p class="text-white font-black text-xs sm:text-sm uppercase italic animate-bounce tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p>
                     </div>
-                    
                     <div class="bg-black/20 py-1.5 rounded-2xl border-2 border-white/20 shrink-0">
                         <p class="text-[7px] text-amber-200 font-black uppercase tracking-widest leading-none">ΣΥΝΟΛΙΚΟ ΣΚΟΡ</p>
                         <p id="final-score" class="text-3xl sm:text-4xl font-black text-white leading-none mt-1">0</p>
                     </div>
-
                     <div id="save-ui" class="space-y-2 shrink-0 py-2 bg-black/10 rounded-xl border border-white/10 px-2 my-1">
                         <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-2 rounded-lg text-center font-black text-white uppercase outline-none text-sm focus:border-amber-400">
                         <button id="submit-btn" class="btn-green w-full py-2 rounded-lg uppercase text-emerald-950 font-black text-base shadow-lg cursor-pointer" onclick="saveScoreToCloud()">ΑΠΟΘΗΚΕΥΣΗ</button>
                     </div>
-
                     <div id="leader-board-container" class="flex-1 flex flex-col min-h-0 text-left border-t border-white/20 pt-1 overflow-hidden">
                         <p class="text-[8px] font-black text-white uppercase tracking-widest text-center leading-none shrink-0 mb-1">ΚΑΤΑΤΑΞΗ</p>
                         <div id="leader-board" class="flex-1 overflow-y-auto custom-scroll pr-1 space-y-1"></div>
@@ -245,41 +228,38 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'eco-composter-github-db';
         
         try { 
-            let firebaseConfig = null;
+            let firebaseConfig = {
+                apiKey: "AIzaSyCsJuhBykWzaknCkG96WrfIjmTDZDXlJVk",
+                authDomain: "eco-composter.firebaseapp.com",
+                projectId: "eco-composter",
+                storageBucket: "eco-composter.firebasestorage.app",
+                messagingSenderId: "184680739885",
+                appId: "1:184680739885:web:e591d729bd916a8680f4a4"
+            };
             if (typeof __firebase_config !== 'undefined') { firebaseConfig = JSON.parse(__firebase_config); }
-            else {
-                firebaseConfig = {
-                    apiKey: "AIzaSyCsJuhBykWzaknCkG96WrfIjmTDZDXlJVk",
-                    authDomain: "eco-composter.firebaseapp.com",
-                    projectId: "eco-composter",
-                    storageBucket: "eco-composter.firebasestorage.app",
-                    messagingSenderId: "184680739885",
-                    appId: "1:184680739885:web:e591d729bd916a8680f4a4"
-                };
-            }
-            if (firebaseConfig && firebaseConfig.projectId && !firebaseConfig.projectId.includes("ΒΑΛΤΕ_ΤΟ_ΔΙΚΟ_ΣΑΣ")) {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore(); 
-                auth = firebase.auth();
-                const initAuth = async () => {
-                    try { 
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await auth.signInWithCustomToken(__initial_auth_token);
-                        } else {
-                            await auth.signInAnonymously();
-                        }
-                    } catch (e) { console.error("Firebase auth error", e); }
-                }; initAuth();
-            }
+            
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore(); 
+            auth = firebase.auth();
+            const initAuth = async () => {
+                try { 
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await auth.signInWithCustomToken(__initial_auth_token);
+                    } else {
+                        await auth.signInAnonymously();
+                    }
+                } catch (e) { console.error("Firebase auth error", e); }
+            }; initAuth();
         } catch(e){ console.error("Firebase init error", e); }
 
-        let gameActive = false, score = 0, mistakes = 0, speed = 0.35, frame = 0, lastX = 0;
+        let gameActive = false, score = 0, mistakes = 0, speed = 0.20, frame = 0, lastX = 0;
         let turboActive = false, turboEndTime = 0, nextTurboFrame = 1000;
         let items = [], audioCtx, musicInt, bgAudioActive = false, playMusicLoop = true;
         let lbData = [], lbCurrentPage = 0;
         const lbPageSize = 5;
 
         let optsZen = false, optsHalos = false, optsVoice = false, optsFreeze = false;
+
         const btnZen = document.getElementById('btn-zen');
         const btnHalo = document.getElementById('btn-halo');
         const btnVoice = document.getElementById('btn-voice');
@@ -318,9 +298,6 @@
             }, 350);
         }
         
-        document.addEventListener('mousedown', startBackgroundMusic, { once: true });
-        document.addEventListener('touchstart', startBackgroundMusic, { once: true });
-        
         function playSfx(f, type = 'sine', dur = 0.2, v = 0.005) {
             if(!audioCtx) return;
             try {
@@ -347,7 +324,7 @@
         document.getElementById('start-btn').onclick = () => {
             if(!bgAudioActive) startBackgroundMusic();
             playMusicLoop = true; gameActive = true; 
-            score = 0; mistakes = 0; frame = 0; speed = 0.35; turboActive = false; turboEndTime = 0; nextTurboFrame = 1500;
+            score = 0; mistakes = 0; frame = 0; speed = 0.20; turboActive = false; turboEndTime = 0; nextTurboFrame = 1500;
             document.getElementById('game-ui-bar').style.display = 'flex';
             document.getElementById('screen-start').classList.remove('overlay-active'); 
             updateUI(); loop(); 
@@ -368,7 +345,7 @@
             btn.innerText = "WAIT..."; btn.disabled = true;
             try {
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').add({
-                    name: name.toUpperCase(), score: score, mistakes: mistakes, duration: frame, zenUsed: optsZen, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    name: name.toUpperCase(), score: score, mistakes: mistakes, duration: frame, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 document.getElementById('save-ui').style.display = 'none'; loadLeaderboard();
             } catch (e) { btn.innerText = "ERROR"; btn.disabled = false; }
@@ -376,30 +353,20 @@
 
         async function loadLeaderboard() {
             const list = document.getElementById('leader-board');
-            if (!db) { list.innerHTML = `<p class="text-red-300">No Connection.</p>`; return; }
+            if (!db) return;
             list.innerHTML = '<p class="text-center opacity-40">Loading...</p>';
             try {
                 const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
                 let data = []; snap.forEach(doc => data.push(doc.data()));
-                
-                // Νέα λογική κατάταξης
                 data.sort((a, b) => {
                     const aSafe = a.mistakes <= 12;
                     const bSafe = b.mistakes <= 12;
-
-                    // Ομάδα Α (<=12) πάντα πάνω από Ομάδα Β (>12)
                     if (aSafe && !bSafe) return -1;
                     if (!aSafe && bSafe) return 1;
-
-                    // Στην ίδια ομάδα:
-                    // 1. Μεγαλύτερο Σκορ
                     if (b.score !== a.score) return b.score - a.score;
-                    // 2. Μικρότερο αριθμό λαθών
                     if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
-                    // 3. Μεγαλύτερη διάρκεια παιχνιδιού
                     return b.duration - a.duration;
                 });
-                
                 lbData = data; lbCurrentPage = 0; renderLBPage();
             } catch (e) { list.innerHTML = '<p class="text-center">Error.</p>'; }
         }
@@ -477,7 +444,13 @@
 
         function loop() {
             if(!gameActive) return; requestAnimationFrame(loop); frame++; 
-            if(!optsFreeze) { let k = Math.floor(frame / 2000); let val = (k <= 1) ? (35 + k * 10) : (45 + (k - 1) * 5); speed = val / 100; }
+            
+            // Δυναμική Ταχύτητα: Ξεκινά 20, +5 κάθε 1800 frames (~30-40 δευτ.), Max 80
+            if(!optsFreeze) { 
+                let step = Math.floor(frame / 1800); 
+                speed = Math.min(0.80, 0.20 + step * 0.05);
+            }
+            
             camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
             const moveSpeed = 2.5; if(keys.ArrowLeft) truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - moveSpeed); if(keys.ArrowRight) truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + moveSpeed);
 
@@ -497,7 +470,10 @@
                 } else if(it.position.z > 50) { scene.remove(it); items.splice(i,1); }
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
-            if(frame % Math.floor(Math.max(12, 55 - (Math.floor(frame/2000)*10))) === 0) spawn(); renderer.render(scene, camera);
+            
+            // Spawn rate που αυξάνεται ελαφρά με την ταχύτητα
+            let spawnInterval = Math.floor(Math.max(15, 60 - (speed * 40)));
+            if(frame % spawnInterval === 0) spawn(); renderer.render(scene, camera);
         }
         
         viewport.addEventListener('touchstart', e => { lastX = e.touches[0].clientX; }, {passive: false});
