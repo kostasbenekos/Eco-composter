@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Vivid-Ultimate-Stats-Ed</title>
+    <title>ECO-COMPOSTER | Vivid-Pro-Flow-Ed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -82,7 +82,6 @@
         </div>
 
         <div id="game-viewport">
-            <!-- Screen Start -->
             <div id="screen-start" class="overlay-layer overlay-active">
                 <div class="max-w-[90%] sm:max-w-md w-full panel-ochre p-8 sm:p-12 rounded-[3rem] text-center space-y-6">
                     <div class="w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
@@ -98,7 +97,6 @@
                 </div>
             </div>
 
-            <!-- Screen Info -->
             <div id="screen-info" class="overlay-layer">
                 <div class="max-w-[95%] sm:max-w-2xl w-full panel-ochre rounded-[3rem] flex flex-col p-6 sm:p-10 max-h-[95vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
@@ -160,7 +158,6 @@
                 </div>
             </div>
 
-            <!-- Screen End -->
             <div id="screen-end" class="overlay-layer">
                 <div class="w-full max-w-[320px] sm:max-w-sm panel-ochre p-4 sm:p-5 rounded-[3rem] text-center space-y-3 max-h-[98vh] flex flex-col overflow-hidden relative">
                     <div class="shrink-0"><div class="text-3xl sm:text-5xl">😊</div><p class="text-white font-black text-xs uppercase italic tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p></div>
@@ -211,9 +208,9 @@
 
         let gameActive = false, score = 0, mistakes = 0, speed = 0.15, frame = 0, lastX = 0;
         let isMoving = false; 
-        let keysPressed = {}; // State tracking for smooth keyboard movement
+        let keysPressed = {}; 
         let turboActive = false, turboEndTime = 0, nextTurboFrame = 1000;
-        let items = [], audioCtx;
+        let items = [], audioCtx, bgMusicInt;
         let lbData = [], lbCurrentPage = 0;
         const lbPageSize = 5;
 
@@ -238,9 +235,24 @@
             x.fillText(itemStr, 128, 128); return new THREE.CanvasTexture(c);
         }
 
-        function playSfx(f, type = 'sine', dur = 0.2, v = 0.005) {
+        // --- ΑΥΞΗΜΕΝΗ ΕΝΤΑΣΗ ΗΧΩΝ ---
+        function playSfx(f, type = 'sine', dur = 0.2, v = 0.02) {
             if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            try { const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = type; o.connect(g); g.connect(audioCtx.destination); o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(v, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur); o.start(); o.stop(audioCtx.currentTime + dur); } catch(e){}
+            try { 
+                const o = audioCtx.createOscillator(), g = audioCtx.createGain(); 
+                o.type = type; o.connect(g); g.connect(audioCtx.destination); 
+                o.frequency.setValueAtTime(f, audioCtx.currentTime); 
+                g.gain.setValueAtTime(v, audioCtx.currentTime); 
+                g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur); 
+                o.start(); o.stop(audioCtx.currentTime + dur); 
+            } catch(e){}
+        }
+
+        function startBgMusic() {
+            if (bgMusicInt) clearInterval(bgMusicInt);
+            bgMusicInt = setInterval(() => {
+                if (gameActive) playSfx(80 + Math.random() * 20, 'triangle', 0.5, 0.015);
+            }, 600);
         }
 
         let infoPageIdx = 0;
@@ -251,9 +263,14 @@
         document.getElementById('instr-btn').onclick = () => { document.getElementById('screen-info').classList.add('overlay-active'); infoPageIdx = 0; updatePages(); };
         document.getElementById('close-info-btn').onclick = () => document.getElementById('screen-info').classList.remove('overlay-active');
 
-        document.getElementById('start-btn').onclick = () => { gameActive = true; score = 0; mistakes = 0; frame = 0; speed = 0.15; turboActive = false; document.getElementById('game-ui-bar').style.display = 'flex'; document.getElementById('screen-start').classList.remove('overlay-active'); updateUI(); loop(); };
+        document.getElementById('start-btn').onclick = () => { 
+            gameActive = true; score = 0; mistakes = 0; frame = 0; speed = 0.15; turboActive = false; 
+            document.getElementById('game-ui-bar').style.display = 'flex'; 
+            document.getElementById('screen-start').classList.remove('overlay-active'); 
+            updateUI(); startBgMusic(); loop(); 
+        };
 
-        function endGame() { gameActive = false; document.getElementById('game-ui-bar').style.display = 'none'; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); }
+        function endGame() { gameActive = false; clearInterval(bgMusicInt); document.getElementById('game-ui-bar').style.display = 'none'; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); }
 
         async function saveScoreToCloud() {
             const name = document.getElementById('p-name').value.trim(); if (!name || !db) return;
@@ -262,7 +279,7 @@
                     name: name.toUpperCase(), 
                     score, 
                     mistakes, 
-                    duration: frame, // in frames
+                    duration: frame, 
                     isZen: optsZen,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp() 
                 }); 
@@ -276,19 +293,15 @@
             const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
             let data = []; snap.forEach(doc => data.push(doc.data()));
             
-            // Logic: Non-Zen first, then Zen. Inside categories: Higher Score > Lower Mistakes > Higher Duration
             data.sort((a, b) => {
                 const aZen = a.isZen === true || a.mistakes > 12;
                 const bZen = b.isZen === true || b.mistakes > 12;
-                
                 if (!aZen && bZen) return -1;
                 if (aZen && !bZen) return 1;
-                
                 if (b.score !== a.score) return b.score - a.score;
                 if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
                 return (b.duration || 0) - (a.duration || 0);
             });
-            
             lbData = data; lbCurrentPage = 0; renderLBPage();
         }
 
@@ -301,12 +314,13 @@
                 const rank = (lbCurrentPage * lbPageSize) + i + 1;
                 const zenUsed = v.isZen === true || v.mistakes > 12;
                 const timeSec = Math.floor((v.duration || 0) / 60);
+                // --- ΧΡΩΜΑΤΑ ΣΤΑΤΙΣΤΙΚΩΝ ΙΔΙΑ ΜΕ ΤΟ ΟΝΟΜΑ ---
                 list.innerHTML += `<div class="flex flex-col py-1.5 border-b border-white/5">
                     <div class="flex justify-between items-center">
                         <div class="font-black text-[#fcd34d] text-[10px] sm:text-xs truncate w-2/3">${rank}. ${v.name}${zenUsed?' <span class="text-[6px] text-amber-500 border border-amber-500 px-1 rounded font-black">ZEN</span>':''}</div>
                         <div class="text-right font-black text-white text-xs sm:text-sm">${v.score}</div>
                     </div>
-                    <div class="flex gap-2 text-[7px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                    <div class="flex gap-2 text-[7px] font-black text-[#fcd34d] opacity-70 uppercase tracking-widest mt-0.5">
                         <span>Λάθη: ${v.mistakes}</span>
                         <span>Χρόνος: ${timeSec}s</span>
                     </div>
@@ -371,9 +385,17 @@
         
         function loop() {
             if(!gameActive) return; requestAnimationFrame(loop); frame++; 
-            speed = 0.15 + (Math.floor(frame / 2100) * 0.05);
             
-            // --- UPDATED KEYBOARD HANDLING ---
+            // --- ΝΕΑ ΛΟΓΙΚΗ ΤΑΧΥΤΗΤΑΣ ---
+            const currentVal = Math.floor(speed * 100);
+            if (currentVal < 30) {
+                speed = 0.15 + (Math.floor(frame / 3500) * 0.05); // Gradual
+            } else if (currentVal < 50) {
+                speed = 0.30 + (Math.floor((frame % 15000) / 2000) * 0.05); // Step by 5
+            } else {
+                speed = 0.50 + (Math.floor((frame % 25000) / 2000) * 0.10); // Step by 10
+            }
+
             const keyStep = 3.5; 
             if(keysPressed['ArrowLeft']) truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - keyStep);
             if(keysPressed['ArrowRight']) truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + keyStep);
@@ -387,20 +409,21 @@
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
-                    if(it.userData.type === 'good') { score += (turboActive ? 200 : 100); playSfx(600); } 
-                    else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square'); if(mistakes >= 12 && !optsZen) { endGame(); } }
+                    if(it.userData.type === 'good') { score += (turboActive ? 200 : 100); playSfx(600, 'sine', 0.3, 0.035); } 
+                    else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square', 0.3, 0.04); if(mistakes >= 12 && !optsZen) { endGame(); } }
                     if(optsVoice && window.speechSynthesis) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || ""); u.lang = 'el-GR'; window.speechSynthesis.speak(u); }
                     scene.remove(it); items.splice(i,1); updateUI();
                 } else if(it.position.z > 50) { scene.remove(it); items.splice(i,1); }
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
 
+            // --- ΕΚΜΑΘΗΣΗ ΜΕΧΡΙ ΤΟ 30 ---
             let spawnInterval;
-            if (speed < 0.35) {
-                spawnInterval = Math.floor(25.0 / speed); 
+            if (speed < 0.30) {
+                spawnInterval = Math.floor(35.0 / speed); // Very sparse
             } else {
-                const ratio = Math.min(1, (speed - 0.35) / (1.0 - 0.35));
-                spawnInterval = Math.floor(40 - (ratio * (40 - 12)));
+                const ratio = Math.min(1, (speed - 0.30) / (1.0 - 0.30));
+                spawnInterval = Math.floor(35 - (ratio * (35 - 12)));
             }
             
             if(frame % spawnInterval === 0) spawn(); 
@@ -419,11 +442,8 @@
         viewport.addEventListener('mousedown', e => { isMoving = true; lastX = e.clientX; });
         window.addEventListener('mousemove', e => { if(isMoving) handleMove(e.clientX); });
         window.addEventListener('mouseup', () => { isMoving = false; });
-
-        // --- ENHANCED KEYBOARD LISTENERS ---
         window.addEventListener('keydown', e => { keysPressed[e.key] = true; });
         window.addEventListener('keyup', e => { keysPressed[e.key] = false; });
-
         window.addEventListener('resize', () => { renderer.setSize(viewport.clientWidth, viewport.clientHeight); camera.aspect = viewport.clientWidth / viewport.clientHeight; camera.updateProjectionMatrix(); });
     </script>
 </body>
