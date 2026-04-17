@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Vivid-Pro-Flow-Ed</title>
+    <title>ECO-COMPOSTER | Vivid-Turbo-Synced-Ed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -36,7 +36,7 @@
             0%, 100% { color: #fbbf24; text-shadow: 0 0 10px #f59e0b; }
             50% { color: #fff; text-shadow: 0 0 20px #fbbf24; }
         }
-        .turbo-text { animation: golden-blink 0.5s infinite; }
+        .turbo-text { animation: none; } /* Managed by JS for perfect sync */
     </style>
 </head>
 <body>
@@ -57,7 +57,7 @@
                 </div>
             </div>
             
-            <div id="hud-boost" class="hidden turbo-text font-black text-[8px] sm:text-[10px] uppercase italic bg-yellow-400/20 px-2 sm:px-3 py-1.5 rounded-full border-2 border-yellow-400 mx-1 shrink-0">⚡ TURBO</div>
+            <div id="hud-boost" class="hidden font-black text-[8px] sm:text-[10px] uppercase italic bg-yellow-400/20 px-2 sm:px-3 py-1.5 rounded-full border-2 border-yellow-400 mx-1 shrink-0 text-yellow-400 shadow-[0_0_10px_#f59e0b]">⚡ TURBO</div>
             
             <div class="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto pointer-events-auto">
                 <button id="btn-zen" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
@@ -82,6 +82,7 @@
         </div>
 
         <div id="game-viewport">
+            <!-- Screen Start -->
             <div id="screen-start" class="overlay-layer overlay-active">
                 <div class="max-w-[90%] sm:max-w-md w-full panel-ochre p-8 sm:p-12 rounded-[3rem] text-center space-y-6">
                     <div class="w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
@@ -97,6 +98,7 @@
                 </div>
             </div>
 
+            <!-- Screen Info -->
             <div id="screen-info" class="overlay-layer">
                 <div class="max-w-[95%] sm:max-w-2xl w-full panel-ochre rounded-[3rem] flex flex-col p-6 sm:p-10 max-h-[95vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
@@ -158,6 +160,7 @@
                 </div>
             </div>
 
+            <!-- Screen End -->
             <div id="screen-end" class="overlay-layer">
                 <div class="w-full max-w-[320px] sm:max-w-sm panel-ochre p-4 sm:p-5 rounded-[3rem] text-center space-y-3 max-h-[98vh] flex flex-col overflow-hidden relative">
                     <div class="shrink-0"><div class="text-3xl sm:text-5xl">😊</div><p class="text-white font-black text-xs uppercase italic tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p></div>
@@ -235,8 +238,8 @@
             x.fillText(itemStr, 128, 128); return new THREE.CanvasTexture(c);
         }
 
-        // --- ΑΥΞΗΜΕΝΗ ΕΝΤΑΣΗ ΗΧΩΝ ---
-        function playSfx(f, type = 'sine', dur = 0.2, v = 0.02) {
+        // --- ΠΟΛΥ ΑΥΞΗΜΕΝΗ ΕΝΤΑΣΗ ΗΧΩΝ ---
+        function playSfx(f, type = 'sine', dur = 0.2, v = 0.15) {
             if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             try { 
                 const o = audioCtx.createOscillator(), g = audioCtx.createGain(); 
@@ -251,7 +254,7 @@
         function startBgMusic() {
             if (bgMusicInt) clearInterval(bgMusicInt);
             bgMusicInt = setInterval(() => {
-                if (gameActive) playSfx(80 + Math.random() * 20, 'triangle', 0.5, 0.015);
+                if (gameActive) playSfx(85 + Math.random() * 25, 'triangle', 0.6, 0.08); // Loud background pulse
             }, 600);
         }
 
@@ -314,13 +317,13 @@
                 const rank = (lbCurrentPage * lbPageSize) + i + 1;
                 const zenUsed = v.isZen === true || v.mistakes > 12;
                 const timeSec = Math.floor((v.duration || 0) / 60);
-                // --- ΧΡΩΜΑΤΑ ΣΤΑΤΙΣΤΙΚΩΝ ΙΔΙΑ ΜΕ ΤΟ ΟΝΟΜΑ ---
+                // --- ΧΡΩΜΑΤΑ ΣΤΑΤΙΣΤΙΚΩΝ ΙΔΙΑ ΜΕ ΤΟ ΟΝΟΜΑ (#fcd34d) ---
                 list.innerHTML += `<div class="flex flex-col py-1.5 border-b border-white/5">
                     <div class="flex justify-between items-center">
                         <div class="font-black text-[#fcd34d] text-[10px] sm:text-xs truncate w-2/3">${rank}. ${v.name}${zenUsed?' <span class="text-[6px] text-amber-500 border border-amber-500 px-1 rounded font-black">ZEN</span>':''}</div>
                         <div class="text-right font-black text-white text-xs sm:text-sm">${v.score}</div>
                     </div>
-                    <div class="flex gap-2 text-[7px] font-black text-[#fcd34d] opacity-70 uppercase tracking-widest mt-0.5">
+                    <div class="flex gap-2 text-[7px] font-black text-[#fcd34d] opacity-90 uppercase tracking-widest mt-0.5">
                         <span>Λάθη: ${v.mistakes}</span>
                         <span>Χρόνος: ${timeSec}s</span>
                     </div>
@@ -380,7 +383,6 @@
             document.getElementById('hud-score').innerText = score; 
             document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; 
             document.getElementById('hud-speed').innerText = Math.floor(speed * 100); 
-            document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; 
         }
         
         function loop() {
@@ -389,11 +391,13 @@
             // --- ΝΕΑ ΛΟΓΙΚΗ ΤΑΧΥΤΗΤΑΣ ---
             const currentVal = Math.floor(speed * 100);
             if (currentVal < 30) {
-                speed = 0.15 + (Math.floor(frame / 3500) * 0.05); // Gradual
-            } else if (currentVal < 50) {
-                speed = 0.30 + (Math.floor((frame % 15000) / 2000) * 0.05); // Step by 5
+                speed = 0.15 + (Math.floor(frame / 4000) * 0.05); // Gradual
+            } else if (currentVal < 45) {
+                // Steps of 5
+                speed = 0.30 + (Math.floor((frame % 15000) / 2500) * 0.05);
             } else {
-                speed = 0.50 + (Math.floor((frame % 25000) / 2000) * 0.10); // Step by 10
+                // Steps of 10
+                speed = 0.45 + (Math.floor((frame % 25000) / 2500) * 0.10);
             }
 
             const keyStep = 3.5; 
@@ -403,31 +407,54 @@
             camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); 
             wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
 
-            if (!turboActive && frame > nextTurboFrame && Math.random() < 0.005) { turboActive = true; turboEndTime = frame + 400; nextTurboFrame = frame + 2500; playSfx(880, 'sine', 0.5, 0.01); }
-            if(turboActive) { if (frame > turboEndTime) { turboActive = false; bin.material.emissive.setHex(0x000000); } else { bin.material.emissive.setRGB((frame % 6 < 3 ? 0.8 : 0.1), (frame % 6 < 3 ? 0.7 : 0.1), 0); } }
+            // --- TURBO LOGIC WITH SYNCED DURATION ---
+            if (!turboActive && frame > nextTurboFrame && Math.random() < 0.005) { 
+                turboActive = true; 
+                turboEndTime = frame + 1000; // Longer duration
+                nextTurboFrame = frame + 3500; 
+                playSfx(880, 'sine', 0.6, 0.04); 
+            }
+            
+            if(turboActive) { 
+                if (frame > turboEndTime) { 
+                    turboActive = false; 
+                    document.getElementById('hud-boost').style.display = 'none';
+                    bin.material.emissive.setHex(0x000000); 
+                } else { 
+                    const isFlash = (frame % 6 < 3);
+                    document.getElementById('hud-boost').style.display = isFlash ? 'block' : 'none';
+                    bin.material.emissive.setRGB(isFlash ? 0.8 : 0.1, isFlash ? 0.7 : 0.1, 0); 
+                } 
+            }
 
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
-                    if(it.userData.type === 'good') { score += (turboActive ? 200 : 100); playSfx(600, 'sine', 0.3, 0.035); } 
-                    else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square', 0.3, 0.04); if(mistakes >= 12 && !optsZen) { endGame(); } }
+                    if(it.userData.type === 'good') { 
+                        score += (turboActive ? 200 : 100); 
+                        playSfx(600, 'sine', 0.4, 0.2); // Loud Correct
+                    } else { 
+                        score = Math.max(0, score - 100); 
+                        mistakes++; 
+                        playSfx(120, 'square', 0.4, 0.25); // Loud Wrong
+                        if(mistakes >= 12 && !optsZen) { endGame(); } 
+                    }
                     if(optsVoice && window.speechSynthesis) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || ""); u.lang = 'el-GR'; window.speechSynthesis.speak(u); }
                     scene.remove(it); items.splice(i,1); updateUI();
                 } else if(it.position.z > 50) { scene.remove(it); items.splice(i,1); }
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
 
-            // --- ΕΚΜΑΘΗΣΗ ΜΕΧΡΙ ΤΟ 30 ---
             let spawnInterval;
             if (speed < 0.30) {
-                spawnInterval = Math.floor(35.0 / speed); // Very sparse
+                spawnInterval = Math.floor(35.0 / speed); 
             } else {
                 const ratio = Math.min(1, (speed - 0.30) / (1.0 - 0.30));
                 spawnInterval = Math.floor(35 - (ratio * (35 - 12)));
             }
             
             if(frame % spawnInterval === 0) spawn(); 
-            renderer.render(scene, camera);
+            updateUI(); renderer.render(scene, camera);
         }
         
         const handleMove = (clientX) => {
