@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Vivid-High-Density-Ed</title>
+    <title>ECO-COMPOSTER | Vivid-Mobile-Precision-Ed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -32,7 +32,9 @@
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 10px; }
         
-        .turbo-text-sync { display: none; font-weight: 900; color: #facc15; text-shadow: 0 0 12px #eab308; }
+        /* Fixed sync for turbo display */
+        .turbo-box { min-width: 60px; display: flex; justify-content: center; align-items: center; }
+        @media (min-width: 640px) { .turbo-box { min-width: 100px; } }
     </style>
 </head>
 <body>
@@ -53,7 +55,10 @@
                 </div>
             </div>
             
-            <div id="hud-boost" class="turbo-text-sync font-black text-[8px] sm:text-[10px] uppercase italic bg-yellow-400/20 px-2 sm:px-3 py-1.5 rounded-full border-2 border-yellow-400 mx-1 shrink-0">⚡ TURBO</div>
+            <!-- Turbo Box with fixed width to prevent flickering UI -->
+            <div class="turbo-box shrink-0">
+                <div id="hud-boost" class="invisible font-black text-[7px] sm:text-[10px] uppercase italic bg-yellow-400/20 px-2 sm:px-3 py-1.5 rounded-full border-2 border-yellow-400 text-yellow-400 shadow-[0_0_10px_#f59e0b]">⚡ TURBO</div>
+            </div>
             
             <div class="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto pointer-events-auto">
                 <button id="btn-zen" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center transition-all cursor-pointer">
@@ -116,19 +121,19 @@
                         </div>
                         <div class="info-page" data-id="2">
                             <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic shrink-0">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
-                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 text-center bg-white/20 p-4 rounded-3xl overflow-y-auto max-h-[350px] custom-scroll">
-                                <div class="flex flex-col items-center"><span class="text-3xl">🍌</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Μπανάνα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🍎</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Μήλο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🥦</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Μπρόκολο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🌿</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Φύλλα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🌱</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Φυτό</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🥚</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Τσόφλια</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">📄</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Χαρτί</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">📰</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Εφημερίδα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">📦</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Χαρτόκουτο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🪱</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Σκουλήκια</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🍂</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Ξερά φύλλα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl">🪵</span><span class="text-[8px] font-bold mt-1 text-white uppercase">Κλαδιά</span></div>
+                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 text-center bg-white/20 p-4 rounded-3xl overflow-y-auto max-h-[350px] custom-scroll text-white">
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍌</span><span class="text-[8px] font-bold mt-1 uppercase">Μπανάνα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍎</span><span class="text-[8px] font-bold mt-1 uppercase">Μήλο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🥦</span><span class="text-[8px] font-bold mt-1 uppercase">Μπρόκολο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🌿</span><span class="text-[8px] font-bold mt-1 uppercase">Φύλλα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🌱</span><span class="text-[8px] font-bold mt-1 uppercase">Φυτό</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🥚</span><span class="text-[8px] font-bold mt-1 uppercase">Τσόφλια</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📄</span><span class="text-[8px] font-bold mt-1 uppercase">Χαρτί</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📰</span><span class="text-[8px] font-bold mt-1 uppercase">Εφημερίδα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📦</span><span class="text-[8px] font-bold mt-1 uppercase">Χαρτόκουτο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🪱</span><span class="text-[8px] font-bold mt-1 uppercase">Σκουλήκια</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍂</span><span class="text-[8px] font-bold mt-1 uppercase">Ξερά φύλλα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🪵</span><span class="text-[8px] font-bold mt-1 uppercase">Κλαδιά</span></div>
                             </div>
                         </div>
                         <div class="info-page" data-id="3">
@@ -231,7 +236,6 @@
             x.textAlign='center'; x.textBaseline='middle'; x.font = `185px Arial`; 
             if(useHalo) { 
                 x.beginPath(); 
-                // Ακτίνα 124 για να είναι έξω από το αντικείμενο
                 x.arc(128, 128, 124, 0, Math.PI * 2); 
                 x.lineWidth = 12; 
                 x.strokeStyle = type === 'good' ? '#22c55e' : '#ef4444'; 
@@ -297,7 +301,6 @@
             if (!db) return;
             const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
             let data = []; snap.forEach(doc => data.push(doc.data()));
-            
             data.sort((a, b) => {
                 const aZen = a.isZen === true || a.mistakes > 12;
                 const bZen = b.isZen === true || b.mistakes > 12;
@@ -358,7 +361,11 @@
             x.font = 'bold 180px Arial'; x.fillText('ΚΑΔΟΣ', 512, 280); x.font = 'bold 130px Arial'; x.fillText('ΚΟΜΠΟΣΤΟ-', 512, 490); x.fillText('ΠΟΙΗΣΗΣ', 512, 670);
             return new THREE.CanvasTexture(c);
         };
-        const bin = new THREE.Mesh(new THREE.BoxGeometry(14.0, 15.0, 9.5), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 })); bin.position.set(0, 9.8, 0.5); truck.add(bin); scene.add(truck);
+        const bin = new THREE.Mesh(new THREE.BoxGeometry(14.0, 15.0, 9.5), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 })); bin.position.set(0, 9.8, 0.5); truck.add(bin); 
+        
+        // --- POSITION TRUCK LOWER ON SCREEN ---
+        truck.position.z = 28;
+        scene.add(truck);
 
         const assetPool = []; const turbineBlades = [];
         function createHouse() { const g = new THREE.Group(); const base = new THREE.Mesh(new THREE.BoxGeometry(11, 16, 11), new THREE.MeshPhongMaterial({color: 0xffffff})); base.position.y = 8; g.add(base); const roof = new THREE.Mesh(new THREE.ConeGeometry(10, 10, 4), new THREE.MeshPhongMaterial({color: 0x6d2800})); roof.position.y = 21; roof.rotation.y = Math.PI/4; g.add(roof); return g; }
@@ -389,13 +396,10 @@
         function loop() {
             if(!gameActive) return; requestAnimationFrame(loop); frame++; 
             
-            // --- ΛΟΓΙΚΗ ΤΑΧΥΤΗΤΑΣ: ΑΥΞΗΣΗ ΑΝΑ 30 ΔΕΥΤΕΡΟΛΕΠΤΑ (1800 frames) ---
+            // Speed logic: increase every 30 seconds
             if (frame - lastSpeedUpdateFrame >= 1800) {
-                if (speedValue < 30) {
-                    speedValue += 5;
-                } else {
-                    speedValue += 10;
-                }
+                if (speedValue < 30) speedValue += 5;
+                else speedValue += 10;
                 speed = speedValue / 100;
                 lastSpeedUpdateFrame = frame;
                 updateUI();
@@ -408,7 +412,7 @@
             camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); 
             wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
 
-            // TURBO LOGIC
+            // Turbo sync logic
             if (!turboActive && frame > nextTurboFrame && Math.random() < 0.005) { 
                 turboActive = true; 
                 turboEndTime = frame + 1000; 
@@ -419,18 +423,20 @@
             if(turboActive) { 
                 if (frame > turboEndTime) { 
                     turboActive = false; 
-                    document.getElementById('hud-boost').style.display = 'none';
+                    document.getElementById('hud-boost').classList.add('invisible');
                     bin.material.emissive.setHex(0x000000); 
                 } else { 
                     const isFlash = (frame % 6 < 3);
-                    document.getElementById('hud-boost').style.display = isFlash ? 'block' : 'none';
+                    if(isFlash) document.getElementById('hud-boost').classList.remove('invisible');
+                    else document.getElementById('hud-boost').classList.add('invisible');
                     bin.material.emissive.setRGB(isFlash ? 0.8 : 0.1, isFlash ? 0.7 : 0.1, 0); 
                 } 
             }
 
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
-                if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
+                // Collision detection adjusted for truck position at z:28
+                if(Math.hypot(it.position.x - truck.position.x, it.position.z - truck.position.z) < 16.0) {
                     if(it.userData.type === 'good') { 
                         score += (turboActive ? 200 : 100); 
                         playSfx(600, 'sine', 0.4, 0.55); 
@@ -446,19 +452,11 @@
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
 
-            // --- ΑΥΞΗΜΕΝΗ ΠΥΚΝΟΤΗΤΑ ΓΙΑ ΤΑΧΥΤΗΤΕΣ 50+ ---
+            // Density logic for high speed
             let spawnInterval;
-            if (speed < 0.25) {
-                // Χαμηλή ταχύτητα
-                spawnInterval = Math.floor(18 / speed); 
-            } else if (speed < 0.50) {
-                // Μεσαία ταχύτητα
-                spawnInterval = Math.floor(14 / speed);
-            } else {
-                // Υψηλή ταχύτητα (50+): Δραστική μείωση interval για μεγάλη πυκνότητα
-                // Ταβάνι (ceiling) τα 7 frames για να μην μπουκώνει η πίστα
-                spawnInterval = Math.floor(Math.max(7, 7 / speed));
-            }
+            if (speed < 0.25) spawnInterval = Math.floor(18 / speed); 
+            else if (speed < 0.50) spawnInterval = Math.floor(14 / speed);
+            else spawnInterval = Math.floor(Math.max(7, 7 / speed));
             
             if(frame % spawnInterval === 0) spawn(); 
             renderer.render(scene, camera);
@@ -466,7 +464,9 @@
         
         const handleMove = (clientX) => {
             if(!gameActive) return;
-            const dx = (clientX - lastX) * 0.26;
+            // Increased touch sensitivity (especially for mobile/landscape)
+            const sens = (window.innerWidth < 1000) ? 0.48 : 0.32;
+            const dx = (clientX - lastX) * sens;
             truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx));
             lastX = clientX;
         };
