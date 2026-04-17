@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Vivid-Dynamic-Flow-Ed</title>
+    <title>ECO-COMPOSTER | Vivid-High-Density-Ed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -203,6 +203,8 @@
         } catch(e){ console.error(e); }
 
         let gameActive = false, score = 0, mistakes = 0, speed = 0.15, frame = 0, lastX = 0;
+        let lastSpeedUpdateFrame = 0;
+        let speedValue = 15;
         let isMoving = false; 
         let keysPressed = {}; 
         let turboActive = false, turboEndTime = 0, nextTurboFrame = 1000;
@@ -229,7 +231,7 @@
             x.textAlign='center'; x.textBaseline='middle'; x.font = `185px Arial`; 
             if(useHalo) { 
                 x.beginPath(); 
-                // Μεγαλύτερη ακτίνα (124) για να μην ακουμπάει τα αντικείμενα
+                // Ακτίνα 124 για να είναι έξω από το αντικείμενο
                 x.arc(128, 128, 124, 0, Math.PI * 2); 
                 x.lineWidth = 12; 
                 x.strokeStyle = type === 'good' ? '#22c55e' : '#ef4444'; 
@@ -238,7 +240,7 @@
             x.fillText(itemStr, 128, 128); return new THREE.CanvasTexture(c);
         }
 
-        function playSfx(f, type = 'sine', dur = 0.2, v = 0.4) {
+        function playSfx(f, type = 'sine', dur = 0.2, v = 0.6) {
             if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             try { 
                 const o = audioCtx.createOscillator(), g = audioCtx.createGain(); 
@@ -253,7 +255,7 @@
         function startBgMusic() {
             if (bgMusicInt) clearInterval(bgMusicInt);
             bgMusicInt = setInterval(() => {
-                if (gameActive) playSfx(90 + Math.random() * 20, 'triangle', 0.8, 0.12);
+                if (gameActive) playSfx(95 + Math.random() * 20, 'triangle', 0.8, 0.18); 
             }, 600);
         }
 
@@ -266,7 +268,8 @@
         document.getElementById('close-info-btn').onclick = () => document.getElementById('screen-info').classList.remove('overlay-active');
 
         document.getElementById('start-btn').onclick = () => { 
-            gameActive = true; score = 0; mistakes = 0; frame = 0; speed = 0.15; turboActive = false; 
+            gameActive = true; score = 0; mistakes = 0; frame = 0; speedValue = 15; speed = 0.15; turboActive = false; 
+            lastSpeedUpdateFrame = 0;
             document.getElementById('game-ui-bar').style.display = 'flex'; 
             document.getElementById('screen-start').classList.remove('overlay-active'); 
             updateUI(); startBgMusic(); loop(); 
@@ -380,27 +383,24 @@
         function updateUI() { 
             document.getElementById('hud-score').innerText = score; 
             document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; 
-            document.getElementById('hud-speed').innerText = Math.floor(speed * 100); 
+            document.getElementById('hud-speed').innerText = speedValue; 
         }
         
         function loop() {
             if(!gameActive) return; requestAnimationFrame(loop); frame++; 
             
-            // --- ΝΕΑ ΛΟΓΙΚΗ ΤΑΧΥΤΗΤΑΣ & ΒΗΜΑΤΩΝ ---
-            const currentSpeedVal = Math.floor(speed * 100);
-            if (currentSpeedVal < 25) {
-                // Φάση εκμάθησης: Σταδιακή αύξηση
-                speed = 0.15 + (Math.floor(frame / 4500) * 0.05);
-            } else if (currentSpeedVal >= 30 && currentSpeedVal <= 45) {
-                // Βήματα των 5
-                speed = 0.30 + (Math.floor((frame % 15000) / 3000) * 0.05);
-                if (speed > 0.45) speed = 0.45;
-            } else if (currentSpeedVal > 45) {
-                // Βήματα των 10
-                speed = 0.50 + (Math.floor((frame % 25000) / 3000) * 0.10);
+            // --- ΛΟΓΙΚΗ ΤΑΧΥΤΗΤΑΣ: ΑΥΞΗΣΗ ΑΝΑ 30 ΔΕΥΤΕΡΟΛΕΠΤΑ (1800 frames) ---
+            if (frame - lastSpeedUpdateFrame >= 1800) {
+                if (speedValue < 30) {
+                    speedValue += 5;
+                } else {
+                    speedValue += 10;
+                }
+                speed = speedValue / 100;
+                lastSpeedUpdateFrame = frame;
+                updateUI();
             }
 
-            // Εξασφάλιση ομαλού χειρισμού πληκτρολογίου
             const keyStep = 3.6; 
             if(keysPressed['ArrowLeft']) truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - keyStep);
             if(keysPressed['ArrowRight']) truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + keyStep);
@@ -433,11 +433,11 @@
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
                     if(it.userData.type === 'good') { 
                         score += (turboActive ? 200 : 100); 
-                        playSfx(600, 'sine', 0.4, 0.35); // Loud Correct
+                        playSfx(600, 'sine', 0.4, 0.55); 
                     } else { 
                         score = Math.max(0, score - 100); 
                         mistakes++; 
-                        playSfx(120, 'square', 0.4, 0.45); // Loud Wrong
+                        playSfx(120, 'square', 0.4, 0.6); 
                         if(mistakes >= 12 && !optsZen) { endGame(); } 
                     }
                     if(optsVoice && window.speechSynthesis) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || ""); u.lang = 'el-GR'; window.speechSynthesis.speak(u); }
@@ -446,19 +446,22 @@
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
 
-            // --- ΛΟΓΙΚΗ ΠΥΚΝΟΤΗΤΑΣ ---
+            // --- ΑΥΞΗΜΕΝΗ ΠΥΚΝΟΤΗΤΑ ΓΙΑ ΤΑΧΥΤΗΤΕΣ 50+ ---
             let spawnInterval;
             if (speed < 0.25) {
-                // Φάση εκμάθησης: Πολύ αραιά
-                spawnInterval = Math.floor(35.0 / speed); 
+                // Χαμηλή ταχύτητα
+                spawnInterval = Math.floor(18 / speed); 
+            } else if (speed < 0.50) {
+                // Μεσαία ταχύτητα
+                spawnInterval = Math.floor(14 / speed);
             } else {
-                // Προοδευτική πυκνότητα
-                const ratio = Math.min(1, (speed - 0.25) / (1.2 - 0.25));
-                spawnInterval = Math.floor(35 - (ratio * (35 - 11)));
+                // Υψηλή ταχύτητα (50+): Δραστική μείωση interval για μεγάλη πυκνότητα
+                // Ταβάνι (ceiling) τα 7 frames για να μην μπουκώνει η πίστα
+                spawnInterval = Math.floor(Math.max(7, 7 / speed));
             }
             
             if(frame % spawnInterval === 0) spawn(); 
-            updateUI(); renderer.render(scene, camera);
+            renderer.render(scene, camera);
         }
         
         const handleMove = (clientX) => {
