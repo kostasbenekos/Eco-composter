@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Unlimited Speed Edition</title>
+    <title>ECO-COMPOSTER | Vivid-Ultimate-Stats-Ed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -16,7 +16,6 @@
         #game-viewport { flex: 1; position: relative; background: #0ea5e9; touch-action: none; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
         
-        /* UI Styling */
         .ui-glass { background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
         .panel-ochre { background-color: #b45309; border: 4px solid #f59e0b; box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.6); }
         .overlay-layer { position: absolute; inset: 0; z-index: 5000; background: rgba(2, 6, 23, 0.8); display: none; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
@@ -24,7 +23,6 @@
         .btn-green { background: #10b981; box-shadow: 0 6px 0 #059669; transition: all 0.1s; cursor: pointer; color: white; font-weight: 900; }
         .btn-green:active { transform: translateY(3px); box-shadow: 0 2px 0 #059669; }
         
-        /* Info Pages */
         .info-page { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .page-active { display: flex !important; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: background 0.3s; }
@@ -39,42 +37,10 @@
             50% { color: #fff; text-shadow: 0 0 20px #fbbf24; }
         }
         .turbo-text { animation: golden-blink 0.5s infinite; }
-        
-        /* Mobile Specific Utility & Orientation tweaks */
-        @media (max-width: 640px) {
-            #game-ui-bar { flex-wrap: wrap; justify-content: center; gap: 4px !important; padding: 4px !important; }
-            .hud-item { min-width: 55px !important; padding: 2px 4px !important; }
-            .btn-hud { padding: 4px 6px !important; }
-            #hud-boost { width: 100%; text-align: center; margin-bottom: 4px; order: -1; }
-        }
-
-        /* Landscape optimization (low height) - Prevent clipping */
-        @media (max-height: 500px) {
-            #game-ui-bar { padding: 4px 8px !important; flex-wrap: nowrap !important; justify-content: space-between !important; }
-            .ui-glass { padding-top: 2px !important; padding-bottom: 2px !important; }
-            .hud-label { font-size: 6px !important; }
-            #hud-score, #hud-mistakes, #hud-speed { font-size: 12px !important; }
-            .turbo-text { font-size: 8px !important; padding: 2px 8px !important; }
-            #info-btn { padding: 4px !important; }
-            #hud-boost { width: auto; order: 0; }
-
-            /* Scaling start screen & info for landscape */
-            .panel-ochre { padding: 1.25rem !important; space-y: 0.5rem !important; max-width: 95% !important; }
-            .panel-ochre h1 { font-size: 1.15rem !important; }
-            .panel-ochre .w-14, .panel-ochre .h-14, .panel-ochre .w-20, .panel-ochre .h-20 { width: 2.5rem !important; height: 2.5rem !important; border-radius: 0.5rem !important; }
-            .panel-ochre svg { width: 18px !important; height: 18px !important; }
-            .panel-ochre .btn-green { py: 0.4rem !important; font-size: 0.9rem !important; }
-            .panel-ochre #instr-btn { py: 0.3rem !important; font-size: 8px !important; }
-            
-            /* Allow scrolling within panels if height is extremely small */
-            .panel-ochre { overflow-y: auto !important; max-height: 95vh !important; }
-            .grid-container { max-height: 150px !important; }
-        }
     </style>
 </head>
 <body>
     <div id="root">
-        <!-- HUD Bar -->
         <div id="game-ui-bar" class="p-2 sm:p-3 bg-slate-900 border-b-4 border-emerald-500 flex justify-between items-center z-50 overflow-x-auto gap-2 no-scrollbar" style="display: none;">
             <div class="flex gap-1 sm:gap-1.5 shrink-0 items-center">
                 <div class="ui-glass hud-item px-2 sm:px-3 py-1.5 rounded-xl text-center min-w-[55px] sm:min-w-[80px]">
@@ -106,14 +72,11 @@
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-slate-300 leading-none mb-0.5">ΦΩΝΗ</p>
                     <p class="text-[9px] sm:text-[11px] font-black text-slate-400 leading-none" id="lbl-voice">OFF</p>
                 </button>
-                
                 <button id="btn-exit" class="ui-glass btn-hud px-2 py-1 sm:py-1.5 rounded-lg text-center bg-red-900/20 border-red-500/50 hover:bg-red-600/40 cursor-pointer">
                     <p class="text-[6px] sm:text-[8px] font-black uppercase text-red-400 leading-none mb-0.5">ΕΞΟΔΟΣ</p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="mx-auto sm:w-3 sm:h-3"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 </button>
-
                 <button id="info-btn" class="ui-glass p-2 sm:p-2.5 rounded-xl text-sky-400 hover:text-white cursor-pointer shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" class="sm:w-5 sm:h-5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                 </button>
             </div>
         </div>
@@ -121,118 +84,101 @@
         <div id="game-viewport">
             <!-- Screen Start -->
             <div id="screen-start" class="overlay-layer overlay-active">
-                <div class="max-w-[90%] sm:max-w-md w-full panel-ochre p-8 sm:p-12 rounded-[3rem] sm:rounded-[4rem] text-center space-y-6 sm:space-y-8">
+                <div class="max-w-[90%] sm:max-w-md w-full panel-ochre p-8 sm:p-12 rounded-[3rem] text-center space-y-6">
                     <div class="w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-[2rem] flex items-center justify-center mx-auto shadow-xl">
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="#b45309" class="sm:w-16 sm:h-16"><path d="M5 3l14 9-14 9V3z"/></svg>
                     </div>
                     <div>
                         <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tighter italic leading-none text-white">ECO-COMPOSTER</h1>
-                        <p class="text-amber-200 text-[10px] sm:text-[14px] font-black uppercase mt-3 tracking-widest leading-none">Responsive Game</p>
                     </div>
-                    <div class="flex flex-col gap-3 sm:gap-5">
-                        <button id="start-btn" class="btn-green w-full py-5 sm:py-7 rounded-2xl sm:rounded-[2.5rem] text-2xl sm:text-4xl uppercase shadow-lg cursor-pointer">ΠΑΙΞΕ</button>
-                        <button id="instr-btn" class="w-full py-3 sm:py-5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-lg text-white uppercase tracking-widest bg-black/30 hover:bg-black/40 cursor-pointer">ΟΔΗΓΙΕΣ</button>
+                    <div class="flex flex-col gap-3">
+                        <button id="start-btn" class="btn-green w-full py-5 rounded-2xl text-2xl uppercase shadow-lg cursor-pointer">ΠΑΙΞΕ</button>
+                        <button id="instr-btn" class="w-full py-3 rounded-xl font-black text-xs text-white uppercase tracking-widest bg-black/30 hover:bg-black/40 cursor-pointer">ΟΔΗΓΙΕΣ</button>
                     </div>
                 </div>
             </div>
 
             <!-- Screen Info -->
             <div id="screen-info" class="overlay-layer">
-                <div class="max-w-[95%] sm:max-w-2xl w-full panel-ochre rounded-[2.5rem] sm:rounded-[3.5rem] flex flex-col p-6 sm:p-10 max-h-[95vh] overflow-hidden">
+                <div class="max-w-[95%] sm:max-w-2xl w-full panel-ochre rounded-[3rem] flex flex-col p-6 sm:p-10 max-h-[95vh] overflow-hidden">
                     <div id="pages-container" class="flex-1 flex flex-col overflow-hidden">
                         <div class="info-page page-active" data-id="0">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none shrink-0">ΟΔΗΓΙΕΣ</h2>
-                            <div class="space-y-3 sm:space-y-5 w-full text-base sm:text-xl font-bold text-amber-50 overflow-y-auto custom-scroll">
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 uppercase italic shrink-0">ΟΔΗΓΙΕΣ</h2>
+                            <div class="space-y-4 w-full text-base sm:text-xl font-bold">
                                 <p class="leading-tight text-[12px] sm:text-lg">Οδήγησε με σύρσιμο (αφή/ποντίκι) ή με τα βελάκια ⬅️ ➡️.</p>
-                                <div class="p-4 sm:p-6 bg-black/20 border-2 border-white/20 rounded-3xl">
-                                    <p class="text-yellow-300 text-lg sm:text-2xl font-black uppercase leading-none">TURBO BOOSTER!</p>
+                                <div class="p-4 bg-black/20 border-2 border-white/20 rounded-3xl">
+                                    <p class="text-yellow-300 text-lg font-black uppercase leading-none">TURBO BOOSTER!</p>
                                     <p class="text-[10px] sm:text-sm mt-2 font-black uppercase leading-tight">Ενεργοποιείται τυχαία! Δίνει διπλούς πόντους.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="info-page" data-id="1">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 sm:mb-6 uppercase italic leading-none shrink-0">ΒΟΗΘΗΜΑΤΑ</h2>
-                            <div class="p-4 sm:p-8 bg-blue-900/40 border-2 border-blue-400/50 rounded-[2rem] text-left space-y-3 sm:space-y-5 w-full overflow-y-auto custom-scroll">
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-4 uppercase italic shrink-0">ΒΟΗΘΗΜΑΤΑ</h2>
+                            <div class="p-4 sm:p-8 bg-blue-900/40 border-2 border-blue-400/50 rounded-[2rem] text-left space-y-3 w-full overflow-y-auto custom-scroll">
                                 <p class="text-[11px] sm:text-lg text-blue-200 uppercase leading-tight"><strong class="text-white">ZEN:</strong> Τα λάθη δεν σε σταματάνε!</p>
                                 <p class="text-[11px] sm:text-lg text-emerald-200 uppercase leading-tight"><strong class="text-white">ΚΥΚΛΟΙ:</strong> Δείχνουν σωστά/λάθος.</p>
                                 <p class="text-[11px] sm:text-lg text-purple-300 uppercase leading-tight"><strong class="text-white">ΦΩΝΗ:</strong> Ακούς το υλικό.</p>
                             </div>
                         </div>
                         <div class="info-page" data-id="2">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none shrink-0">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
-                            <div class="grid-container grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-4 text-center bg-white/20 p-4 rounded-[2.5rem] border-2 border-white/30 overflow-y-auto max-h-[250px] sm:max-h-[450px] custom-scroll">
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🍌</span><span class="text-[9px] font-bold mt-1">Μπανάνα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🍎</span><span class="text-[9px] font-bold mt-1">Μήλο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🥦</span><span class="text-[9px] font-bold mt-1">Μπρόκολο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🌿</span><span class="text-[9px] font-bold mt-1">Φύλλα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🌱</span><span class="text-[9px] font-bold mt-1">Φυτό</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🥚</span><span class="text-[9px] font-bold mt-1">Τσόφλια</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">📄</span><span class="text-[9px] font-bold mt-1">Χαρτί</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">📰</span><span class="text-[9px] font-bold mt-1">Εφημερίδα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">📦</span><span class="text-[9px] font-bold mt-1">Χαρτόκουτο</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🪱</span><span class="text-[9px] font-bold mt-1">Σκουλήκια</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🍂</span><span class="text-[9px] font-bold mt-1">Ξερά φύλλα</span></div>
-                                <div class="flex flex-col items-center"><span class="text-3xl sm:text-4xl">🪵</span><span class="text-[9px] font-bold mt-1">Κλαδιά</span></div>
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic shrink-0">ΣΩΣΤΑ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 text-center bg-white/20 p-4 rounded-3xl overflow-y-auto max-h-[350px] custom-scroll">
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍌</span><span class="text-[8px] font-bold mt-1">Μπανάνα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍎</span><span class="text-[8px] font-bold mt-1">Μήλο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🥦</span><span class="text-[8px] font-bold mt-1">Μπρόκολο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🌿</span><span class="text-[8px] font-bold mt-1">Φύλλα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🌱</span><span class="text-[8px] font-bold mt-1">Φυτό</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🥚</span><span class="text-[8px] font-bold mt-1">Τσόφλια</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📄</span><span class="text-[8px] font-bold mt-1">Χαρτί</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📰</span><span class="text-[8px] font-bold mt-1">Εφημερίδα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">📦</span><span class="text-[8px] font-bold mt-1">Χαρτόκουτο</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🪱</span><span class="text-[8px] font-bold mt-1">Σκουλήκια</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🍂</span><span class="text-[8px] font-bold mt-1">Ξερά φύλλα</span></div>
+                                <div class="flex flex-col items-center"><span class="text-3xl">🪵</span><span class="text-[8px] font-bold mt-1">Κλαδιά</span></div>
                             </div>
                         </div>
                         <div class="info-page" data-id="3">
-                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic leading-none shrink-0">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
-                            <div class="grid-container grid grid-cols-4 gap-2 sm:gap-4 text-center bg-black/20 p-4 rounded-[2.5rem] border-2 border-white/20 overflow-y-auto max-h-[250px] sm:max-h-[450px] custom-scroll">
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🥛</span><span class="text-[9px] font-bold mt-1">Γάλα</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🍾</span><span class="text-[9px] font-bold mt-1">Μπουκάλι</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🍲</span><span class="text-[9px] font-bold mt-1">Φαγητό</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🥩</span><span class="text-[9px] font-bold mt-1">Κρέας</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🍼</span><span class="text-[9px] font-bold mt-1">Μπιμπερό</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🥫</span><span class="text-[9px] font-bold mt-1">Κονσέρβα</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🔋</span><span class="text-[9px] font-bold mt-1">Μπαταρία</span></div>
-                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl sm:text-4xl grayscale">🪣</span><span class="text-[9px] font-bold mt-1">Κουβάς</span></div>
+                            <h2 class="text-2xl sm:text-4xl font-black text-white mb-3 uppercase italic shrink-0">ΛΑΘΟΣ ΥΛΙΚΑ</h2>
+                            <div class="grid grid-cols-4 gap-2 text-center bg-black/20 p-4 rounded-3xl overflow-y-auto max-h-[350px] custom-scroll">
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥛</span><span class="text-[8px] font-bold mt-1">Γάλα</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍾</span><span class="text-[8px] font-bold mt-1">Μπουκάλι</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍲</span><span class="text-[8px] font-bold mt-1">Φαγητό</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥩</span><span class="text-[8px] font-bold mt-1">Κρέας</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🍼</span><span class="text-[8px] font-bold mt-1">Μπιμπερό</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🥫</span><span class="text-[8px] font-bold mt-1">Κονσέρβα</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🔋</span><span class="text-[8px] font-bold mt-1">Μπαταρία</span></div>
+                                <div class="flex flex-col items-center opacity-70"><span class="text-3xl grayscale">🪣</span><span class="text-[8px] font-bold mt-1">Κουβάς</span></div>
                             </div>
                         </div>
                     </div>
                     <div class="flex justify-between items-center mt-auto pt-4 border-t border-white/20">
-                        <button id="prev-page-btn" class="p-3 sm:p-5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" class="sm:w-8 sm:h-8"><path d="M15 18l-6-6 6-6"/></svg>
-                        </button>
-                        <div class="flex gap-2">
-                            <div class="dot dot-active" id="dot-0"></div><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div><div class="dot" id="dot-3"></div>
-                        </div>
-                        <button id="next-page-btn" class="p-3 sm:p-5 bg-black/20 rounded-full active:scale-90 transition-transform cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" class="sm:w-8 sm:h-8"><path d="M9 18l6-6-6-6"/></svg>
-                        </button>
+                        <button id="prev-page-btn" class="p-3 bg-black/20 rounded-full cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg></button>
+                        <div class="flex gap-2"><div class="dot dot-active" id="dot-0"></div><div class="dot" id="dot-1"></div><div class="dot" id="dot-2"></div><div class="dot" id="dot-3"></div></div>
+                        <button id="next-page-btn" class="p-3 bg-black/20 rounded-full cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg></button>
                     </div>
-                    <button id="close-info-btn" class="w-full bg-emerald-600 py-3 sm:py-5 rounded-2xl font-black text-white uppercase text-xs sm:text-lg mt-5 shadow-xl cursor-pointer">ΚΛΕΙΣΙΜΟ</button>
+                    <button id="close-info-btn" class="w-full bg-emerald-600 py-3 rounded-2xl font-black text-white uppercase mt-5 shadow-xl cursor-pointer">ΚΛΕΙΣΙΜΟ</button>
                 </div>
             </div>
 
             <!-- Screen End -->
             <div id="screen-end" class="overlay-layer">
-                <div class="w-full max-w-[320px] sm:max-w-sm panel-ochre p-4 sm:p-5 rounded-[2.5rem] text-center space-y-3 max-h-[98vh] flex flex-col overflow-hidden relative">
-                    <div class="shrink-0">
-                        <div class="text-3xl sm:text-5xl">😊</div>
-                        <p class="text-white font-black text-xs sm:text-sm uppercase italic animate-bounce tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p>
-                    </div>
-                    
+                <div class="w-full max-w-[320px] sm:max-w-sm panel-ochre p-4 sm:p-5 rounded-[3rem] text-center space-y-3 max-h-[98vh] flex flex-col overflow-hidden relative">
+                    <div class="shrink-0"><div class="text-3xl sm:text-5xl">😊</div><p class="text-white font-black text-xs uppercase italic tracking-tight leading-none mt-2">ΔΕΝ ΠΕΙΡΑΖΕΙ!<br>Ήσουν πολύ καλός!</p></div>
                     <div class="bg-black/20 py-1.5 rounded-2xl border-2 border-white/20 shrink-0">
                         <p class="text-[7px] text-amber-200 font-black uppercase tracking-widest leading-none">ΣΥΝΟΛΙΚΟ ΣΚΟΡ</p>
                         <p id="final-score" class="text-3xl sm:text-4xl font-black text-white leading-none mt-1">0</p>
                     </div>
-
                     <div id="save-ui" class="space-y-2 shrink-0 py-2 bg-black/10 rounded-xl border border-white/10 px-2 my-1">
                         <input type="text" id="p-name" maxlength="12" placeholder="ΤΟ ΟΝΟΜΑ ΣΟΥ" class="w-full bg-black/40 border-2 border-white/10 p-2 rounded-lg text-center font-black text-white uppercase outline-none text-sm focus:border-amber-400">
                         <button id="submit-btn" class="btn-green w-full py-2 rounded-lg uppercase text-emerald-950 font-black text-base shadow-lg cursor-pointer" onclick="saveScoreToCloud()">ΑΠΟΘΗΚΕΥΣΗ</button>
                     </div>
-
                     <div id="leader-board-container" class="flex-1 flex flex-col min-h-0 text-left border-t border-white/20 pt-1 overflow-hidden">
-                        <p class="text-[8px] font-black text-white uppercase tracking-widest text-center leading-none shrink-0 mb-1">ΚΑΤΑΤΑΞΗ</p>
+                        <p class="text-[8px] font-black text-white uppercase tracking-widest text-center mb-1 shrink-0">ΚΑΤΑΤΑΞΗ</p>
                         <div id="leader-board" class="flex-1 overflow-y-auto custom-scroll pr-1 space-y-1"></div>
                         <div class="flex justify-between items-center px-3 py-1 shrink-0 bg-black/20 mt-1 rounded-lg">
-                            <button id="lb-prev" class="p-1 bg-white/10 rounded-full hover:bg-white/20 disabled:opacity-30 cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg>
-                            </button>
+                            <button id="lb-prev" class="p-1 bg-white/10 rounded-full cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M15 18l-6-6 6-6"/></svg></button>
                             <span id="lb-page-info" class="text-[8px] font-black text-amber-200 uppercase tracking-widest">1/1</span>
-                            <button id="lb-next" class="p-1 bg-white/10 rounded-full hover:bg-white/20 disabled:opacity-30 cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg>
-                            </button>
+                            <button id="lb-next" class="p-1 bg-white/10 rounded-full cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M9 18l6-6-6-6"/></svg></button>
                         </div>
                     </div>
                     <button onclick="location.reload()" class="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200 pt-1 hover:text-white cursor-pointer shrink-0">ΠΑΙΞΕ ΞΑΝΑ</button>
@@ -256,26 +202,22 @@
             };
             if (typeof __firebase_config !== 'undefined') { firebaseConfig = JSON.parse(__firebase_config); }
             firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore(); 
-            auth = firebase.auth();
+            db = firebase.firestore(); auth = firebase.auth();
             const initAuth = async () => {
-                try { 
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await auth.signInWithCustomToken(__initial_auth_token);
-                    } else {
-                        await auth.signInAnonymously();
-                    }
-                } catch (e) { console.error("Firebase auth error", e); }
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await auth.signInWithCustomToken(__initial_auth_token); } 
+                else { await auth.signInAnonymously(); }
             }; initAuth();
-        } catch(e){ console.error("Firebase init error", e); }
+        } catch(e){ console.error(e); }
 
         let gameActive = false, score = 0, mistakes = 0, speed = 0.15, frame = 0, lastX = 0;
+        let isMoving = false; 
+        let keysPressed = {}; // State tracking for smooth keyboard movement
         let turboActive = false, turboEndTime = 0, nextTurboFrame = 1000;
-        let items = [], audioCtx, musicInt, bgAudioActive = false, playMusicLoop = true;
+        let items = [], audioCtx;
         let lbData = [], lbCurrentPage = 0;
         const lbPageSize = 5;
 
-        let optsZen = false, optsHalos = false, optsVoice = false, optsFreeze = false;
+        let optsZen = false, optsHalos = false, optsVoice = false;
         const btnZen = document.getElementById('btn-zen');
         const btnHalo = document.getElementById('btn-halo');
         const btnVoice = document.getElementById('btn-voice');
@@ -289,119 +231,86 @@
 
         function getTexture(itemStr, type, useHalo) {
             const c = document.createElement('canvas'); c.width=256; c.height=256; const x = c.getContext('2d');
-            x.filter = 'saturate(200%)'; x.textAlign='center'; x.textBaseline='middle'; 
-            x.font = `175px Arial`; 
+            x.imageSmoothingEnabled = true;
+            x.filter = 'saturate(250%) contrast(120%)'; 
+            x.textAlign='center'; x.textBaseline='middle'; x.font = `185px Arial`; 
             if(useHalo) { x.beginPath(); x.arc(128, 128, 115, 0, Math.PI * 2); x.lineWidth = 14; x.strokeStyle = type === 'good' ? '#22c55e' : '#ef4444'; x.stroke(); }
             x.fillText(itemStr, 128, 128); return new THREE.CanvasTexture(c);
         }
 
-        function startBackgroundMusic() {
-            if (bgAudioActive) return;
-            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            bgAudioActive = true;
-            const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; let mIdx = 0;
-            musicInt = setInterval(() => {
-                if(!playMusicLoop) return; 
-                try {
-                    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-                    o.type = 'triangle'; o.connect(g); g.connect(audioCtx.destination);
-                    o.frequency.setValueAtTime(melody[mIdx], audioCtx.currentTime);
-                    g.gain.setValueAtTime(0.006, audioCtx.currentTime);
-                    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
-                    o.start(); o.stop(audioCtx.currentTime + 0.4); mIdx = (mIdx + 1) % melody.length;
-                } catch(e){}
-            }, 350);
-        }
-        
-        document.addEventListener('mousedown', startBackgroundMusic, { once: true });
-        document.addEventListener('touchstart', startBackgroundMusic, { once: true });
-        
         function playSfx(f, type = 'sine', dur = 0.2, v = 0.005) {
-            if(!audioCtx) return;
-            try {
-                const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-                o.type = type; o.connect(g); g.connect(audioCtx.destination);
-                o.frequency.setValueAtTime(f, audioCtx.currentTime);
-                g.gain.setValueAtTime(v, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-                o.start(); o.stop(audioCtx.currentTime + dur);
-            } catch(e){}
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            try { const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = type; o.connect(g); g.connect(audioCtx.destination); o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(v, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur); o.start(); o.stop(audioCtx.currentTime + dur); } catch(e){}
         }
 
         let infoPageIdx = 0;
-        const updatePages = () => {
-            document.querySelectorAll('.info-page').forEach((p, i) => p.classList.toggle('page-active', i === infoPageIdx));
-            document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('dot-active', i === infoPageIdx));
-        };
+        const updatePages = () => { document.querySelectorAll('.info-page').forEach((p, i) => p.classList.toggle('page-active', i === infoPageIdx)); document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('dot-active', i === infoPageIdx)); };
         document.getElementById('prev-page-btn').onclick = () => { infoPageIdx = (infoPageIdx - 1 + 4) % 4; updatePages(); };
         document.getElementById('next-page-btn').onclick = () => { infoPageIdx = (infoPageIdx + 1) % 4; updatePages(); };
         document.getElementById('info-btn').onclick = () => { document.getElementById('screen-info').classList.add('overlay-active'); infoPageIdx = 0; updatePages(); };
         document.getElementById('instr-btn').onclick = () => { document.getElementById('screen-info').classList.add('overlay-active'); infoPageIdx = 0; updatePages(); };
         document.getElementById('close-info-btn').onclick = () => document.getElementById('screen-info').classList.remove('overlay-active');
 
-        document.getElementById('start-btn').onclick = () => {
-            if(!bgAudioActive) startBackgroundMusic();
-            playMusicLoop = true; gameActive = true; 
-            score = 0; mistakes = 0; frame = 0; speed = 0.15; turboActive = false; turboEndTime = 0; nextTurboFrame = 1500;
-            document.getElementById('game-ui-bar').style.display = 'flex';
-            document.getElementById('screen-start').classList.remove('overlay-active'); 
-            updateUI(); loop(); 
-        };
+        document.getElementById('start-btn').onclick = () => { gameActive = true; score = 0; mistakes = 0; frame = 0; speed = 0.15; turboActive = false; document.getElementById('game-ui-bar').style.display = 'flex'; document.getElementById('screen-start').classList.remove('overlay-active'); updateUI(); loop(); };
 
-        function endGame() {
-            gameActive = false; playMusicLoop = false; 
-            document.getElementById('game-ui-bar').style.display = 'none';
-            document.getElementById('final-score').innerText = score; 
-            document.getElementById('screen-end').classList.add('overlay-active'); 
-            loadLeaderboard();
-        }
+        function endGame() { gameActive = false; document.getElementById('game-ui-bar').style.display = 'none'; document.getElementById('final-score').innerText = score; document.getElementById('screen-end').classList.add('overlay-active'); loadLeaderboard(); }
 
         async function saveScoreToCloud() {
-            const btn = document.getElementById('submit-btn');
-            if (!db || !auth || !auth.currentUser) { btn.innerText = "FIREBASE ERROR"; return; }
-            const name = document.getElementById('p-name').value.trim(); if (!name) return;
-            btn.innerText = "WAIT..."; btn.disabled = true;
-            try {
-                await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').add({
-                    name: name.toUpperCase(), score: score, mistakes: mistakes, duration: frame, zenUsed: optsZen, timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                document.getElementById('save-ui').style.display = 'none'; loadLeaderboard();
-            } catch (e) { btn.innerText = "ERROR"; btn.disabled = false; }
+            const name = document.getElementById('p-name').value.trim(); if (!name || !db) return;
+            try { 
+                await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').add({ 
+                    name: name.toUpperCase(), 
+                    score, 
+                    mistakes, 
+                    duration: frame, // in frames
+                    isZen: optsZen,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+                }); 
+                document.getElementById('save-ui').style.display = 'none'; 
+                loadLeaderboard(); 
+            } catch (e) {}
         }
 
         async function loadLeaderboard() {
-            const list = document.getElementById('leader-board');
-            if (!db) { list.innerHTML = `<p class="text-red-300">No Connection.</p>`; return; }
-            list.innerHTML = '<p class="text-center opacity-40">Loading...</p>';
-            try {
-                const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
-                let data = []; snap.forEach(doc => data.push(doc.data()));
-                data.sort((a, b) => {
-                    const aSafe = a.mistakes <= 12;
-                    const bSafe = b.mistakes <= 12;
-                    if (aSafe && !bSafe) return -1;
-                    if (!aSafe && bSafe) return 1;
-                    if (b.score !== a.score) return b.score - a.score;
-                    if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
-                    return b.duration - a.duration;
-                });
-                lbData = data; lbCurrentPage = 0; renderLBPage();
-            } catch (e) { list.innerHTML = '<p class="text-center">Error.</p>'; }
+            if (!db) return;
+            const snap = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('leaderboard').get();
+            let data = []; snap.forEach(doc => data.push(doc.data()));
+            
+            // Logic: Non-Zen first, then Zen. Inside categories: Higher Score > Lower Mistakes > Higher Duration
+            data.sort((a, b) => {
+                const aZen = a.isZen === true || a.mistakes > 12;
+                const bZen = b.isZen === true || b.mistakes > 12;
+                
+                if (!aZen && bZen) return -1;
+                if (aZen && !bZen) return 1;
+                
+                if (b.score !== a.score) return b.score - a.score;
+                if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
+                return (b.duration || 0) - (a.duration || 0);
+            });
+            
+            lbData = data; lbCurrentPage = 0; renderLBPage();
         }
 
         function renderLBPage() {
             const list = document.getElementById('leader-board');
             const totalPages = Math.ceil(lbData.length / lbPageSize) || 1;
             document.getElementById('lb-page-info').innerText = `${lbCurrentPage + 1}/${totalPages}`;
-            document.getElementById('lb-prev').disabled = lbCurrentPage === 0;
-            document.getElementById('lb-next').disabled = lbCurrentPage >= totalPages - 1;
             list.innerHTML = '';
-            const pageItems = lbData.slice(lbCurrentPage * lbPageSize, (lbCurrentPage + 1) * lbPageSize);
-            pageItems.forEach((v, i) => {
+            lbData.slice(lbCurrentPage * lbPageSize, (lbCurrentPage + 1) * lbPageSize).forEach((v, i) => {
                 const rank = (lbCurrentPage * lbPageSize) + i + 1;
-                const penalty = (v.mistakes > 12);
-                list.innerHTML += `<div class="flex justify-between items-center py-1.5 border-b border-white/5"><div class="font-black text-[#fcd34d] text-[10px] sm:text-xs truncate w-1/2">${rank}. ${v.name}${penalty?' <span class="text-[6px] text-amber-500 border border-amber-500 px-1 rounded">ZEN</span>':''}</div><div class="text-right w-1/2"><div class="font-black text-white text-xs sm:text-sm leading-none">${v.score}</div><div class="text-[8px] font-bold mt-1 text-gray-400">L:${v.mistakes} | ${Math.floor(v.duration/60)}s</div></div></div>`;
+                const zenUsed = v.isZen === true || v.mistakes > 12;
+                const timeSec = Math.floor((v.duration || 0) / 60);
+                list.innerHTML += `<div class="flex flex-col py-1.5 border-b border-white/5">
+                    <div class="flex justify-between items-center">
+                        <div class="font-black text-[#fcd34d] text-[10px] sm:text-xs truncate w-2/3">${rank}. ${v.name}${zenUsed?' <span class="text-[6px] text-amber-500 border border-amber-500 px-1 rounded font-black">ZEN</span>':''}</div>
+                        <div class="text-right font-black text-white text-xs sm:text-sm">${v.score}</div>
+                    </div>
+                    <div class="flex gap-2 text-[7px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                        <span>Λάθη: ${v.mistakes}</span>
+                        <span>Χρόνος: ${timeSec}s</span>
+                    </div>
+                </div>`;
             });
         }
         document.getElementById('lb-prev').onclick = () => { if(lbCurrentPage > 0) { lbCurrentPage--; renderLBPage(); } };
@@ -413,96 +322,109 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true }); 
         renderer.setSize(viewport.clientWidth, viewport.clientHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding; viewport.appendChild(renderer.domElement);
 
-        function onResize() {
-            const width = viewport.clientWidth;
-            const height = viewport.clientHeight;
-            const aspect = width / height;
-            renderer.setSize(width, height);
-            camera.aspect = aspect;
-            if (aspect < 1.0) camera.fov = 55 + (1.0 - aspect) * 25; 
-            else camera.fov = 45; 
-            camera.updateProjectionMatrix();
-        }
-        window.addEventListener('resize', onResize);
-        window.addEventListener('orientationchange', () => setTimeout(onResize, 200));
-        onResize();
-        
         scene.add(new THREE.AmbientLight(0xffffff, 1.0)); 
         const sun = new THREE.DirectionalLight(0xfff5e6, 2.0); sun.position.set(20, 50, 20); scene.add(sun);
-        const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshPhongMaterial({ color: 0x4a2c18 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -2.0; scene.add(ground);
-        const roadWidth = 110; 
-        const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x0a0a0a })); road.rotation.x = -Math.PI / 2; road.position.y = 0.0; scene.add(road);
         
+        const roadWidth = 110; 
+        const road = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, 4000), new THREE.MeshPhongMaterial({ color: 0x0a0a0a })); road.rotation.x = -Math.PI / 2; scene.add(road);
+        const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshPhongMaterial({ color: 0x4a2c18 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -2.0; scene.add(ground);
+
         const truck = new THREE.Group(); 
         const chassis = new THREE.Mesh(new THREE.BoxGeometry(12.0, 1.5, 11.0), new THREE.MeshPhongMaterial({ color: 0x1e293b })); chassis.position.y = 1.5; truck.add(chassis); 
-        const wheels = []; 
-        for(let i=0; i<4; i++) { 
-            const w = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 2.0, 24), new THREE.MeshPhongMaterial({color: 0x0f172a})); w.rotation.z = Math.PI/2; wheels.push(w); truck.add(w); 
-        } 
+        const wheels = []; for(let i=0; i<4; i++) { const w = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 2.0, 24), new THREE.MeshPhongMaterial({color: 0x0f172a})); w.rotation.z = Math.PI/2; wheels.push(w); truck.add(w); } 
         wheels[0].position.set(6.0, 1.6, 4.0); wheels[1].position.set(-6.0, 1.6, 4.0); wheels[2].position.set(6.0, 1.6, -4.0); wheels[3].position.set(-6.0, 1.6, -4.0);
         
-        const genLabel = () => { const c = document.createElement('canvas'); c.width = 1024; c.height = 1024; const x = c.getContext('2d'); x.fillStyle = '#005c00'; x.fillRect(0,0,1024,1024); x.fillStyle = 'white'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = 'bold 190px Arial'; x.fillText('ΚΑΔΟΣ', 512, 280); x.font = 'bold 135px Arial'; x.fillText('ΚΟΜΠΟΣΤΟ-', 512, 490); x.fillText('ΠΟΙΗΣΗΣ', 512, 670); return new THREE.CanvasTexture(c); };
+        const genLabel = () => { 
+            const c = document.createElement('canvas'); c.width = 1024; c.height = 1024; const x = c.getContext('2d');
+            x.fillStyle = '#005c00'; x.fillRect(0,0,1024,1024); x.fillStyle = 'white'; x.textAlign = 'center'; x.textBaseline = 'middle';
+            x.font = 'bold 180px Arial'; x.fillText('ΚΑΔΟΣ', 512, 280); x.font = 'bold 130px Arial'; x.fillText('ΚΟΜΠΟΣΤΟ-', 512, 490); x.fillText('ΠΟΙΗΣΗΣ', 512, 670);
+            return new THREE.CanvasTexture(c);
+        };
         const bin = new THREE.Mesh(new THREE.BoxGeometry(14.0, 15.0, 9.5), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 })); bin.position.set(0, 9.8, 0.5); truck.add(bin); scene.add(truck);
 
         const assetPool = []; const turbineBlades = [];
-        function createHouse() { const g = new THREE.Group(); const colors = [0xffd700, 0x00e676, 0xff3d00, 0x2979ff, 0xffffff]; const base = new THREE.Mesh(new THREE.BoxGeometry(11.2, 16.8, 11.2), new THREE.MeshPhongMaterial({color: colors[Math.floor(Math.random()*colors.length)]})); base.position.y = 8.4; g.add(base); const roof = new THREE.Mesh(new THREE.ConeGeometry(10.5, 9.8, 4), new THREE.MeshPhongMaterial({color: 0x6d2800})); roof.position.y = 21.7; roof.rotation.y = Math.PI/4; g.add(roof); return g; }
-        function createRoundTree() { const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 14), new THREE.MeshPhongMaterial({color: 0x3d2511})); trunk.position.y = 7; const foliage = new THREE.Mesh(new THREE.SphereGeometry(9.8, 12, 12), new THREE.MeshPhongMaterial({color: 0x1f911a})); foliage.position.y = 18.2; g.add(trunk); g.add(foliage); return g; }
-        function createConeTree() { const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.68, 12.6), new THREE.MeshPhongMaterial({color: 0x3d2511})); trunk.position.y = 6.3; const foliage = new THREE.Mesh(new THREE.ConeGeometry(8.4, 30.8, 8), new THREE.MeshPhongMaterial({color: 0x006b21})); foliage.position.y = 21; g.add(trunk); g.add(foliage); return g; }
-        function createTurbine() { const g = new THREE.Group(); const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.2, 50), new THREE.MeshPhongMaterial({color: 0xf0f0f0})); tower.position.y = 25; g.add(tower); const blades = new THREE.Group(); blades.position.y = 45; g.add(blades); for(let i=0; i<3; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.8, 22, 0.2), new THREE.MeshPhongMaterial({color:0xffffff})); b.position.y = 11; const p = new THREE.Group(); p.rotation.z = (i*Math.PI*2)/3; p.add(b); blades.add(p); } turbineBlades.push(blades); return g; }
-        for(let i=0; i<70; i++) { const r = Math.random(); let asset; if(r < 0.10) asset = createTurbine(); else if(r < 0.30) asset = createHouse(); else if(r < 0.65) asset = createRoundTree(); else asset = createConeTree(); const side = Math.random() > 0.5 ? 1 : -1; asset.position.set(side * (Math.random() * 150 + 85), 0, -i * 45 + (Math.random() * 120)); scene.add(asset); assetPool.push(asset); }
+        function createHouse() { const g = new THREE.Group(); const base = new THREE.Mesh(new THREE.BoxGeometry(11, 16, 11), new THREE.MeshPhongMaterial({color: 0xffffff})); base.position.y = 8; g.add(base); const roof = new THREE.Mesh(new THREE.ConeGeometry(10, 10, 4), new THREE.MeshPhongMaterial({color: 0x6d2800})); roof.position.y = 21; roof.rotation.y = Math.PI/4; g.add(roof); return g; }
+        function createRoundTree() { const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 12), new THREE.MeshPhongMaterial({color: 0x3d2511})); trunk.position.y = 6; g.add(trunk); const foliage = new THREE.Mesh(new THREE.SphereGeometry(10, 12, 12), new THREE.MeshPhongMaterial({color: 0x1f911a})); foliage.position.y = 18; g.add(foliage); return g; }
+        function createConeTree() { const g = new THREE.Group(); const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 10), new THREE.MeshPhongMaterial({color: 0x3d2511})); trunk.position.y = 5; g.add(trunk); const foliage = new THREE.Mesh(new THREE.ConeGeometry(8, 28, 8), new THREE.MeshPhongMaterial({color: 0x006b21})); foliage.position.y = 19; g.add(foliage); return g; }
+        function createTurbine() { const g = new THREE.Group(); const tower = new THREE.Mesh(new THREE.CylinderGeometry(1, 1.5, 50), new THREE.MeshPhongMaterial({color: 0xf0f0f0})); tower.position.y = 25; g.add(tower); const head = new THREE.Group(); head.position.y = 45; g.add(head); for(let i=0; i<3; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.8, 22, 0.2), new THREE.MeshPhongMaterial({color:0xffffff})); b.position.y = 11; const p = new THREE.Group(); p.rotation.z = (i*Math.PI*2)/3; p.add(b); head.add(p); } turbineBlades.push(head); return g; }
+
+        for(let i=0; i<70; i++) {
+            let r = Math.random(); let asset;
+            if(r < 0.10) asset = createTurbine(); else if(r < 0.30) asset = createHouse(); else if(r < 0.65) asset = createRoundTree(); else asset = createConeTree();
+            let side = Math.random() > 0.5 ? 1 : -1; asset.position.set(side * (Math.random() * 150 + 85), 0, -i * 45 + (Math.random() * 120));
+            scene.add(asset); assetPool.push(asset);
+        }
         
         function spawn() {
-            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🪵','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; const tex = getTexture(item, type, optsHalos); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex})); sprite.position.set((Math.random()-0.5) * (roadWidth - 10), 4.5, -350); sprite.scale.set(16.0, 16.0, 1); sprite.userData = { type, itemStr: item }; scene.add(sprite); items.push(sprite);
+            const icons = ['🍌','🍎','🥦','🌿','🌱','🥚','📄','📰','📦','🪱','🍂','🪵','🥛','🍾','🍲','🥩','🍼','🥫','🔋','🪣']; 
+            const idx = Math.floor(Math.random()*icons.length); const item = icons[idx]; const type = idx < 12 ? 'good' : 'bad'; 
+            const tex = getTexture(item, type, optsHalos); const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex})); 
+            sprite.position.set((Math.random()-0.5) * (roadWidth - 20), 4.5, -350); sprite.scale.set(16, 16, 1); sprite.userData = { type, itemStr: item }; scene.add(sprite); items.push(sprite);
         }
 
-        function updateUI() { document.getElementById('hud-score').innerText = score; document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; document.getElementById('hud-speed').innerText = Math.floor(speed * 100); document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; }
+        function updateUI() { 
+            document.getElementById('hud-score').innerText = score; 
+            document.getElementById('hud-mistakes').innerText = `${mistakes}/12`; 
+            document.getElementById('hud-speed').innerText = Math.floor(speed * 100); 
+            document.getElementById('hud-boost').style.display = turboActive ? 'block' : 'none'; 
+        }
         
-        const keys = { ArrowLeft: false, ArrowRight: false };
-        window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
-        window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
-
         function loop() {
             if(!gameActive) return; requestAnimationFrame(loop); frame++; 
+            speed = 0.15 + (Math.floor(frame / 2100) * 0.05);
             
-            // Δυναμική Ταχύτητα: Ξεκινά 15, +5 κάθε 35 δευτερόλεπτα (~2100 frames), Χωρίς όριο
-            if(!optsFreeze) { 
-                let step = Math.floor(frame / 2100); 
-                speed = 0.15 + (step * 0.05);
-            }
-            
-            camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
-            const moveSpeed = 2.5; if(keys.ArrowLeft) truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - moveSpeed); if(keys.ArrowRight) truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + moveSpeed);
+            // --- UPDATED KEYBOARD HANDLING ---
+            const keyStep = 3.5; 
+            if(keysPressed['ArrowLeft']) truck.position.x = Math.max(-(roadWidth/2 - 12), truck.position.x - keyStep);
+            if(keysPressed['ArrowRight']) truck.position.x = Math.min((roadWidth/2 - 12), truck.position.x + keyStep);
 
-            if (!turboActive && frame > nextTurboFrame && Math.random() < 0.005) {
-                turboActive = true; let durationFrames = Math.max(240, Math.floor(960 - 1028.57 * speed));
-                turboEndTime = frame + durationFrames; nextTurboFrame = frame + 2500; updateUI(); playSfx(880, 'sine', 0.5, 0.01);
-            }
-            if(turboActive) { if (frame > turboEndTime) { turboActive = false; bin.material.emissive.setHex(0x000000); updateUI(); } else { bin.material.emissive.setRGB((frame % 6 < 3 ? 0.8 : 0.1), (frame % 6 < 3 ? 0.7 : 0.1), 0); } }
+            camera.position.set(truck.position.x*0.4, 50, 100); camera.lookAt(truck.position.x, 22, -35); 
+            wheels.forEach(w => w.rotation.x += speed * 4); turbineBlades.forEach(b => b.rotation.z += 0.05);
+
+            if (!turboActive && frame > nextTurboFrame && Math.random() < 0.005) { turboActive = true; turboEndTime = frame + 400; nextTurboFrame = frame + 2500; playSfx(880, 'sine', 0.5, 0.01); }
+            if(turboActive) { if (frame > turboEndTime) { turboActive = false; bin.material.emissive.setHex(0x000000); } else { bin.material.emissive.setRGB((frame % 6 < 3 ? 0.8 : 0.1), (frame % 6 < 3 ? 0.7 : 0.1), 0); } }
 
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - (truck.position.z+0.3)) < 16.0) {
-                    if(optsVoice && window.speechSynthesis) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || ""); u.lang = 'el-GR'; u.rate = 1.6; window.speechSynthesis.speak(u); }
-                    if(it.userData.type === 'good') { score += (turboActive ? 200 : 100); playSfx(600, 'sine', 0.15, 0.005); } 
-                    else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square', 0.4, 0.008); if(mistakes >= 12 && !optsZen) { endGame(); } }
+                    if(it.userData.type === 'good') { score += (turboActive ? 200 : 100); playSfx(600); } 
+                    else { score = Math.max(0, score - 100); mistakes++; playSfx(120, 'square'); if(mistakes >= 12 && !optsZen) { endGame(); } }
+                    if(optsVoice && window.speechSynthesis) { window.speechSynthesis.cancel(); let u = new SpeechSynthesisUtterance(emojiNames[it.userData.itemStr] || ""); u.lang = 'el-GR'; window.speechSynthesis.speak(u); }
                     scene.remove(it); items.splice(i,1); updateUI();
                 } else if(it.position.z > 50) { scene.remove(it); items.splice(i,1); }
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
+
+            let spawnInterval;
+            if (speed < 0.35) {
+                spawnInterval = Math.floor(25.0 / speed); 
+            } else {
+                const ratio = Math.min(1, (speed - 0.35) / (1.0 - 0.35));
+                spawnInterval = Math.floor(40 - (ratio * (40 - 12)));
+            }
             
-            // Spawn Rate: Απόσταση-Βάσει (6.5 / speed). 
-            // Εξασφαλίζει ότι τα αντικείμενα έχουν την ίδια χωρική απόσταση ανεξαρτήτως ταχύτητας.
-            let spawnInterval = Math.floor(Math.max(12, 7.5 / speed)); 
-            if(frame % spawnInterval === 0) spawn(); renderer.render(scene, camera);
+            if(frame % spawnInterval === 0) spawn(); 
+            renderer.render(scene, camera);
         }
         
+        const handleMove = (clientX) => {
+            if(!gameActive) return;
+            const dx = (clientX - lastX) * 0.25;
+            truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx));
+            lastX = clientX;
+        };
+
         viewport.addEventListener('touchstart', e => { lastX = e.touches[0].clientX; }, {passive: false});
-        viewport.addEventListener('touchmove', e => { if(!gameActive) return; const dx = (e.touches[0].clientX - lastX) * 0.25; truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx)); lastX = e.touches[0].clientX; e.preventDefault(); }, {passive: false});
-        let isDragging = false; viewport.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; });
-        viewport.addEventListener('mousemove', e => { if(!isDragging || !gameActive) return; const dx = (e.clientX - lastX) * 0.25; truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx)); lastX = e.clientX; });
-        viewport.addEventListener('mouseup', () => { isDragging = false; }); viewport.addEventListener('mouseleave', () => { isDragging = false; });
-        
-        renderer.render(scene, camera);
+        viewport.addEventListener('touchmove', e => { handleMove(e.touches[0].clientX); e.preventDefault(); }, {passive: false});
+        viewport.addEventListener('mousedown', e => { isMoving = true; lastX = e.clientX; });
+        window.addEventListener('mousemove', e => { if(isMoving) handleMove(e.clientX); });
+        window.addEventListener('mouseup', () => { isMoving = false; });
+
+        // --- ENHANCED KEYBOARD LISTENERS ---
+        window.addEventListener('keydown', e => { keysPressed[e.key] = true; });
+        window.addEventListener('keyup', e => { keysPressed[e.key] = false; });
+
+        window.addEventListener('resize', () => { renderer.setSize(viewport.clientWidth, viewport.clientHeight); camera.aspect = viewport.clientWidth / viewport.clientHeight; camera.updateProjectionMatrix(); });
     </script>
 </body>
 </html>
