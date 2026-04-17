@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ECO-COMPOSTER | Vivid-Mobile-Precision-Ed</title>
+    <title>ECO-COMPOSTER | Vivid-Classic-Shift-Ed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -32,7 +32,6 @@
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 10px; }
         
-        /* Fixed sync for turbo display */
         .turbo-box { min-width: 60px; display: flex; justify-content: center; align-items: center; }
         @media (min-width: 640px) { .turbo-box { min-width: 100px; } }
     </style>
@@ -55,7 +54,6 @@
                 </div>
             </div>
             
-            <!-- Turbo Box with fixed width to prevent flickering UI -->
             <div class="turbo-box shrink-0">
                 <div id="hud-boost" class="invisible font-black text-[7px] sm:text-[10px] uppercase italic bg-yellow-400/20 px-2 sm:px-3 py-1.5 rounded-full border-2 border-yellow-400 text-yellow-400 shadow-[0_0_10px_#f59e0b]">⚡ TURBO</div>
             </div>
@@ -363,8 +361,8 @@
         };
         const bin = new THREE.Mesh(new THREE.BoxGeometry(14.0, 15.0, 9.5), new THREE.MeshPhongMaterial({ map: genLabel(), emissive: 0x000000 })); bin.position.set(0, 9.8, 0.5); truck.add(bin); 
         
-        // --- POSITION TRUCK LOWER ON SCREEN ---
-        truck.position.z = 28;
+        // --- POSITION TRUCK AT CLASSIC POSITION (WITH TINY OFFSET) ---
+        truck.position.z = 8;
         scene.add(truck);
 
         const assetPool = []; const turbineBlades = [];
@@ -435,7 +433,6 @@
 
             for(let i=items.length-1; i>=0; i--) {
                 const it = items[i]; it.position.z += speed * 4.5;
-                // Collision detection adjusted for truck position at z:28
                 if(Math.hypot(it.position.x - truck.position.x, it.position.z - truck.position.z) < 16.0) {
                     if(it.userData.type === 'good') { 
                         score += (turboActive ? 200 : 100); 
@@ -452,7 +449,6 @@
             }
             assetPool.forEach(t => { t.position.z += speed*4.5; if(t.position.z > 150) t.position.z = -3000; });
 
-            // Density logic for high speed
             let spawnInterval;
             if (speed < 0.25) spawnInterval = Math.floor(18 / speed); 
             else if (speed < 0.50) spawnInterval = Math.floor(14 / speed);
@@ -464,7 +460,6 @@
         
         const handleMove = (clientX) => {
             if(!gameActive) return;
-            // Increased touch sensitivity (especially for mobile/landscape)
             const sens = (window.innerWidth < 1000) ? 0.48 : 0.32;
             const dx = (clientX - lastX) * sens;
             truck.position.x = Math.max(-(roadWidth/2 - 12), Math.min((roadWidth/2 - 12), truck.position.x + dx));
